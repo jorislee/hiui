@@ -1,0 +1,12 @@
+location = /hiui-rpc {
+    content_by_lua_file /etc/nginx/lua/hiui-rpc.lua;
+}
+
+location = /hiui-upload {
+    client_max_body_size 500M;
+    content_by_lua_file /etc/nginx/lua/hiui-upload.lua;
+}
+
+location = /hiui-download {
+    content_by_lua_file /etc/nginx/lua/hiui-download.lua;
+}
