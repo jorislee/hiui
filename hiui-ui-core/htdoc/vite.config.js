@@ -1,121 +1,124 @@
-import { defineConfig } from 'vite'
-import viteCompression from 'vite-plugin-compression'
-import vueI18n from '@intlify/vite-plugin-vue-i18n'
-import eslint from 'vite-plugin-eslint'
-import vue from '@vitejs/plugin-vue'
-import path from 'path'
-import fs from 'fs'
-import AutoImport from 'unplugin-auto-import/vite'
-import ViteComponents from 'unplugin-vue-components/vite'
-import { VantResolver } from 'unplugin-vue-components/resolvers'
-
+import {defineConfig} from 'vite';
+import viteCompression from 'vite-plugin-compression';
+import vueI18n from '@intlify/vite-plugin-vue-i18n';
+import eslint from 'vite-plugin-eslint';
+import vue from '@vitejs/plugin-vue';
+import path from 'path';
+import fs from 'fs';
+import AutoImport from 'unplugin-auto-import/vite';
+import ViteComponents from 'unplugin-vue-components/vite';
+import {VantResolver,NaiveUiResolver} from 'unplugin-vue-components/resolvers';
 
 function transformRoutes() {
-  let config
+	let config;
 
-  return {
-    name: 'transform-routes',
+	return {
+		name: 'transform-routes',
 
-    configResolved(resolvedConfig) {
-      config = resolvedConfig
-    },
+		configResolved(resolvedConfig) {
+			config = resolvedConfig;
+		},
 
-    transform(src, id) {
-      if (config.command === 'serve')
-        return
+		transform(src, id) {
+			if (config.command === 'serve') return;
 
-      if (/src\/router\/development\.js$/.test(id)) {
-        return {
-          code: 'export default function(routes, menus, loginView, layoutView, homeView){}'
-        }
-      }
-    }
-  }
+			if (/src\/router\/development\.js$/.test(id)) {
+				return {
+					code: 'export default function(routes, menus, loginView, layoutView, homeView){}'
+				};
+			}
+		}
+	};
 }
 
-export default defineConfig(({ mode }) => {
-  let menus
+export default defineConfig(({mode}) => {
+	let menus;
 
-  if (mode === 'development') {
-    menus = JSON.parse(fs.readFileSync(path.resolve(path.dirname(__dirname), 'files', 'menu.json')))
+	if (mode === 'development') {
+		menus = JSON.parse(fs.readFileSync(path.resolve(path.dirname(__dirname), 'files', 'menu.json')));
 
-    const appsDir = path.resolve(path.dirname(path.dirname(__dirname)), 'applications')
-    const destDir = path.resolve(__dirname, 'src', 'applications')
+		const appsDir = path.resolve(path.dirname(path.dirname(__dirname)), 'applications');
+		const destDir = path.resolve(__dirname, 'src', 'applications');
 
-    fs.rmSync(destDir, {force: true, recursive: true})
+		fs.rmSync(destDir, {force: true, recursive: true});
 
-    fs.readdirSync(appsDir).forEach(appName => {
-      const appDir = path.join(appsDir, appName)
+		fs.readdirSync(appsDir).forEach((appName) => {
+			const appDir = path.join(appsDir, appName);
 
-      if (!fs.statSync(appDir).isDirectory())
-        return
+			if (!fs.statSync(appDir).isDirectory()) return;
 
-      fs.mkdirSync(path.resolve(destDir, appName), {recursive: true})
-      fs.symlinkSync(path.resolve(appDir, 'htdoc'), path.resolve(destDir, appName, 'htdoc'))
+			fs.mkdirSync(path.resolve(destDir, appName), {recursive: true});
+			fs.symlinkSync(path.resolve(appDir, 'htdoc'), path.resolve(destDir, appName, 'htdoc'));
 
-      const menuFile = path.resolve(appDir, 'files', 'menu.json')
-      if (fs.existsSync(menuFile)) {
-        const menu = JSON.parse(fs.readFileSync(menuFile))
-        Object.assign(menus, menu)
-      }
-    })
-  }
+			const menuFile = path.resolve(appDir, 'files', 'menu.json');
+			if (fs.existsSync(menuFile)) {
+				const menu = JSON.parse(fs.readFileSync(menuFile));
+				Object.assign(menus, menu);
+			}
+		});
+	}
 
-  return {
-    define: {
-      __MENUS__: menus
-    },
-    resolve: {
-      preserveSymlinks: true
-    },
-    build: {
-      chunkSizeWarningLimit: 1500,
-      rollupOptions: {
-        input: {
-          index: path.resolve(__dirname, 'hiui.html')
-        }
-      }
-    },
-    plugins: [
-      transformRoutes(),
-      vue(),
-      viteCompression({
-        deleteOriginFile: true
-      }),
-      vueI18n({
-        compositionOnly: false
-      }),
-      eslint(),
-      AutoImport({
-        include: [
-          /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
-          /\.vue$/,
-          /\.vue\?vue/, // .vue
-          /\.md$/, // .md
-        ],
-        dts: true,
-        imports: ['vue', 'vue-router'],
-      }),
-      ViteComponents({
-        dts: true,
-        resolvers: [VantResolver()],
-      }),
-    ],
-    server: {
-      proxy: {
-        '/hiui-rpc': {
-          target: 'https://172.16.148.14',
-          secure: false
-        },
-        '/hiui-upload': {
-          target: 'https://172.16.148.14',
-          secure: false
-        },
-        '/hiui-download': {
-          target: 'https://172.16.148.14',
-          secure: false
-        }
-      }
-    }
-  }
-})
+	return {
+		define: {
+			__MENUS__: menus
+		},
+		resolve: {
+			preserveSymlinks: true
+		},
+		build: {
+			chunkSizeWarningLimit: 1500,
+			rollupOptions: {
+				input: {
+					index: path.resolve(__dirname, 'hiui.html')
+				}
+			}
+		},
+		plugins: [
+			transformRoutes(),
+			vue(),
+			viteCompression({
+				deleteOriginFile: true
+			}),
+			vueI18n({
+				compositionOnly: false
+			}),
+			eslint(),
+			AutoImport({
+				include: [
+					/\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+					/\.vue$/,
+					/\.vue\?vue/, // .vue
+					/\.md$/ // .md
+				],
+				dts: true,
+				imports: [
+					'vue',
+					'vue-router',
+					{
+						'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar']
+					}
+				]
+			}),
+			ViteComponents({
+				dts: true,
+				resolvers: [VantResolver(),NaiveUiResolver()]
+			})
+		],
+		server: {
+			proxy: {
+				'/hiui-rpc': {
+					target: 'https://172.16.148.14',
+					secure: false
+				},
+				'/hiui-upload': {
+					target: 'https://172.16.148.14',
+					secure: false
+				},
+				'/hiui-download': {
+					target: 'https://172.16.148.14',
+					secure: false
+				}
+			}
+		}
+	};
+});
