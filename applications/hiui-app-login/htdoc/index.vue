@@ -23,7 +23,7 @@
 				<n-button type="primary" block :loading="loading" @click="handleSubmit">{{ $t('Login') }}</n-button>
 			</n-form-item>
 			<div class="copyright">
-				<n-text type="info">Copyright © 2022 Powered by </n-text>
+				<n-text type="info">Copyright © 2022 Powered by</n-text>
 				<n-a href="https://github.com/zhaojh329/hiui" target="_blank">hiui</n-a>
 			</div>
 		</n-form>

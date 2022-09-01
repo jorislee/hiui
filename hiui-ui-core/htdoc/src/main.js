@@ -6,7 +6,7 @@ import router from './router';
 import timers from './timers';
 import i18n from './i18n';
 import hiui from './hiui';
-// import NaiveUI from './naive-ui'
+import NaiveUI from './naive-ui';
 
 const app = createApp(App);
 
@@ -15,6 +15,6 @@ app.use(router);
 app.use(i18n);
 app.use(hiui);
 app.use(timers);
-// app.use(NaiveUI)
+app.use(NaiveUI);
 
 app.mount('#app');

@@ -1,12 +1,13 @@
 <template>
 	<n-layout has-sider position="absolute">
-		<n-layout-sider content-style="padding: 10px;" bordered :native-scrollbar="false">
+		<n-layout-sider content-style="padding: 10px;" bordered :native-scrollbar="false" collapsed :collapsed-width="124" collapse-mode="width">
 			<div class="logo-name">
 				<router-link to="/">
 					<n-el tag="span" style="color: var(--info-color)">{{ $hiui.state.hostname }}</n-el>
 				</router-link>
 			</div>
 			<n-divider />
+
 			<n-menu ref="menu" :options="menuOptions" accordion :expanded-keys="expandedMenus" :value="selectedMenu" @update:value="clickMenuItem" @update:expanded-keys="menuExpanded" />
 		</n-layout-sider>
 		<n-layout position="absolute" style="left: 272px">
@@ -15,25 +16,25 @@
 					<n-tooltip placement="bottom">
 						<template #trigger>
 							<n-switch v-model:value="darkTheme" :rail-style="() => 'background-color: #000e1c'">
-								<template #checked
-									><n-icon size="14" color="#ffd93b"><sunny-sharp-icon /></n-icon
-								></template>
-								<template #unchecked
-									><n-icon size="14" color="#ffd93b"><moon-icon /></n-icon
-								></template>
+								<template #checked>
+									<n-icon size="14" color="#ffd93b"><sunny-sharp-icon /></n-icon>
+								</template>
+								<template #unchecked>
+									<n-icon size="14" color="#ffd93b"><moon-icon /></n-icon>
+								</template>
 							</n-switch>
 						</template>
 						<span>{{ $t((darkTheme ? 'Dark' : 'Light') + ' theme') }}</span>
 					</n-tooltip>
 					<n-dropdown :options="localeOptions" @select="(key) => $hiui.setLocale(key)" :render-icon="renderLocaleIcon">
-						<n-button text
-							><n-icon size="25" color="#0e7a0d"><translate-icon /></n-icon
-						></n-button>
+						<n-button text>
+							<n-icon size="25" color="#0e7a0d"><translate-icon /></n-icon>
+						</n-button>
 					</n-dropdown>
 					<n-dropdown :options="userOptions" @select="handleUserAction">
-						<n-button text
-							><n-icon size="25" color="#0e7a0d"><user-icon /></n-icon
-						></n-button>
+						<n-button text>
+							<n-icon size="25" color="#0e7a0d"><user-icon /></n-icon>
+						</n-button>
 					</n-dropdown>
 				</n-space>
 			</n-layout-header>
@@ -51,7 +52,7 @@
 			</n-layout-content>
 			<n-layout-footer position="absolute" bordered style="padding: 4px">
 				<div class="copyright">
-					<n-text type="info">Copyright © 2022 Powered by </n-text>
+					<n-text type="info">Copyright © 2022 Powered by</n-text>
 					<n-a href="https://github.com/zhaojh329/hiui" target="_blank">hiui</n-a>
 				</div>
 			</n-layout-footer>
@@ -87,7 +88,6 @@ function renderIcon(icon) {
 function renderSvg(el, opt) {
 	const props = {};
 	const children = [];
-
 	Object.keys(opt).forEach((key) => {
 		if (key.startsWith('-')) {
 			props[key.substring(1)] = opt[key];
@@ -96,7 +96,6 @@ function renderSvg(el, opt) {
 			else children.push(renderSvg(key, opt[key]));
 		}
 	});
-
 	return h(el, props, children);
 }
 

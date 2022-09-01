@@ -7,7 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import AutoImport from 'unplugin-auto-import/vite';
 import ViteComponents from 'unplugin-vue-components/vite';
-import {VantResolver,NaiveUiResolver} from 'unplugin-vue-components/resolvers';
+import {VantResolver, NaiveUiResolver} from 'unplugin-vue-components/resolvers';
 
 function transformRoutes() {
 	let config;
@@ -101,7 +101,7 @@ export default defineConfig(({mode}) => {
 			}),
 			ViteComponents({
 				dts: true,
-				resolvers: [VantResolver(),NaiveUiResolver()]
+				resolvers: [VantResolver(), NaiveUiResolver()]
 			})
 		],
 		server: {

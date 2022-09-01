@@ -15,20 +15,20 @@
 	<n-space>
 		<n-descriptions label-placement="left" :title="$t('System')" bordered :column="1">
 			<n-descriptions-item v-for="item in renderSysinfo" :key="item[0]">
-				<template #label>{{ $t(item[0]) }}</template
-				>{{ item[1] }}
+				<template #label>{{ $t(item[0]) }}</template>
+				{{ item[1] }}
 			</n-descriptions-item>
 		</n-descriptions>
 		<n-descriptions v-for="net in wanNetworks" :key="net.interface" label-placement="left" :title="'IPv4 ' + $t('Upstream')" bordered :column="1">
 			<n-descriptions-item v-for="item in renderNetworkInfo(net)" :key="item[0]">
-				<template #label>{{ $t(item[0]) }}</template
-				>{{ item[1] }}
+				<template #label>{{ $t(item[0]) }}</template>
+				{{ item[1] }}
 			</n-descriptions-item>
 		</n-descriptions>
 		<n-descriptions v-for="net in wan6Networks" :key="net.interface" label-placement="left" :title="'IPv6 ' + $t('Upstream')" bordered :column="1">
 			<n-descriptions-item v-for="item in renderNetworkInfo(net, true)" :key="item[0]">
-				<template #label>{{ $t(item[0]) }}</template
-				>{{ item[1] }}
+				<template #label>{{ $t(item[0]) }}</template>
+				{{ item[1] }}
 			</n-descriptions-item>
 		</n-descriptions>
 	</n-space>
