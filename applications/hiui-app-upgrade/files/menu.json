@@ -1,5 +1,5 @@
 {
-    "/system/upgrade": {
+    "/upgrade": {
         "title": "upgrade",
         "view": "upgrade",
         "index": 10,

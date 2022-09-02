@@ -1,16 +1,15 @@
 <template>
 	<n-layout has-sider position="absolute">
-		<n-layout-sider content-style="padding: 10px;" bordered :native-scrollbar="false" collapsed :collapsed-width="124" collapse-mode="width">
+		<n-layout-sider content-style="padding: 14px;" bordered :native-scrollbar="false" collapsed :collapsed-width="124" collapse-mode="width">
 			<div class="logo-name">
 				<router-link to="/">
-					<n-el tag="span" style="color: var(--info-color)">{{ $hiui.state.hostname }}</n-el>
+					<img src="../../../assets/logo.svg" style="width: 64px" />
 				</router-link>
 			</div>
-			<n-divider />
-
-			<n-menu ref="menu" :options="menuOptions" accordion :expanded-keys="expandedMenus" :value="selectedMenu" @update:value="clickMenuItem" @update:expanded-keys="menuExpanded" />
+			<the-menu :menus="menuOptions"></the-menu>
+			<!-- <n-menu ref="menu" :options="menuOptions" accordion :expanded-keys="expandedMenus" :value="selectedMenu" @update:value="clickMenuItem" @update:expanded-keys="menuExpanded" /> -->
 		</n-layout-sider>
-		<n-layout position="absolute" style="left: 272px">
+		<n-layout>
 			<n-layout-header position="absolute" bordered style="padding: 4px">
 				<n-space justify="end" size="large">
 					<n-tooltip placement="bottom">
@@ -69,7 +68,6 @@
 
 <script>
 import {h, resolveComponent} from 'vue';
-
 import {Translate as TranslateIcon} from '@vicons/carbon';
 
 import {
@@ -80,6 +78,7 @@ import {
 	Moon as MoonIcon,
 	SunnySharp as SunnySharpIcon
 } from '@vicons/ionicons5';
+import TheMenu from './components/TheMenu.vue';
 
 function renderIcon(icon) {
 	return () => h(resolveComponent('n-icon'), () => h(icon));
@@ -111,7 +110,8 @@ export default {
 		TranslateIcon,
 		UserIcon,
 		MoonIcon,
-		SunnySharpIcon
+		SunnySharpIcon,
+		TheMenu
 	},
 	data() {
 		return {
@@ -134,7 +134,7 @@ export default {
 	},
 	computed: {
 		menuOptions() {
-			return this.menus.map((m) => {
+			this.menus.map((m) => {
 				if (m.children) {
 					return {
 						label: this.$t('menus.' + m.title),
@@ -146,6 +146,19 @@ export default {
 					return this.renderMenuOption(m);
 				}
 			});
+			return this.menus;
+			// return this.menus.map((m) => {
+			// 	if (m.children) {
+			// 		return {
+			// 			label: this.$t('menus.' + m.title),
+			// 			key: m.path,
+			// 			icon: renderIconSvg(m.svg),
+			// 			children: m.children.map((c) => this.renderMenuOption(c))
+			// 		};
+			// 	} else {
+			// 		return this.renderMenuOption(m);
+			// 	}
+			// });
 		},
 		darkTheme: {
 			get() {
@@ -162,7 +175,6 @@ export default {
 				'zh-CN': '简体中文',
 				'zh-TW': '繁體中文'
 			};
-
 			const options = this.$i18n.availableLocales.map((locale) => {
 				return {
 					label: titles[locale] ?? locale,
