@@ -63,7 +63,10 @@ export default defineConfig(({mode}) => {
 			__MENUS__: menus
 		},
 		resolve: {
-			preserveSymlinks: true
+			preserveSymlinks: true,
+			alias: {
+				'@': path.resolve(__dirname, 'src')
+			}
 		},
 		build: {
 			chunkSizeWarningLimit: 1500,
@@ -113,15 +116,15 @@ export default defineConfig(({mode}) => {
 		server: {
 			proxy: {
 				'/hiui-rpc': {
-					target: 'https://172.16.148.14',
+					target: 'https://192.168.17.131',
 					secure: false
 				},
 				'/hiui-upload': {
-					target: 'https://172.16.148.14',
+					target: 'https://192.168.17.131',
 					secure: false
 				},
 				'/hiui-download': {
-					target: 'https://172.16.148.14',
+					target: 'https://192.168.17.131',
 					secure: false
 				}
 			}

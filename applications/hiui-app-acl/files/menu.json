@@ -1,5 +1,5 @@
 {
-    "/system/acl": {
+    "/acl": {
         "title": "acl",
         "view": "acl",
         "index": 4,

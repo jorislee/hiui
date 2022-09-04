@@ -1,5 +1,5 @@
 {
-    "/status/dhcp-lease": {
+    "/dhcp-lease": {
         "title": "DHCP lease",
         "view": "dhcp-lease",
         "index": 1,

@@ -1,0 +1,8 @@
+.components-bg {
+    align-self: stretch;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #F3F5F8 0%, #FFFFFF 100%);
+    box-sizing: border-box;
+    border: 2px solid #FFFFFF;
+    box-shadow: -4px -4px 10px 0px #FFFFFF, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
+}

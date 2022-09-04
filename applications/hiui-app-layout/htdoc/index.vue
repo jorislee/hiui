@@ -3,14 +3,15 @@
 		<n-layout-sider content-style="padding: 14px;" bordered :native-scrollbar="false" collapsed :collapsed-width="124" collapse-mode="width">
 			<div class="logo-name">
 				<router-link to="/">
-					<img src="../../../assets/logo.svg" style="width: 64px" />
+					<img src="@/assets/logo.svg" style="width: 64px" />
 				</router-link>
 			</div>
-			<the-menu :menus="menuOptions"></the-menu>
-			<!-- <n-menu ref="menu" :options="menuOptions" accordion :expanded-keys="expandedMenus" :value="selectedMenu" @update:value="clickMenuItem" @update:expanded-keys="menuExpanded" /> -->
+			<n-dialog-provider>
+				<the-menu :menus="menus"></the-menu>
+			</n-dialog-provider>
 		</n-layout-sider>
 		<n-layout>
-			<n-layout-header position="absolute" bordered style="padding: 4px">
+			<n-layout-header bordered style="padding: 4px">
 				<n-space justify="end" size="large">
 					<n-tooltip placement="bottom">
 						<template #trigger>
@@ -25,19 +26,9 @@
 						</template>
 						<span>{{ $t((darkTheme ? 'Dark' : 'Light') + ' theme') }}</span>
 					</n-tooltip>
-					<n-dropdown :options="localeOptions" @select="(key) => $hiui.setLocale(key)" :render-icon="renderLocaleIcon">
-						<n-button text>
-							<n-icon size="25" color="#0e7a0d"><translate-icon /></n-icon>
-						</n-button>
-					</n-dropdown>
-					<n-dropdown :options="userOptions" @select="handleUserAction">
-						<n-button text>
-							<n-icon size="25" color="#0e7a0d"><user-icon /></n-icon>
-						</n-button>
-					</n-dropdown>
 				</n-space>
 			</n-layout-header>
-			<n-layout-content embedded position="absolute" style="top: 40px; bottom: 42px" content-style="padding: 10px;" :native-scrollbar="false">
+			<n-layout-content embedded content-style="padding: 30px;" :native-scrollbar="false">
 				<router-view>
 					<template #default="{Component}">
 						<transition name="zoom-fade" mode="out-in">
@@ -51,22 +42,18 @@
 			</n-layout-content>
 			<n-layout-footer position="absolute" bordered style="padding: 4px">
 				<div class="copyright">
-					<n-text type="info">Copyright © 2022 Powered by</n-text>
-					<n-a href="https://github.com/zhaojh329/hiui" target="_blank">hiui</n-a>
+					<n-text type="info">{{ $t('© 2021 SpeedBox版权所有') }}</n-text>
+					<n-divider vertical />
+					<n-text type="info">S/N: 1123123123123213213</n-text>
+					<n-divider vertical />
+					<n-text type="info">version: 2.0.0-14</n-text>
 				</div>
 			</n-layout-footer>
 		</n-layout>
 	</n-layout>
-	<n-modal v-model:show="modalSpin" :close-on-esc="false" :mask-closable="false">
-		<n-spin size="large">
-			<template #description>
-				<n-el style="color: var(--primary-color)">{{ $t('Rebooting') }}...</n-el>
-			</template>
-		</n-spin>
-	</n-modal>
 </template>
 
-<script>
+<script setup>
 import {h, resolveComponent} from 'vue';
 import {Translate as TranslateIcon} from '@vicons/carbon';
 
@@ -79,183 +66,21 @@ import {
 	SunnySharp as SunnySharpIcon
 } from '@vicons/ionicons5';
 import TheMenu from './components/TheMenu.vue';
-
+const proxy = getCurrentInstance().appContext.config.globalProperties;
+defineProps({
+	menus: Array
+});
+let darkTheme = computed({
+	get() {
+		return proxy.$hiui.state.theme === 'dark';
+	},
+	set(val) {
+		proxy.$hiui.setTheme(val ? 'dark' : 'light');
+	}
+});
 function renderIcon(icon) {
 	return () => h(resolveComponent('n-icon'), () => h(icon));
 }
-
-function renderSvg(el, opt) {
-	const props = {};
-	const children = [];
-	Object.keys(opt).forEach((key) => {
-		if (key.startsWith('-')) {
-			props[key.substring(1)] = opt[key];
-		} else {
-			if (Array.isArray(opt[key])) opt[key].forEach((item) => children.push(renderSvg(key, item)));
-			else children.push(renderSvg(key, opt[key]));
-		}
-	});
-	return h(el, props, children);
-}
-
-function renderIconSvg(opt) {
-	return () => h(resolveComponent('n-icon'), () => renderSvg('svg', opt ?? {}));
-}
-
-export default {
-	props: {
-		menus: Array
-	},
-	components: {
-		TranslateIcon,
-		UserIcon,
-		MoonIcon,
-		SunnySharpIcon,
-		TheMenu
-	},
-	data() {
-		return {
-			modalSpin: false,
-			expandedMenus: [],
-			selectedMenu: '',
-			userOptions: [
-				{
-					key: 'logout',
-					label: () => this.$t('Logout'),
-					icon: renderIcon(LogoutIcon)
-				},
-				{
-					key: 'reboot',
-					label: () => this.$t('Reboot'),
-					icon: renderIcon(PowerSharpIcon)
-				}
-			]
-		};
-	},
-	computed: {
-		menuOptions() {
-			this.menus.map((m) => {
-				if (m.children) {
-					return {
-						label: this.$t('menus.' + m.title),
-						key: m.path,
-						icon: renderIconSvg(m.svg),
-						children: m.children.map((c) => this.renderMenuOption(c))
-					};
-				} else {
-					return this.renderMenuOption(m);
-				}
-			});
-			return this.menus;
-			// return this.menus.map((m) => {
-			// 	if (m.children) {
-			// 		return {
-			// 			label: this.$t('menus.' + m.title),
-			// 			key: m.path,
-			// 			icon: renderIconSvg(m.svg),
-			// 			children: m.children.map((c) => this.renderMenuOption(c))
-			// 		};
-			// 	} else {
-			// 		return this.renderMenuOption(m);
-			// 	}
-			// });
-		},
-		darkTheme: {
-			get() {
-				return this.$hiui.state.theme === 'dark';
-			},
-			set(val) {
-				this.$hiui.setTheme(val ? 'dark' : 'light');
-			}
-		},
-		localeOptions() {
-			const titles = {
-				'en-US': 'English',
-				'ja-JP': '日本語',
-				'zh-CN': '简体中文',
-				'zh-TW': '繁體中文'
-			};
-			const options = this.$i18n.availableLocales.map((locale) => {
-				return {
-					label: titles[locale] ?? locale,
-					key: locale
-				};
-			});
-
-			options.unshift({
-				label: this.$t('Auto'),
-				key: 'auto'
-			});
-
-			return options;
-		}
-	},
-	watch: {
-		$route() {
-			this.updateMenu();
-		}
-	},
-	methods: {
-		renderMenuOption(m) {
-			return {
-				label: () => h(resolveComponent('router-link'), {to: {path: m.path}}, () => this.$t('menus.' + m.title)),
-				key: m.path,
-				icon: renderIconSvg(m.svg)
-			};
-		},
-		updateMenu() {
-			const path = this.$route.path;
-			const paths = path.split('/');
-
-			if (path === '/home') {
-				this.expandedMenus = [];
-				this.selectedMenu = '';
-				return;
-			}
-
-			this.selectedMenu = path;
-
-			if (paths.length > 2) this.expandedMenus = ['/' + paths[1]];
-		},
-		clickMenuItem(key) {
-			this.selectedMenu = key;
-			if (key.split('/').length === 2) this.expandedMenus = [];
-		},
-		menuExpanded(keys) {
-			this.expandedMenus = keys;
-		},
-		renderLocaleIcon(o) {
-			if (o.key === this.$hiui.state.locale) return renderIcon(ChevronForwardIcon)();
-		},
-		renderThemeIcon(o) {
-			if (o.key === this.$hiui.state.theme) return renderIcon(ChevronForwardIcon)();
-		},
-		handleUserAction(key) {
-			if (key === 'logout') {
-				this.$hiui.logout();
-				this.$router.push('/login');
-			} else if (key === 'reboot') {
-				this.$dialog.warning({
-					title: this.$t('Reboot'),
-					content: this.$t('RebootConfirm'),
-					positiveText: this.$t('OK'),
-					onPositiveClick: () => {
-						this.$hiui.ubus('system', 'reboot').then(() => {
-							this.modalSpin = true;
-							this.$hiui.reconnect().then(() => {
-								this.modalSpin = false;
-								this.$router.push('/login');
-							});
-						});
-					}
-				});
-			}
-		}
-	},
-	mounted() {
-		this.updateMenu();
-	}
-};
 </script>
 
 <style scoped>
@@ -273,6 +98,8 @@ export default {
 	text-align: right;
 	font-size: medium;
 	padding-right: 40px;
+	display: flex;
+	justify-content: center;
 }
 
 .copyright .n-a {

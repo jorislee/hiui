@@ -7,6 +7,7 @@ import timers from './timers';
 import i18n from './i18n';
 import hiui from './hiui';
 import NaiveUI from './naive-ui';
+import basic from './css/basic.css';
 
 const app = createApp(App);
 

@@ -1,5 +1,5 @@
 {
-    "/system/backup": {
+    "/backup": {
         "title": "backup",
         "view": "backup",
         "index": 11,

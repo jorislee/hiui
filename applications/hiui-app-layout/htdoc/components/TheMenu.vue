@@ -4,69 +4,76 @@
 			<div class="menu-item" v-for="(item, index) in menus" :key="index" :class="selectIndex == index ? 'active' : ''" @click="menuClick(index, item.path)">
 				<div>
 					<n-icon v-if="item.svg" :size="48">
-						<svg :xmlns="item['svg']['-xmlns']" :viewBox="item['svg']['-viewBox']">
-							<path :d="item['svg']['path']['-d']" />
-						</svg>
+						<IconSvg :opt="item.svg" />
 					</n-icon>
 				</div>
 				<div>{{ $t('menus.' + item.title) }}</div>
 			</div>
 		</n-space>
 		<div class="more">
-			<n-dropdown :options="userOptions" placement="right-end" :render-label="renderDropdownLabel">
+			<n-dropdown :options="moreOptions" placement="right-end" @select="handleSelect" :render-label="renderDropdownLabel">
 				<n-button text>
-					<img src="../../../../assets/more.svg" />
+					<img src="@/assets/more.svg" />
 				</n-button>
 			</n-dropdown>
 		</div>
 	</div>
+	<n-modal v-model:show="modalSpin" :close-on-esc="false" :mask-closable="false">
+		<n-spin size="large">
+			<template #description>
+				<n-el style="color: var(--primary-color)">{{ $t('Rebooting') }}...</n-el>
+			</template>
+		</n-spin>
+	</n-modal>
 </template>
 
 <script setup>
-//import { useI18n } from 'vue-i18n'
-//const { t } = useI18n()
 import {ContentDeliveryNetwork} from '@vicons/carbon';
-import {
-	PersonCircleOutline as UserIcon,
-	LogOutOutline as LogoutIcon,
-	PowerSharp as PowerSharpIcon,
-	ChevronForward as ChevronForwardIcon,
-	Moon as MoonIcon,
-	SunnySharp as SunnySharpIcon
-} from '@vicons/ionicons5';
+import {IconSvg} from './IconSvg.ts';
+import {PersonCircleOutline as UserIcon, LogOutOutline as LogoutIcon, PowerSharp as PowerSharpIcon, ChevronForward as ChevronForwardIcon} from '@vicons/ionicons5';
+
 defineProps({
 	menus: Object
 });
 
 const router = useRouter();
 const {proxy} = getCurrentInstance();
+const titles = {
+	'en-US': 'English',
+	'ja-JP': '日本語',
+	'zh-CN': '简体中文',
+	'zh-TW': '繁體中文'
+};
 const localeOptions = () => {
-	const titles = {
-		'en-US': 'English',
-		'ja-JP': '日本語',
-		'zh-CN': '简体中文',
-		'zh-TW': '繁體中文'
-	};
-
+	let isAuto = true;
 	const options = proxy.$i18n.availableLocales.map((locale) => {
-		return {
+		let tmp = {
 			label: titles[locale] ?? locale,
 			key: locale
 		};
+		console.log(proxy.$hiui.state.locale);
+		if (locale === proxy.$hiui.state.locale) {
+			isAuto = false;
+			tmp.icon = renderIcon(ChevronForwardIcon);
+		}
+		return tmp;
 	});
 
 	options.unshift({
 		label: proxy.$t('Auto'),
-		key: 'auto'
+		key: 'auto',
+		icon: isAuto ? renderIcon(ChevronForwardIcon) : null
 	});
+
 	return options;
 };
 
-const userOptions = reactive([
+const moreOptions = reactive([
 	{
-		label: '语言',
-		key: 'others2',
-		children: []
+		label: 'Auto',
+		key: 'language',
+		children: [],
+		icon: renderIcon(ContentDeliveryNetwork)
 	},
 	{
 		key: 'logout',
@@ -79,30 +86,51 @@ const userOptions = reactive([
 		icon: renderIcon(PowerSharpIcon)
 	}
 ]);
-
+const modalSpin = ref(false);
 const selectIndex = ref(-1);
+const dialog = useDialog();
+
+function renderDropdownLabel(option) {
+	option.label = proxy.$t(option.label);
+	if ('children' in option && option.children.length === 0) {
+		option.children = localeOptions();
+	}
+	console.log(option);
+	return option.label;
+}
 
 function renderIcon(icon) {
 	return () => h(resolveComponent('n-icon'), () => h(icon));
 }
-
-function handleUserAction(key) {
+function handleSelect(key) {
+	console.log(key, proxy);
 	if (key === 'logout') {
 		proxy.$hiui.logout();
 		proxy.$router.push('/login');
 	} else if (key === 'reboot') {
-		proxy.$dialog.warning({
+		console.log(dialog);
+		dialog.warning({
 			title: proxy.$t('Reboot'),
 			content: proxy.$t('RebootConfirm'),
 			positiveText: proxy.$t('OK'),
 			onPositiveClick: () => {
 				proxy.$hiui.ubus('system', 'reboot').then(() => {
-					proxy.modalSpin = true;
+					modalSpin.value = true;
 					proxy.$hiui.reconnect().then(() => {
-						proxy.modalSpin = false;
+						modalSpin.value = false;
 						proxy.$router.push('/login');
 					});
 				});
+			}
+		});
+	} else {
+		proxy.$hiui.setLocale(key);
+		moreOptions[0].label = titles[key] ?? proxy.$t('Auto');
+		moreOptions[0].children.forEach((element) => {
+			if (element.key === key) {
+				element.icon = renderIcon(ChevronForwardIcon);
+			} else {
+				element.icon = null;
 			}
 		});
 	}
@@ -113,18 +141,6 @@ function menuClick(index, path) {
 	router.push(path);
 	this.selectIndex = index;
 }
-
-function renderDropdownLabel(option) {
-	option.label = proxy.$t(option.label);
-	if ('children' in option && option.children.length === 0) {
-		option.children = localeOptions();
-	}
-	return option.label;
-}
-
-onMounted(() => {
-	console.log(proxy.$t('Logout'));
-});
 </script>
 <style scoped lang="less">
 .the-menu {

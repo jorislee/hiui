@@ -1,5 +1,5 @@
 {
-    "/system/user": {
+    "/user": {
         "title": "user",
         "view": "user",
         "index": 2,

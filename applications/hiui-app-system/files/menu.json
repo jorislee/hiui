@@ -1,12 +1,12 @@
 {
-    "/system/system": {
-        "title": "System",
-        "view": "system",
-        "index": 0,
-        "locales": {
-            "en-US": "System",
-            "zh-CN": "系统",
-            "zh-TW": "系統"
-        }
-    }
+	"/system": {
+		"title": "System",
+		"view": "system",
+		"index": 30,
+		"locales": {
+			"en-US": "System",
+			"zh-CN": "系统",
+			"zh-TW": "系統"
+		}
+	}
 }
