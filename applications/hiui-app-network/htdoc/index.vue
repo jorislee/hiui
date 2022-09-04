@@ -7,19 +7,26 @@
 			</n-space>
 		</n-layout>
 		<n-layout embedded>
-			<n-space size="large" align="center" item-style="padding-top: 30px">
+			<n-space size="large" item-style="padding-top: 30px">
 				<n-space vertical align="center" size="large">
 					<img src="@/assets/router.png" height="157" />
 					<div>{{ $t('Router') }}</div>
 					<n-button type="default" @click="lanInfo('router')" class="bt-bg bt-w-300"></n-button>
 				</n-space>
-				<div></div>
+				<div style="width: 170px">
+					<img v-if="conLocal" src="@/assets/connect-success.svg" alt="" />
+					<n-divider v-else style="padding-top: 55px" />
+				</div>
 				<n-space vertical align="center" size="large">
 					<img src="@/assets/internal.png" height="157" />
 					<div>{{ $t('Internal') }}</div>
 					<n-button type="default" @click="lanInfo('internal')" class="bt-bg bt-w-120"></n-button>
 				</n-space>
-				<n-space vertical align="center" size="large" style="padding-bottom: 75px">
+				<div style="width: 170px">
+					<img v-if="conLocal" src="@/assets/connect-success.svg" alt="" />
+					<n-divider v-else style="padding-top: 55px" />
+				</div>
+				<n-space vertical align="center" size="large" style="padding-top: 40px">
 					<n-ellipsis style="max-width: 190px" :line-clamp="2">您可以开通互联网加速模块，以便更快速地访问互联网。</n-ellipsis>
 					<n-button type="info" @click="lanInfo('speed')" color="#0052D9" round size="medium">{{ $t('开通加速') }}</n-button>
 				</n-space>
@@ -29,6 +36,8 @@
 	</n-space>
 </template>
 <script setup>
+const conLocal = ref(false);
+const conSpeed = ref(false);
 function lanInfo(params) {
 	console.log(params);
 }
