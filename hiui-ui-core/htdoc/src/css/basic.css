@@ -6,7 +6,29 @@
     border: 2px solid #FFFFFF;
     box-shadow: -4px -4px 10px 0px #FFFFFF, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
 }
+.bg-border {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	border: 2px solid #ffffff;
+}
+.circle {
+	width: 8px;
+	height: 8px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	background: #1cc198;
+}
 
 .__divider {
     --n-color: rgba(73, 87, 112, 0.15) !important;
+}
+
+.pd-20{
+    padding: 20px;
+}
+
+.pd-0-15{
+    padding: 0 15px;
 }

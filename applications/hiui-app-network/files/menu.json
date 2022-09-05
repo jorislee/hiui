@@ -2,7 +2,7 @@
 	"/network": {
 		"title": "Network",
 		"view": "network",
-		"index": 1,
+		"index": 10,
 		"locales": {
 			"en-US": "Network",
 			"zh-CN": "网络",
@@ -16,11 +16,33 @@
 			"-width": "48",
 			"-height": "48",
 			"-viewBox": "0 0 48 48",
-			"defs": {"clipPath": {"-id": "master_svg0_311_8221/275_5857", "rect": {"-x": "0", "-y": "0", "-width": "48", "-height": "48", "-rx": "0"}}},
+			"defs": {
+				"clipPath": {
+					"-id": "master_svg0_311_8221/275_5857",
+					"rect": {
+						"-x": "0",
+						"-y": "0",
+						"-width": "48",
+						"-height": "48",
+						"-rx": "0"
+					}
+				}
+			},
 			"g": {
 				"-clip-path": "url(#master_svg0_311_8221/275_5857)",
 				"g": [
-					{"-style": "opacity:0;", "rect": {"-x": "0", "-y": "0", "-width": "48", "-height": "48", "-rx": "0", "-fill": "#FFFFFF", "-fill-opacity": "1"}},
+					{
+						"-style": "opacity:0;",
+						"rect": {
+							"-x": "0",
+							"-y": "0",
+							"-width": "48",
+							"-height": "48",
+							"-rx": "0",
+							"-fill": "#FFFFFF",
+							"-fill-opacity": "1"
+						}
+					},
 					{
 						"-style": "opacity:0.4000000059604645;",
 						"path": {

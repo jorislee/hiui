@@ -2,7 +2,7 @@
     "/backup": {
         "title": "backup",
         "view": "backup",
-        "index": 11,
+        "index": 90,
         "locales": {
             "en-US": "Backup / Restore",
             "zh-CN": "备份/恢复",

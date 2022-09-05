@@ -137,7 +137,6 @@ function handleSelect(key) {
 }
 
 function menuClick(index, path) {
-	console.log(index, path);
 	router.push(path);
 	this.selectIndex = index;
 }

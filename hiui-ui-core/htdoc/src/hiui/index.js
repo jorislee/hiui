@@ -83,7 +83,6 @@ class Hiui {
 
 	parseMenus(raw) {
 		const menus = {};
-
 		for (const path in raw) {
 			const paths = path.split('/');
 			if (paths.length === 2) menus[path] = raw[path];
@@ -93,7 +92,7 @@ class Hiui {
 			const paths = path.split('/');
 			if (paths.length === 3) {
 				const parent = menus['/' + paths[1]];
-				if (!parent || parent.view) continue;
+				// if (!parent || (parent.view && parent.type)) continue;
 
 				if (!parent.children) parent.children = {};
 

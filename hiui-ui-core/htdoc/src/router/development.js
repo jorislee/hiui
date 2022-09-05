@@ -5,7 +5,8 @@ function addRoutes(r, menu) {
 			component: () => import(`../applications/hiui-app-${menu.view}/htdoc/index.vue`),
 			meta: {menu: menu}
 		});
-	} else if (menu.children) {
+	}
+	if (menu.children) {
 		menu.children.forEach((m) => addRoutes(r, m));
 	}
 }

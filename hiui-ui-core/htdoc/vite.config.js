@@ -116,15 +116,15 @@ export default defineConfig(({mode}) => {
 		server: {
 			proxy: {
 				'/hiui-rpc': {
-					target: 'https://192.168.17.131',
+					target: 'https://172.16.148.14',
 					secure: false
 				},
 				'/hiui-upload': {
-					target: 'https://192.168.17.131',
+					target: 'https://172.16.148.14',
 					secure: false
 				},
 				'/hiui-download': {
-					target: 'https://192.168.17.131',
+					target: 'https://172.16.148.14',
 					secure: false
 				}
 			}

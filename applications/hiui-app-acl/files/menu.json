@@ -2,7 +2,7 @@
     "/acl": {
         "title": "acl",
         "view": "acl",
-        "index": 4,
+        "index": 70,
         "locales": {
             "en-US": "ACL",
             "zh-CN": "权限管理",

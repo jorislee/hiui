@@ -11,7 +11,14 @@
 				<n-space vertical align="center" size="large">
 					<img src="@/assets/router.png" height="157" />
 					<div>{{ $t('Router') }}</div>
-					<n-button type="default" @click="lanInfo('router')" class="bt-bg bt-w-300"></n-button>
+					<n-button type="default" @click="lanInfo('router')" class="bt-bg bt-w-300">
+						<div class="circle"></div>
+						<span>&ensp;5G:dddd</span>
+						<n-divider vertical />
+
+						<div class="circle"></div>
+						<span>&ensp;2.4G:dddd</span>
+					</n-button>
 				</n-space>
 				<div style="width: 170px">
 					<img v-if="conLocal" src="@/assets/connect-success.svg" alt="" />
@@ -20,37 +27,46 @@
 				<n-space vertical align="center" size="large">
 					<img src="@/assets/internal.png" height="157" />
 					<div>{{ $t('Internal') }}</div>
-					<n-button type="default" @click="lanInfo('internal')" class="bt-bg bt-w-120"></n-button>
+					<n-button type="default" @click="lanInfo('internal')" class="bt-bg bt-w-120">
+						<div class="circle"></div>
+						<span>&ensp;dddd</span>
+					</n-button>
 				</n-space>
 				<div style="width: 170px">
 					<img v-if="conLocal" src="@/assets/connect-success.svg" alt="" />
 					<n-divider v-else style="padding-top: 55px" />
 				</div>
-				<n-space vertical align="center" size="large" style="padding-top: 40px">
-					<n-ellipsis style="max-width: 190px" :line-clamp="2">您可以开通互联网加速模块，以便更快速地访问互联网。</n-ellipsis>
-					<n-button type="info" @click="lanInfo('speed')" color="#0052D9" round size="medium">{{ $t('开通加速') }}</n-button>
-				</n-space>
+				<div>
+					<n-space v-if="conSpeed" vertical align="center" size="large">
+						<img src="@/assets/speedserver.png" height="157" />
+						<div>{{ $t('Internal') }}</div>
+						<n-button ghost round type="info" @click="lanInfo('internal')">{{ $t('设置') }}</n-button>
+					</n-space>
+					<n-space v-else vertical align="center" size="large" style="padding-top: 40px">
+						<n-ellipsis style="max-width: 190px" :line-clamp="2">您可以开通互联网加速模块，以便更快速地访问互联网。</n-ellipsis>
+						<n-button type="info" @click="lanInfo('speed')" color="#0052D9" round size="medium">{{ $t('开通加速') }}</n-button>
+					</n-space>
+				</div>
 			</n-space>
 		</n-layout>
-		<n-layout>成府路</n-layout>
+		<n-layout>
+			<TheLanInfo v-if="infoType === 1"></TheLanInfo>
+			<TheWanConnect v-else-if="infoType === 2"></TheWanConnect>
+		</n-layout>
 	</n-space>
 </template>
 <script setup>
+import TheLanInfo from './components/TheLanInfo.vue';
+import TheWanConnect from './components/TheWanConnect.vue';
+
 const conLocal = ref(false);
-const conSpeed = ref(false);
+const conSpeed = ref(true);
+const infoType = ref(2);
 function lanInfo(params) {
 	console.log(params);
 }
 </script>
 <style scoped>
-.circle {
-	width: 8px;
-	height: 8px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	border-radius: 4px;
-	background: #1cc198;
-}
 .bt-bg {
 	/* S_渐变色 */
 	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);
