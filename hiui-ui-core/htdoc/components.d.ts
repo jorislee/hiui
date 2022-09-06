@@ -31,6 +31,7 @@ declare module '@vue/runtime-core' {
     NLayoutSider: typeof import('naive-ui')['NLayoutSider']
     NList: typeof import('naive-ui')['NList']
     NListItem: typeof import('naive-ui')['NListItem']
+    NMessageProvider: typeof import('naive-ui')['NMessageProvider']
     NModal: typeof import('naive-ui')['NModal']
     NotFound: typeof import('./src/components/NotFound.vue')['default']
     NPageHeader: typeof import('naive-ui')['NPageHeader']

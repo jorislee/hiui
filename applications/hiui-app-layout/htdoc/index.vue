@@ -33,7 +33,11 @@
 					<template #default="{Component}">
 						<transition name="zoom-fade" mode="out-in">
 							<div :key="$route.path">
-								<component :is="Component" />
+								<n-message-provider>
+									<n-dialog-provider>
+										<component :is="Component" />
+									</n-dialog-provider>
+								</n-message-provider>
 							</div>
 						</transition>
 					</template>

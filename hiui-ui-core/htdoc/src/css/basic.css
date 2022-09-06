@@ -10,7 +10,7 @@
 	display: flex;
 	align-items: center;
 	box-sizing: border-box;
-	border: 2px solid #ffffff;
+	border: 1px solid #ffffff;
 }
 .circle {
 	width: 8px;

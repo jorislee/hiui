@@ -28,7 +28,8 @@
 		</n-space>
 		<n-space vertical class="pd-20 components-bg">
 			<n-space justify="space-between" class="pd-0-15">
-				{{ $t('Nearby available network') }}
+				<div>{{ $t('Nearby available network') }}</div>
+				<div>{{ $t('Join network') }}</div>
 			</n-space>
 			<n-list bordered>
 				<n-space vertical>
@@ -39,7 +40,7 @@
 								<span>openwrt-5g</span>
 							</n-space>
 							<div>
-								<n-switch v-model:value="item.auto" size="medium" />
+								<n-switch v-model:value="item.auto" size="medium" @update:value="handleChange(item)" />
 							</div>
 						</n-space>
 					</n-list-item>
@@ -47,10 +48,20 @@
 			</n-list>
 		</n-space>
 	</n-page-header>
+	<n-modal :show="showModal" preset="dialog" :title="modalTitle" :show-icon="false">
+		<n-input type="password" show-password-on="mousedown" placeholder="密码" :maxlength="8" />
+		<template #action>
+			<n-space align="center" :size="30">
+				<n-button text ghost @click="removeWifi">{{ $t('移除网络') }}</n-button>
+				<n-button type="primary" size="small" round>{{ $t('join') }}</n-button>
+			</n-space>
+		</template>
+	</n-modal>
 </template>
 
 <script setup>
 import {MdWifi} from '@vicons/ionicons4';
+const dialog = useDialog();
 const datas = reactive([
 	{
 		name: '1111',
@@ -93,9 +104,28 @@ const historyDatas = reactive([
 ]);
 const {proxy} = getCurrentInstance();
 const {autoConnect} = ref(false);
-console.log(proxy.$route.query);
+const showModal = ref(false);
+const modalTitle = ref('111111111');
 function handleBack() {
 	console.log('2222222');
+}
+function handleChange(item) {
+	showModal.value = item.auto;
+	console.log(item);
+}
+function removeWifi() {
+	dialog.warning({
+		title: '警告',
+		content: '你确定？',
+		positiveText: '确定',
+		negativeText: '不确定',
+		onPositiveClick: () => {
+			console.log('1');
+		},
+		onNegativeClick: () => {
+			console.log('2');
+		}
+	});
 }
 </script>
 <style scoped>
