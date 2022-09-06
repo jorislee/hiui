@@ -37,6 +37,7 @@ declare module '@vue/runtime-core' {
     NotFound: typeof import('./src/components/NotFound.vue')['default']
     NPageHeader: typeof import('naive-ui')['NPageHeader']
     NProgress: typeof import('naive-ui')['NProgress']
+    NSelect: typeof import('naive-ui')['NSelect']
     NSpace: typeof import('naive-ui')['NSpace']
     NSpin: typeof import('naive-ui')['NSpin']
     NSwitch: typeof import('naive-ui')['NSwitch']

@@ -1,6 +1,6 @@
 <template>
-	<div class="bg-list bg-border">
-		<n-list class="bg-list pd-30">
+	<div class="bg-color bg-border">
+		<n-list class="bg-color pd-30">
 			<template #header>
 				<div class="font-18">{{ $t('广域网信息-WAN') }}</div>
 			</template>
@@ -16,7 +16,7 @@
 		</n-list>
 		<n-divider vertical />
 
-		<n-list class="bg-list pd-30">
+		<n-list class="bg-color pd-30">
 			<template #header>
 				<div class="font-18">{{ $t('局域网信息-LAN') }}</div>
 			</template>
@@ -38,11 +38,6 @@
 :deep(.n-divider.n-divider--vertical) {
 	height: 200px;
 	margin: 0 30px;
-}
-.bg-list {
-	width: -webkit-fill-available;
-	align-self: stretch;
-	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);
 }
 .pd-30 {
 	padding: 18px 30px 30px 30px;

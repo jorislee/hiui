@@ -1,6 +1,6 @@
 <template>
-	<div class="bg-list bg-border">
-		<n-list class="bg-list pd-30">
+	<div class="bg-color bg-border">
+		<n-list class="bg-color pd-30">
 			<template #header>
 				<n-space justify="space-between">
 					<n-space class="font-18" align="center">
@@ -23,7 +23,7 @@
 		</n-list>
 		<n-divider vertical />
 
-		<n-list class="bg-list pd-30">
+		<n-list class="bg-color pd-30">
 			<template #header>
 				<n-space class="font-18" align="center">
 					<div class="circle"></div>
@@ -69,11 +69,6 @@ function pushRelayd(params) {
 :deep(.n-divider.n-divider--vertical) {
 	height: 200px;
 	margin: 0 30px;
-}
-.bg-list {
-	width: -webkit-fill-available;
-	align-self: stretch;
-	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);
 }
 
 .pd-30 {

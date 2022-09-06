@@ -1,11 +1,12 @@
 <template>
-	<n-space class="components-bg" vertical size="large" style="padding: 0 30px">
+	<n-space class="components-bg pd-30" vertical size="large">
 		<n-layout>
 			<n-space align="center">
 				<div class="circle"></div>
-				<h2>{{ $t('Network Status') }}</h2>
+				<div class="font-24-size">{{ $t('Network Status') }}</div>
 			</n-space>
 		</n-layout>
+		<n-divider />
 		<n-layout embedded>
 			<n-space size="large" item-style="padding-top: 30px">
 				<n-space vertical align="center" size="large">
@@ -50,8 +51,8 @@
 			</n-space>
 		</n-layout>
 		<n-layout>
-			<TheLanInfo v-if="infoType === 1"></TheLanInfo>
-			<TheWanConnect v-else-if="infoType === 2"></TheWanConnect>
+			<the-lan-info v-if="infoType === 1"></the-lan-info>
+			<the-wan-connect v-else-if="infoType === 2"></the-wan-connect>
 		</n-layout>
 	</n-space>
 </template>

@@ -33,7 +33,7 @@
 			</n-space>
 			<n-list bordered>
 				<n-space vertical>
-					<n-list-item v-for="(item, index) in historyDatas" :key="index" class="bg-border">
+					<n-list-item v-for="(item, index) in historyDatas" :key="index" class="bg-border bg">
 						<n-space justify="space-between" align="center">
 							<n-space>
 								<n-icon size="24" :component="MdWifi"></n-icon>
@@ -49,7 +49,7 @@
 		</n-space>
 	</n-page-header>
 	<n-modal :show="showModal" preset="dialog" :title="modalTitle" :show-icon="false">
-		<n-input type="password" show-password-on="mousedown" placeholder="密码" :maxlength="8" />
+		<n-input type="password" show-password-on="mousedown" placeholder="密码" :minlength="8" />
 		<template #action>
 			<n-space align="center" :size="30">
 				<n-button text ghost @click="removeWifi">{{ $t('移除网络') }}</n-button>
