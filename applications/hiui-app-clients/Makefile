@@ -6,8 +6,8 @@
 
 include $(TOPDIR)/rules.mk
 
-APP_TITLE:=DHCP lease
-APP_NAME:=dhcp-lease
+APP_TITLE:=Clients
+APP_NAME:=clients
 
 include ../../hiui.mk
 
