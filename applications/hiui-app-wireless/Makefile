@@ -6,8 +6,8 @@
 
 include $(TOPDIR)/rules.mk
 
-APP_TITLE:=Stations
-APP_NAME:=stations
+APP_TITLE:=Wireless
+APP_NAME:=wireless
 
 include ../../hiui.mk
 

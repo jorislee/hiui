@@ -1,0 +1,12 @@
+{
+	"/wireless": {
+		"title": "Wireless",
+		"view": "wireless",
+		"index": 20,
+		"locales": {
+			"en-US": "wireless",
+			"zh-CN": "无线",
+			"zh-TW": "無線"
+		}
+	}
+}
