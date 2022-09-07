@@ -1,3 +1,6 @@
+.n-icon{
+	line-height: unset !important;
+}
 .components-bg {
     align-self: stretch;
     border-radius: 8px;
@@ -21,6 +24,16 @@
 	box-shadow: -4px -4px 10px 0px #FFFFFF,4px 4px 10px 0px rgba(55, 99, 170, 0.05);
 
 }
+
+.list-item-border {
+	padding: 15px 20px 15px 15px !important;
+	border-radius: 4px !important;
+	background: #FFFFFF;
+	box-sizing: border-box;
+	border: 1px solid rgba(73, 87, 112, 0.15);
+	height: 70px;
+}
+
 .circle {
 	width: 8px;
 	height: 8px;
@@ -32,6 +45,14 @@
 
 .__divider {
     --n-color: rgba(73, 87, 112, 0.15) !important;
+}
+
+.font-24-size{
+	font-size: 24px;
+}
+
+.pd-8-20 {
+	padding: 8px 20px;
 }
 
 .pd-20{
@@ -46,6 +67,7 @@
     padding: 0 15px;
 }
 
-.font-24-size{
-	font-size: 24px;
+.mg-bt-10{
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
