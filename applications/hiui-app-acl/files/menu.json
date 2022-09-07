@@ -1,5 +1,5 @@
 {
-    "/acl": {
+    "/settings/acl": {
         "title": "acl",
         "view": "acl",
         "index": 70,

@@ -93,7 +93,7 @@ class Hiui {
 			if (paths.length === 3) {
 				const parent = menus['/' + paths[1]];
 				// if (!parent || (parent.view && parent.type)) continue;
-
+				if (!parent) continue;
 				if (!parent.children) parent.children = {};
 
 				parent.children[path] = raw[path];

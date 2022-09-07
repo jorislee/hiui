@@ -6,8 +6,8 @@
 
 include $(TOPDIR)/rules.mk
 
-APP_TITLE:=Backup / Restore
-APP_NAME:=backup
+APP_TITLE:=Settings
+APP_NAME:=settings
 
 include ../../hiui.mk
 

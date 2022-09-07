@@ -1,5 +1,5 @@
 {
-	"/system": {
+	"/settings/system": {
 		"title": "System",
 		"view": "system",
 		"index": 99,

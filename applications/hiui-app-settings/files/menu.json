@@ -1,0 +1,12 @@
+{
+    "/settings": {
+        "title": "Settings",
+        "view": "settings",
+        "index": 60,
+        "locales": {
+            "en-US": "Settings",
+            "zh-CN": "设置",
+            "zh-TW": "设置"
+        }
+    }
+}

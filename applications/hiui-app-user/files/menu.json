@@ -1,5 +1,5 @@
 {
-    "/user": {
+    "/settings/user": {
         "title": "user",
         "view": "user",
         "index": 80,
