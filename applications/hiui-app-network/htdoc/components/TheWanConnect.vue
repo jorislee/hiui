@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-color bg-border">
+	<div class="dis-flex-hor bg-color bg-border">
 		<n-list class="bg-color pd-30">
 			<template #header>
 				<n-space justify="space-between">

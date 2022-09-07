@@ -1,12 +1,57 @@
 <template>
-	<n-upload ref="upload" directory-dnd action="/hiui-upload" :data="{path: '/tmp/firmware.bin'}" :on-finish="onUploadFinish">
-		<n-upload-dragger>
-			<div>
-				<n-icon size="48"><arrow-up-circle-icon /></n-icon>
-			</div>
-			<n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
-		</n-upload-dragger>
-	</n-upload>
+	<n-space class="components-bg-dark pd-30" vertical>
+		<n-layout>
+			<n-space align="center">
+				<div class="circle"></div>
+				<div class="font-24-size">{{ $t('Network Status') }}</div>
+			</n-space>
+		</n-layout>
+		<n-divider />
+		<div class="dis-flex-hor bg-color-dark bg-border-dark">
+			<n-list class="bg-color-dark pd-30">
+				<template #header>
+					<div class="font-18">{{ $t('广域网信息-WAN') }}</div>
+				</template>
+				<n-list-item v-for="i in 4" :key="i">
+					<template #prefix>
+						<n-button>{{ i }}</n-button>
+					</template>
+					<template #suffix>
+						<n-button>Suffix</n-button>
+					</template>
+					<n-thing title="Thing" title-extra="extra" />
+				</n-list-item>
+			</n-list>
+			<n-divider vertical />
+
+			<n-list class="bg-color-dark pd-30">
+				<template #header>
+					<div class="font-18">{{ $t('局域网信息-LAN') }}</div>
+				</template>
+				<n-list-item v-for="i in 4" :key="i">
+					<template #prefix>
+						<n-button>{{ i }}</n-button>
+					</template>
+					<template #suffix>
+						<n-button>Suffix</n-button>
+					</template>
+					<n-thing title="Thing" title-extra="extra" />
+				</n-list-item>
+			</n-list>
+		</div>
+		<div class="bg-border-dark pd-30">
+			<h2>{{ $t('local upload') }}</h2>
+			<n-upload ref="upload" directory-dnd action="/hiui-upload" :data="{path: '/tmp/firmware.bin'}" :on-finish="onUploadFinish">
+				<n-upload-dragger>
+					<div>
+						<n-icon size="48"><arrow-up-circle-icon /></n-icon>
+					</div>
+					<n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
+				</n-upload-dragger>
+			</n-upload>
+		</div>
+	</n-space>
+
 	<n-modal v-model:show="modalConfirm" preset="dialog" :title="$t('Upgrade')" :positive-text="$t('OK')" :negative-text="$t('Cancel')" @positive-click="doUpgrade">
 		<n-space vertical>
 			<p>{{ $t('flash-confirm', {btn: this.$t('OK')}) }}</p>

@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-color bg-border">
+	<div class="dis-flex-hor bg-color bg-border">
 		<n-list class="bg-color pd-30">
 			<template #header>
 				<div class="font-18">{{ $t('广域网信息-WAN') }}</div>

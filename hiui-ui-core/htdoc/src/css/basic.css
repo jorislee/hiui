@@ -1,5 +1,7 @@
-.n-icon{
-	line-height: unset !important;
+
+.dis-flex-hor{
+	display: flex;
+	align-items: center;
 }
 .components-bg {
     align-self: stretch;
@@ -10,19 +12,38 @@
     box-shadow: -4px -4px 10px 0px #FFFFFF, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
 }
 
+.components-bg-dark {
+    align-self: stretch;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #000000 0%, #222222 100%);
+    box-sizing: border-box;
+    border: 2px solid #222222;
+    box-shadow: -4px -4px 10px 0px #222222, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
+}
+
+
 .bg-color {
 	width: -webkit-fill-available;
 	align-self: stretch;
 	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);
 }
 
+.bg-color-dark {
+	width: -webkit-fill-available;
+	align-self: stretch;
+	background: linear-gradient(180deg, #000000 0%, #222222 100%);
+}
+
 .bg-border {
-	display: flex;
-	align-items: center;
 	box-sizing: border-box;
 	border: 2px solid #ffffff;
 	box-shadow: -4px -4px 10px 0px #FFFFFF,4px 4px 10px 0px rgba(55, 99, 170, 0.05);
+}
 
+.bg-border-dark {
+	box-sizing: border-box;
+    border: 2px solid #222222;
+    box-shadow: -4px -4px 10px 0px #222222, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
 }
 
 .list-item-border {
