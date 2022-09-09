@@ -4,7 +4,7 @@
 			<div class="menu-item" v-for="(item, index) in menus" :key="index" :class="selectIndex == index ? 'active' : ''" @click="menuClick(index, item.path)">
 				<div>
 					<n-icon v-if="item.svg" :size="48">
-						<IconSvg :opt="item.svg" />
+						<IconSvg :opt="item.svg" class="fff" />
 					</n-icon>
 				</div>
 				<div>{{ $t('menus.' + item.title) }}</div>
@@ -89,7 +89,7 @@ const moreOptions = reactive([
 const modalSpin = ref(false);
 const selectIndex = ref(-1);
 const dialog = useDialog();
-
+let menusicon = ref([]);
 function renderDropdownLabel(option) {
 	option.label = proxy.$t(option.label);
 	if ('children' in option && option.children.length === 0) {
@@ -137,8 +137,8 @@ function handleSelect(key) {
 }
 
 function menuClick(index, path) {
+	selectIndex.value = index;
 	router.push(path);
-	this.selectIndex = index;
 }
 </script>
 <style scoped lang="less">
@@ -166,11 +166,11 @@ function menuClick(index, path) {
 	background: linear-gradient(174deg, rgba(231, 232, 239, 0.15) 4%, rgba(198, 202, 222, 0.359) 95%);
 	box-shadow: -4px -4px 10px 0px rgba(54, 62, 77, 0.5), 4px 4px 10px 0px rgba(18, 21, 26, 0.6), inset 0px 2px 10px 0px rgba(36, 41, 51, 0.5);
 }
-
 .menu-item.active {
 	border-radius: 8px;
 	background: linear-gradient(174deg, rgba(231, 232, 239, 0.15) 4%, rgba(198, 202, 222, 0.359) 95%);
 	box-shadow: -4px -4px 10px 0px rgba(54, 62, 77, 0.5), 4px 4px 10px 0px rgba(18, 21, 26, 0.6), inset 0px 2px 10px 0px rgba(36, 41, 51, 0.5);
+	--icon-active-color: #f5f7fa;
 }
 .more {
 	position: absolute;

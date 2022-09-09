@@ -1,29 +1,56 @@
 <template>
-	<n-h2>{{ $t('Backup') }}</n-h2>
-	<div v-if="backupUrl" class="backup">
-		<n-a :href="backupUrl" download="backup.tar.gz">backup.tar.gz</n-a>
-		<n-icon size="25"><arrow-down-sharp-icon /></n-icon>
-	</div>
-	<n-button :loading="loading" type="primary" style="margin-top: 4px" @click="generateBackup">{{ $t('Generate backup file') }}</n-button>
-	<n-divider />
-	<n-h2>{{ $t('Restore from backup') }}</n-h2>
-	<n-upload ref="upload" directory-dnd action="/hiui-upload" :data="{path: '/tmp/backup.tar.gz'}" :on-finish="onUploadFinish">
-		<n-upload-dragger>
-			<div>
-				<n-icon size="48"><arrow-up-circle-icon /></n-icon>
+	<div class="components-bg-dark pd-30" vertical>
+		<n-layout>
+			<n-space align="center">
+				<div class="circle"></div>
+				<div class="font-24-size">{{ $t('Network Status') }}</div>
+			</n-space>
+		</n-layout>
+		<n-divider />
+		<n-space vertical :size="20">
+			<div class="dis-flex-hor bg-color-dark bg-border-dark">
+				<n-space vertical style="width: 100%" class="pd-30" size="large">
+					<div class="font-18-size">{{ $t('管理员密码') }}</div>
+					<n-input v-model:value="oldpd" type="password" placeholder="必填" size="medium" show-password-on="mousedown" :minlenght="8">
+						<template #suffix>
+							<div style="padding: 0 8px 0 0; color: #98a3b7">{{ $t('password') }}</div>
+						</template>
+					</n-input>
+					<n-input v-model:value="newpd" type="password" placeholder="必填" size="medium" show-password-on="mousedown" @keydown.enter.prevent>
+						<template #suffix>
+							<div style="padding: 0 8px 0 0; color: #98a3b7">{{ $t('new password') }}</div>
+						</template>
+					</n-input>
+					<n-form-item :rule="verifyPd" :show-label="false" :show-feedback="false">
+						<n-input v-model:value="newpd1" type="password" placeholder="必填" size="medium" show-password-on="mousedown" @keydown.enter.prevent>
+							<template #suffix>
+								<div style="padding: 0 8px 0 0; color: #98a3b7">{{ $t('again new password') }}</div>
+							</template>
+						</n-input>
+					</n-form-item>
+					<n-button type="info" size="medium" round>{{ $t('save') }}</n-button>
+				</n-space>
+				<div class="pd-30"></div>
+				<n-space justify="center" style="width: 100%" class="pd-30">
+					<img src="@/assets/setting.png" />
+				</n-space>
 			</div>
-			<n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
-		</n-upload-dragger>
-	</n-upload>
-	<n-modal v-model:show="modalConfirm" preset="dialog" :title="$t('Apply backup') + '?'" :positive-text="$t('Continue')" :negative-text="$t('Cancel')" @positive-click="doRestore">
-		<n-space vertical>
-			<p>{{ $t('restore-confirm', [this.$t('Continue'), this.$t('Cancel')]) }}</p>
-			<n-input readonly type="textarea" :autosize="{minRows: 5, maxRows: 10}" :value="backupFiles" />
+			<n-space vertical class="bg-color-dark bg-border-dark pd-30" :size="15">
+				<div class="font-18-size">{{ $t('Reset to defaults') }}</div>
+				<div>
+					<n-space class="tips-info-bg">
+						<img src="@/assets/info.svg" />
+						<div>
+							<div>1、如果设备出现无法解法的故障，你可以选择恢复到出厂默认设置。</div>
+							<div>2、恢复到出厂设置后，你当前的所有设置、应用程序和数据都将丢失。</div>
+							<div>3、恢复过程大约需要3分钟，在恢复过程中不要让路由器断电。</div>
+						</div>
+					</n-space>
+				</div>
+				<n-button round type="info" @click="doReset">{{ $t('Perform reset') }}</n-button>
+			</n-space>
 		</n-space>
-	</n-modal>
-	<n-divider />
-	<n-h2>{{ $t('Reset to defaults') }}</n-h2>
-	<n-button type="error" @click="doReset">{{ $t('Perform reset') }}</n-button>
+	</div>
 	<n-modal v-model:show="modalSpin" :close-on-esc="false" :mask-closable="false">
 		<n-spin size="large">
 			<template #description>
@@ -33,84 +60,53 @@
 	</n-modal>
 </template>
 
-<script>
-import {ArrowDownSharp as ArrowDownSharpIcon, ArrowUpCircle as ArrowUpCircleIcon} from '@vicons/ionicons5';
-
-export default {
-	components: {
-		ArrowDownSharpIcon,
-		ArrowUpCircleIcon
-	},
-	data() {
-		return {
-			backupUrl: '',
-			backupFiles: '',
-			loading: false,
-			modalConfirm: false,
-			modalSpin: false
-		};
-	},
-	methods: {
-		generateBackup() {
-			this.loading = true;
-			this.$hiui.call('system', 'create_backup', {path: '/tmp/backup.tar.gz'}).then(() => {
-				this.axios.post('/hiui-download', {path: '/tmp/backup.tar.gz'}, {responseType: 'blob'}).then((resp) => {
-					this.backupUrl = window.URL.createObjectURL(resp.data);
-					this.loading = false;
-				});
-			});
-		},
-		onUploadFinish() {
-			this.$refs.upload.clear();
-
-			this.$hiui.call('system', 'list_backup', {path: '/tmp/backup.tar.gz'}).then(({files}) => {
-				if (!files) {
-					this.$dialog.error({
-						content: this.$t('The uploaded backup archive is not readable')
-					});
-				} else {
-					this.backupFiles = files;
-					this.modalConfirm = true;
-				}
-			});
-		},
-		doRestore() {
-			this.$hiui.call('system', 'restore_backup', {path: '/tmp/backup.tar.gz'}).then(() => {
-				this.modalSpin = true;
-				this.$hiui.reconnect().then(() => {
-					this.$router.push('/login');
-				});
-			});
-		},
-		doReset() {
-			this.$dialog.warning({
-				title: this.$t('Reset to defaults'),
-				content: this.$t('ResettConfirm') + '?',
-				positiveText: this.$t('OK'),
-				onPositiveClick: () => {
-					this.$hiui.ubus('system', 'reset').then(() => {
-						this.modalSpin = true;
-						this.$hiui.reconnect().then(() => {
-							this.modalSpin = false;
-							this.$router.push('/login');
-						});
-					});
-				}
-			});
+<script setup>
+const oldpd = ref('');
+const newpd = ref('');
+const newpd1 = ref('');
+const message = '它不在 Form 里面';
+const verifyPd = {
+	trigger: ['input', 'blur'],
+	validator() {
+		if (newpd.value !== newpd1.value) {
+			return new Error(message);
 		}
 	}
 };
+function doReset() {
+	// this.$dialog.warning({
+	// 	title: this.$t('Reset to defaults'),
+	// 	content: this.$t('ResettConfirm') + '?',
+	// 	positiveText: this.$t('OK'),
+	// 	onPositiveClick: () => {
+	// 		this.$hiui.ubus('system', 'reset').then(() => {
+	// 			this.modalSpin = true;
+	// 			this.$hiui.reconnect().then(() => {
+	// 				this.modalSpin = false;
+	// 				this.$router.push('/login');
+	// 			});
+	// 		});
+	// 	}
+	// });
+}
 </script>
 
 <style scoped>
-.backup a {
-	font-size: 1.5em;
-	text-decoration: none;
-	margin-right: 10px;
+.font-18-size {
+	font-size: 18px;
+	font-weight: 500;
 }
-
-.backup:hover {
-	text-decoration: underline;
+.tips-info-bg {
+	padding: 20px;
+	align-self: stretch;
+	border-radius: 4px;
+	background: rgba(0, 82, 217, 0.08);
+}
+.__input-dark-m {
+	--n-height: 48px;
+}
+.__input-m {
+	--n-height: 48px;
 }
 </style>
 

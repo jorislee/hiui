@@ -1,26 +1,28 @@
+.the-menu {
+	--icon-active-color: #7f88b7;
+}
 
-.dis-flex-hor{
+.dis-flex-hor {
 	display: flex;
 	align-items: center;
 }
 .components-bg {
-    align-self: stretch;
-    border-radius: 8px;
-    background: linear-gradient(180deg, #F3F5F8 0%, #FFFFFF 100%);
-    box-sizing: border-box;
-    border: 2px solid #FFFFFF;
-    box-shadow: -4px -4px 10px 0px #FFFFFF, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
+	align-self: stretch;
+	border-radius: 8px;
+	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);
+	box-sizing: border-box;
+	border: 2px solid #ffffff;
+	box-shadow: -4px -4px 10px 0px #ffffff, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
 }
 
 .components-bg-dark {
-    align-self: stretch;
-    border-radius: 8px;
-    background: linear-gradient(180deg, #000000 0%, #222222 100%);
-    box-sizing: border-box;
-    border: 2px solid #222222;
-    box-shadow: -4px -4px 10px 0px #222222, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
+	align-self: stretch;
+	border-radius: 8px;
+	background: linear-gradient(180deg, #000000 0%, var(--n-color) 100%);
+	box-sizing: border-box;
+	border: 2px solid #222222;
+	box-shadow: -4px -4px 10px 0px #222222, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
 }
-
 
 .bg-color {
 	width: -webkit-fill-available;
@@ -31,25 +33,25 @@
 .bg-color-dark {
 	width: -webkit-fill-available;
 	align-self: stretch;
-	background: linear-gradient(180deg, #000000 0%, #222222 100%);
+	background: linear-gradient(180deg, #000000 0%, var(--n-color) 100%);
 }
 
 .bg-border {
 	box-sizing: border-box;
 	border: 2px solid #ffffff;
-	box-shadow: -4px -4px 10px 0px #FFFFFF,4px 4px 10px 0px rgba(55, 99, 170, 0.05);
+	box-shadow: -4px -4px 10px 0px #ffffff, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
 }
 
 .bg-border-dark {
 	box-sizing: border-box;
-    border: 2px solid #222222;
-    box-shadow: -4px -4px 10px 0px #222222, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
+	border: 2px solid #222222;
+	box-shadow: -4px -4px 10px 0px #222222, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
 }
 
 .list-item-border {
 	padding: 15px 20px 15px 15px !important;
 	border-radius: 4px !important;
-	background: #FFFFFF;
+	background: #ffffff;
 	box-sizing: border-box;
 	border: 1px solid rgba(73, 87, 112, 0.15);
 	height: 70px;
@@ -65,10 +67,10 @@
 }
 
 .__divider {
-    --n-color: rgba(73, 87, 112, 0.15) !important;
+	--n-color: rgba(73, 87, 112, 0.15) !important;
 }
 
-.font-24-size{
+.font-24-size {
 	font-size: 24px;
 }
 
@@ -76,19 +78,19 @@
 	padding: 8px 20px;
 }
 
-.pd-20{
-    padding: 20px;
+.pd-20 {
+	padding: 20px;
 }
 
-.pd-30{
-    padding: 30px;
+.pd-30 {
+	padding: 30px;
 }
 
-.pd-0-15{
-    padding: 0 15px;
+.pd-0-15 {
+	padding: 0 15px;
 }
 
-.mg-bt-10{
+.mg-bt-10 {
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
