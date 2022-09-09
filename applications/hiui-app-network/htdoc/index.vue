@@ -1,5 +1,5 @@
 <template>
-	<n-space class="components-bg pd-30" vertical size="large">
+	<n-space :class="$hiui.state.theme == 'dark' ? 'components-bg-dark' : 'components-bg'" class="pd-30" vertical size="large">
 		<n-layout>
 			<n-space align="center">
 				<div class="circle"></div>
@@ -8,7 +8,7 @@
 		</n-layout>
 		<n-divider />
 		<n-layout embedded>
-			<n-space size="large" item-style="padding-top: 30px;" justify="space-between">
+			<div class="dis-fle-nowrap">
 				<n-space vertical align="center" size="large">
 					<img src="@/assets/router.png" height="157" />
 					<div>{{ $t('Router') }}</div>
@@ -20,11 +20,11 @@
 						<span>&ensp;2.4G:ddddsfsdfsf</span>
 					</n-button>
 				</n-space>
-				<div>
+				<div ref="dividerLocal" style="width: 100%">
 					<img v-if="conLocal" src="@/assets/connect-success.svg" />
-					<div class="line" v-else></div>
+					<n-divider v-else style="padding-top: 55px" />
 				</div>
-				<n-space vertical align="center" size="large">
+				<n-space vertical align="center" size="large" class="pd-0-55">
 					<img src="@/assets/internal.png" height="157" />
 					<div>{{ $t('Internal') }}</div>
 					<n-button type="default" @click="lanInfo('internal')" class="bt-bg">
@@ -32,22 +32,22 @@
 						<span>&ensp;dddd</span>
 					</n-button>
 				</n-space>
-				<div>
-					<img v-if="conLocal" src="@/assets/connect-success.svg" />
-					<div class="line" v-else></div>
+				<div ref="dividerSpeed" style="width: 100%">
+					<img v-if="conSpeed" src="@/assets/connect-success.svg" />
+					<n-divider v-else style="padding-top: 55px" />
 				</div>
-				<div style="width: 25%">
+				<div class="pd-0-55">
 					<n-space v-if="conSpeed" vertical align="center" size="large">
 						<img src="@/assets/speedserver.png" height="157" />
 						<div>{{ $t('Internal') }}</div>
 						<n-button ghost round type="info" @click="lanInfo('internal')">{{ $t('设置') }}</n-button>
 					</n-space>
 					<n-space v-else vertical align="center" size="large" style="padding-top: 40px">
-						<n-ellipsis style="max-width: 190px" :line-clamp="2">您可以开通互联网加速模块，以便更快速地访问互联网。</n-ellipsis>
+						<n-ellipsis style="width: 157px" :line-clamp="3">您可以开通互联网加速模块，以便更快速地访问互联网。</n-ellipsis>
 						<n-button type="info" @click="lanInfo('speed')" color="#0052D9" round size="medium">{{ $t('开通加速') }}</n-button>
 					</n-space>
 				</div>
-			</n-space>
+			</div>
 		</n-layout>
 		<n-layout>
 			<the-lan-info v-if="infoType === 1"></the-lan-info>
@@ -60,18 +60,24 @@ import TheLanInfo from './components/TheLanInfo.vue';
 import TheWanConnect from './components/TheWanConnect.vue';
 
 const conLocal = ref(true);
-const conSpeed = ref(true);
+const conSpeed = ref(false);
 const infoType = ref(2);
+const dividerLocal = ref(null);
+const dividerSpeed = ref(null);
 function lanInfo(params) {
 	console.log(params);
 }
+onMounted(() => {
+	console.log(dividerLocal);
+});
 </script>
 <style scoped>
-.line {
-	width: 100%;
-	height: 1px;
-	border-top: 1px solid rgba(73, 87, 112, 0.15);
-	padding-top: 55px;
+.dis-fle-nowrap {
+	display: flex;
+	flex-wrap: nowrap;
+}
+.pd-0-55 {
+	padding: 0 60px;
 }
 .bt-bg {
 	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);

@@ -32,7 +32,7 @@
 				<router-view>
 					<template #default="{Component}">
 						<transition name="zoom-fade" mode="out-in">
-							<div :key="$route.path">
+							<div :key="$route.path" style="display: flex; justify-content: center">
 								<n-message-provider>
 									<n-dialog-provider>
 										<component :is="Component" />
