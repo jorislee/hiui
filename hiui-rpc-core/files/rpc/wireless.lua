@@ -14,9 +14,7 @@ function M.status()
     for dev_name, dev in pairs(status) do
         if dev.up then
             local typ = iwinfo.type(dev_name)
-            if not typ then
-                return
-            end
+            if not typ then return end
 
             local iw = iwinfo[typ]
 
@@ -43,7 +41,7 @@ function M.status()
         end
     end
 
-    return { devs = devs }
+    return {devs = devs}
 end
 
 function M.stations(param)
@@ -56,9 +54,7 @@ function M.stations(param)
     for dev_name, dev in pairs(status) do
         if dev.up then
             local typ = iwinfo.type(dev_name)
-            if not typ then
-                break
-            end
+            if not typ then break end
 
             local iw = iwinfo[typ]
 
@@ -107,7 +103,34 @@ function M.stations(param)
         end
     end
 
-    return { stations = stations }
+    return {stations = stations}
+end
+
+function M.staInfo()
+    local interface = uci.get({
+        config = "wireless",
+        section = "sta",
+        option = "network"
+    }, "sta")
+    local status = {}
+    if interface then
+        local conn = ubus.connect()
+        status = conn:call('network.interface.' .. interface, 'status', {}) or
+                     {}
+        conn:close()
+        status.name = uci.get({
+            config = "hiui",
+            section = "sta",
+            option = "ssid"
+        }, "sta")
+        status.disabled = uci.get({
+            config = "hiui",
+            section = "sta",
+            option = "disabled"
+        }, "sta")
+    end
+
+    return status
 end
 
 return M

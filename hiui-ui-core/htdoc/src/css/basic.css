@@ -28,13 +28,11 @@
 
 .bg-color {
 	width: -webkit-fill-available;
-	align-self: stretch;
 	background: linear-gradient(180deg, #f3f5f8 0%, var(--n-color) 100%);
 }
 
 .bg-color-dark {
 	width: -webkit-fill-available;
-	align-self: stretch;
 	background: linear-gradient(180deg, #000000 0%, var(--n-color) 100%);
 }
 
@@ -95,4 +93,8 @@
 .mg-bt-10 {
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+
+.n-list {
+	background: transparent !important;
 }

@@ -1,9 +1,9 @@
 <template>
-	<n-page-header @back="handleBack" class="components-bg">
+	<n-page-header @back="handleBack" class="components-bg pd-30">
 		<template #title>
 			{{ $t('Relayd Settings') }}
 		</template>
-		<n-space vertical class="pd-20 components-bg">
+		<n-space v-if="route.query.action === 'scan'" vertical class="pd-20 components-bg">
 			<n-space justify="space-between" class="pd-0-15">
 				{{ $t('History connect network') }}
 				<div>
@@ -12,28 +12,30 @@
 				</div>
 			</n-space>
 			<n-list bordered>
-				<n-list-item v-for="(item, index) in datas" :key="index">
-					<n-space justify="space-between" align="center">
-						<n-space>
-							<n-icon size="24" :component="MdWifi"></n-icon>
-							<span>openwrt-5g</span>
-							<n-tag type="info" size="small">current</n-tag>
+				<n-space vertical>
+					<n-list-item v-for="(item, index) in datas" :key="index" class="bg">
+						<n-space justify="space-between" align="center">
+							<n-space>
+								<n-icon size="24" :component="MdWifi"></n-icon>
+								<span>openwrt-5g</span>
+								<n-tag type="info" size="small">current</n-tag>
+							</n-space>
+							<div>
+								<n-switch v-model:value="item.auto" size="medium" />
+							</div>
 						</n-space>
-						<div>
-							<n-switch v-model:value="item.auto" size="medium" />
-						</div>
-					</n-space>
-				</n-list-item>
+					</n-list-item>
+				</n-space>
 			</n-list>
 		</n-space>
-		<n-space vertical class="pd-20 components-bg">
+		<n-space v-else-if="route.query.action === 'check'" vertical class="pd-20 components-bg">
 			<n-space justify="space-between" class="pd-0-15">
 				<div>{{ $t('Nearby available network') }}</div>
 				<div>{{ $t('Join network') }}</div>
 			</n-space>
 			<n-list bordered>
 				<n-space vertical>
-					<n-list-item v-for="(item, index) in historyDatas" :key="index" class="bg-border bg">
+					<n-list-item v-for="(item, index) in historyDatas" :key="index" class="bg">
 						<n-space justify="space-between" align="center">
 							<n-space>
 								<n-icon size="24" :component="MdWifi"></n-icon>
@@ -106,6 +108,8 @@ const {proxy} = getCurrentInstance();
 const {autoConnect} = ref(false);
 const showModal = ref(false);
 const modalTitle = ref('111111111');
+const route = useRoute();
+console.log(route.query.action);
 function handleBack() {
 	console.log('2222222');
 }
@@ -130,7 +134,8 @@ function removeWifi() {
 </script>
 <style scoped>
 .bg {
-	background-color: red;
+	background-color: #ffffff;
+	border: 1px solid rgba(73, 87, 112, 0.15);
 }
 </style>
 

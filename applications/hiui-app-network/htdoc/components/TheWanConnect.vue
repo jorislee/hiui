@@ -5,20 +5,14 @@
 				<n-space justify="space-between">
 					<n-space class="font-18" align="center">
 						<div class="circle"></div>
-						{{ $t('广域网信息-WAN') }}
+						{{ $t(name) }}
 						<n-tag :bordered="false" size="small">{{ $t('current network') }}</n-tag>
 					</n-space>
-					<n-button ghost round color="red" size="medium">断开</n-button>
+					<n-button v-if="isconnect" ghost round color="red" size="medium" @click="disconnect">{{ $t('Disconnect') }}</n-button>
 				</n-space>
 			</template>
-			<n-list-item v-for="i in 4" :key="i">
-				<template #prefix>
-					<n-button>{{ i }}</n-button>
-				</template>
-				<template #suffix>
-					<n-button>Suffix</n-button>
-				</template>
-				<n-thing title="Thing" title-extra="extra" />
+			<n-list-item v-for="i in staInfo" :key="i">
+				<n-thing :title="i[0]" :title-extra="i[1]" />
 			</n-list-item>
 		</n-list>
 		<n-divider vertical />
@@ -54,11 +48,38 @@
 
 <script setup>
 const autoConnect = ref(false);
+const staInfo = ref([]);
 const {proxy} = getCurrentInstance();
+const name = ref('Not connected');
+const isconnect = ref(false);
+function getNetworks() {
+	proxy.$hiui.call('wireless', 'staInfo').then((element) => {
+		name.value = element.name;
+		if (element.up) {
+			isconnect.value = true;
+		}
+		staInfo.value[0] = ['Address', element['ipv4-address'][0].address];
+		let mask;
+		if (element['ipv4-address'][0].mask === 24) {
+			mask = '255.255.255.0';
+		} else if (element['ipv4-address'][0].mask === 16) {
+			mask = '255.255.0.0';
+		}
+		staInfo.value[1] = ['Mask', mask];
+		staInfo.value[2] = ['Gateway', element.route.filter((r) => r.target === '0.0.0.0' && r.mask === 0).map((r) => r.nexthop)[0]];
+		staInfo.value[3] = ['DNS', element['dns-server'].join(', ')];
+	});
+}
+function disconnect() {
+	proxy.$hiui.call('wireless', 'disStaConnect').then((element) => {});
+}
+onBeforeMount(() => {
+	proxy.$timer.create('getNetworks', getNetworks, {repeat: true, immediate: true, time: 5000});
+});
 function pushRelayd(params) {
 	let data;
 	if (params === 'scan') {
-		data = {action: 'sacan'};
+		data = {action: 'scan'};
 	} else if (params === 'check') {
 		data = {action: 'check'};
 	}

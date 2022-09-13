@@ -12,7 +12,7 @@
 				<n-space vertical align="center" size="large">
 					<img src="@/assets/router.png" height="157" />
 					<div>{{ $t('Router') }}</div>
-					<n-button type="default" @click="lanInfo('router')" class="bt-bg">
+					<n-button type="default" @click="showInfo('router')" class="bt-bg">
 						<div class="circle"></div>
 						<span>&ensp;5G:dddddfsfsdfs</span>
 						<n-divider vertical />
@@ -27,7 +27,7 @@
 				<n-space vertical align="center" size="large" class="pd-0-55">
 					<img src="@/assets/internal.png" height="157" />
 					<div>{{ $t('Internal') }}</div>
-					<n-button type="default" @click="lanInfo('internal')" class="bt-bg">
+					<n-button type="default" @click="showInfo('internal')" class="bt-bg">
 						<div class="circle"></div>
 						<span>&ensp;dddd</span>
 					</n-button>
@@ -40,11 +40,11 @@
 					<n-space v-if="conSpeed" vertical align="center" size="large">
 						<img src="@/assets/speedserver.png" height="157" />
 						<div>{{ $t('Internal') }}</div>
-						<n-button ghost round type="info" @click="lanInfo('internal')">{{ $t('设置') }}</n-button>
+						<n-button ghost round type="info" @click="showInfo('internal')">{{ $t('设置') }}</n-button>
 					</n-space>
 					<n-space v-else vertical align="center" size="large" style="padding-top: 40px">
 						<n-ellipsis style="width: 157px" :line-clamp="3">您可以开通互联网加速模块，以便更快速地访问互联网。</n-ellipsis>
-						<n-button type="info" @click="lanInfo('speed')" color="#0052D9" round size="medium">{{ $t('开通加速') }}</n-button>
+						<n-button type="info" @click="showInfo('speed')" color="#0052D9" round size="medium">{{ $t('开通加速') }}</n-button>
 					</n-space>
 				</div>
 			</div>
@@ -61,11 +61,17 @@ import TheWanConnect from './components/TheWanConnect.vue';
 
 const conLocal = ref(true);
 const conSpeed = ref(false);
-const infoType = ref(2);
+const infoType = ref(1);
 const dividerLocal = ref(null);
 const dividerSpeed = ref(null);
-function lanInfo(params) {
-	console.log(params);
+function showInfo(params) {
+	if (params === 'router') {
+		infoType.value = 1;
+	} else if (params === 'internal') {
+		infoType.value = 2;
+	} else if (params === 'speed') {
+		console.log(params);
+	}
 }
 onMounted(() => {
 	console.log(dividerLocal);
