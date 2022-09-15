@@ -1,6 +1,6 @@
 <template>
-	<div class="dis-flex-hor bg-color bg-border">
-		<n-list class="bg-color pd-30">
+	<div class="flex-hor bg-color bg-border">
+		<n-list class="width-fill pd-30">
 			<template #header>
 				<n-space justify="space-between">
 					<n-space class="font-18" align="center">
@@ -11,13 +11,13 @@
 					<n-button v-if="isconnect" ghost round color="red" size="medium" @click="disconnect">{{ $t('Disconnect') }}</n-button>
 				</n-space>
 			</template>
-			<n-list-item v-for="i in staInfo" :key="i">
-				<n-thing :title="i[0]" :title-extra="i[1]" />
+			<n-list-item v-for="i in staName.length" :key="i">
+				<n-thing :title="staName[i - 1]" :title-extra="i[1]" />
 			</n-list-item>
 		</n-list>
 		<n-divider vertical />
 
-		<n-list class="bg-color pd-30">
+		<n-list class="width-fill pd-30">
 			<template #header>
 				<n-space class="font-18" align="center">
 					<div class="circle"></div>
@@ -49,6 +49,7 @@
 <script setup>
 const autoConnect = ref(false);
 const staInfo = ref([]);
+const staName = ['Address', 'Mask', 'Gateway', 'DNS'];
 const {proxy} = getCurrentInstance();
 const name = ref('Not connected');
 const isconnect = ref(false);
@@ -89,7 +90,7 @@ function pushRelayd(params) {
 <style scoped>
 :deep(.n-divider.n-divider--vertical) {
 	height: 200px;
-	margin: 0 30px;
+	margin: 50px 30px;
 }
 
 .pd-30 {

@@ -1,6 +1,6 @@
 <template>
-	<div class="dis-flex-hor bg-color bg-border">
-		<n-list class="bg-color pd-30">
+	<div class="flex-hor bg-color bg-border">
+		<n-list class="width-fill pd-30">
 			<template #header>
 				<div class="font-18">{{ $t('广域网信息-WAN') }}</div>
 			</template>
@@ -10,7 +10,7 @@
 		</n-list>
 		<n-divider vertical />
 
-		<n-list class="bg-color pd-30">
+		<n-list class="width-fill pd-30">
 			<template #header>
 				<div class="font-18">{{ $t('局域网信息-LAN') }}</div>
 			</template>
@@ -64,7 +64,8 @@ onBeforeMount(() => {
 <style scoped>
 :deep(.n-divider.n-divider--vertical) {
 	height: 200px;
-	margin: 0 30px;
+	margin: 60px 30px;
+	padding-top: 20%;
 }
 .pd-30 {
 	padding: 18px 30px 30px 30px;

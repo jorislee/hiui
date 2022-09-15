@@ -1,5 +1,5 @@
 <template>
-	<n-list class="bg-color pd-30" :show-divider="false">
+	<n-list class="width-fill pd-30" :show-divider="false">
 		<template #header>
 			<n-space justify="space-between">
 				<n-space class="font-18" align="center">

@@ -2,10 +2,15 @@
 	--icon-active-color: #7f88b7;
 }
 
-.dis-flex-hor {
+.flex-hor-ac {
 	display: flex;
 	align-items: center;
 }
+
+.flex-hor {
+	display: flex;
+}
+
 .components-bg {
 	min-width: 1256px;
 	align-self: stretch;
@@ -94,7 +99,9 @@
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
-
+.width-fill {
+	width: -webkit-fill-available;
+}
 .n-list {
 	background: transparent !important;
 }

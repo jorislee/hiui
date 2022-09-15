@@ -7,12 +7,12 @@
 			</n-space>
 		</n-layout>
 		<n-divider />
-		<div class="dis-flex-hor bg-color-dark bg-border-dark">
-			<n-list class="bg-color-dark pd-30">
+		<div class="flex-hor bg-color-dark bg-border-dark">
+			<n-list class="width-fill pd-30">
 				<template #header>
 					<div class="font-18">{{ $t('广域网信息-WAN') }}</div>
 				</template>
-				<n-list-item v-for="i in 4" :key="i">
+				<n-list-item v-for="i in 2" :key="i">
 					<template #prefix>
 						<n-button>{{ i }}</n-button>
 					</template>
@@ -24,7 +24,7 @@
 			</n-list>
 			<n-divider vertical />
 
-			<n-list class="bg-color-dark pd-30">
+			<n-list class="width-fill pd-30">
 				<template #header>
 					<div class="font-18">{{ $t('局域网信息-LAN') }}</div>
 				</template>

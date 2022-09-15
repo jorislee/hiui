@@ -8,7 +8,7 @@
 		</n-layout>
 		<n-divider />
 		<n-space vertical :size="20">
-			<div class="dis-flex-hor bg-color-dark bg-border-dark">
+			<div class="flex-hor-ac bg-color-dark bg-border-dark">
 				<n-space vertical style="width: 100%" class="pd-30" size="large">
 					<div class="font-18-size">{{ $t('管理员密码') }}</div>
 					<n-input v-model:value="oldpd" type="password" placeholder="必填" size="medium" show-password-on="mousedown" :minlenght="8">

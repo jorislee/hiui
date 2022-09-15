@@ -8,7 +8,7 @@
 		</n-layout>
 		<n-divider />
 
-		<div class="bg-color bg-border dis-flex-hor">
+		<div class="bg-color bg-border flex-hor">
 			<the-wifi-settings :wifiInfo="wifi"></the-wifi-settings>
 			<n-divider vertical />
 			<the-wifi-settings :wifiInfo="wifi"></the-wifi-settings>

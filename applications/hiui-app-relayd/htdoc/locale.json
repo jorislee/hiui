@@ -1,9 +1,11 @@
 {
   "en-US": {
-    "hello": "hello world!"
+    "hello": "hello world!",
+    "input password": "Enter the password for {0}"
   },
   "zh-CN": {
-    "hello": "你好世界！"
+    "hello": "你好世界！",
+    "input password": "输入 {0} 的密码"
   },
   "zh-TW": {
     "hello": "你好世界！"
