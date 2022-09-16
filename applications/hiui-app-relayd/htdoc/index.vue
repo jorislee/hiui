@@ -4,27 +4,28 @@
 			{{ $t('Relayd Settings') }}
 		</template>
 		<n-space v-if="route.query.action === 'check'" vertical class="pd-20 components-bg">
-			<n-space justify="space-between" class="pd-0-15">
+			<n-space justify="space-between" class="pd-0-15" style="font-size: 12px">
 				{{ $t('History connect network') }}
 				<n-space :size="35">
 					<div>{{ $t('enable network') }}</div>
-					<div>{{ $t('operation') }}</div>
+					<div>{{ $t('del') }}</div>
 				</n-space>
 			</n-space>
 			<n-list bordered>
 				<n-space vertical>
 					<n-list-item v-for="(item, index) in historyList" :key="index" class="bg">
 						<n-space justify="space-between" align="center">
-							<n-space>
+							<div class="flex-hor-ac">
 								<n-icon size="24" :component="MdWifi"></n-icon>
-								<span>{{ item.ssid }}</span>
-							</n-space>
-							<n-space>
-								<n-switch v-model:value="item.auto" size="medium" />
-								<n-button text v-if="cur == 'offline'" @click="delClient(item)">
+								<span class="pd-0-15">{{ item.ssid }}</span>
+								<n-tag v-if="item.auto" type="info" size="small">{{ $t('current') }}</n-tag>
+							</div>
+							<div class="flex-hor-ac">
+								<n-switch style="padding-right: 45px" v-model:value="item.auto" size="medium" @update:value="changeNetwork(item)" />
+								<n-button text @click="removeWifi(item)">
 									<n-icon size="18"><DeleteFilled /></n-icon>
 								</n-button>
-							</n-space>
+							</div>
 						</n-space>
 					</n-list-item>
 				</n-space>
@@ -39,12 +40,12 @@
 				<n-space vertical>
 					<n-list-item v-for="(item, index) in wifiList" :key="index" class="bg">
 						<n-space justify="space-between" align="center">
-							<n-space>
+							<div class="flex-hor-ac">
 								<n-icon size="24" :component="MdWifi"></n-icon>
-								<span>{{ item.ssid }}</span>
-							</n-space>
+								<span class="pd-0-15">{{ item.ssid }}</span>
+							</div>
 							<div>
-								<n-switch v-model:value="item.auto" size="medium" @update:value="handleChange(item)" />
+								<n-switch v-model:value="item.auto" size="medium" @update:value="readyJoin(item)" />
 							</div>
 						</n-space>
 					</n-list-item>
@@ -269,7 +270,12 @@ const wifiList = ref([
 		mode: 'Master',
 		bssid: '1A:F2:2C:AC:0C:2E',
 		quality: 64
-	},
+	}
+]);
+const remember = ref(true);
+const password = ref('');
+let curItem;
+const historyList = ref([
 	{
 		encryption: {enabled: true, auth_algs: {}, description: 'mixed WPA/WPA2 PSK (CCMP)', wep: false, auth_suites: ['PSK'], wpa: 3, pair_ciphers: ['CCMP'], group_ciphers: ['CCMP']},
 		quality_max: 70,
@@ -397,22 +403,28 @@ const wifiList = ref([
 		quality: 37
 	}
 ]);
-const remember = ref(true);
-const password = ref('');
-let curItem;
-const historyList = ref([]);
 const {proxy} = getCurrentInstance();
-const {autoConnect} = ref(false);
 const showModal = ref(false);
 const modalTitle = ref('');
 const route = useRoute();
-console.log(route.query.action);
 
 function handleBack() {
-	console.log('2222222');
+	window.history.back();
 }
 
-function handleChange(item) {
+//===================附近网络========================
+function scanlist() {
+	proxy.$hiui.call('relayd', 'scan').then(({result}) => {
+		Object.keys(result).map((key) => {
+			result[key].forEach((item) => {
+				item.device = key;
+			});
+			wifiList.value.push.apply(...result[key]);
+		});
+	});
+}
+
+function readyJoin(item) {
 	modalTitle.value = proxy.$t('input password', [item.ssid]);
 	showModal.value = item.auto;
 	curItem = item;
@@ -434,37 +446,56 @@ function cancelJoin() {
 	showModal.value = false;
 	curItem.auto = false;
 }
+//===================附近网络========================
 
-function removeWifi() {
+function curNetwork() {
+	proxy.$hiui.call('wireless', 'staInfo').then((result) => {
+		console.log(result);
+	});
+}
+
+//===================历史网络========================
+function getHistoryList() {
+	proxy.$hiui.call('relayd', 'scan').then(({result}) => {
+		historyList.value.push.apply(...result);
+	});
+}
+
+function changeNetwork(params) {
+	proxy.$hiui.call('relayd', 'updateHistory', params).then(({result}) => {
+		console.log(result);
+	});
+}
+
+function removeWifi(item) {
 	dialog.warning({
-		title: '警告',
-		content: '你确定？',
+		title: '移除网络',
+		content: '停止自动连接“GAOER-Mac”，再次连接时可能需要重新输入密码。',
 		positiveText: '确定',
-		negativeText: '不确定',
-		onPositiveClick: () => {
-			console.log('1');
-		},
+		negativeText: '取消',
+		autoFocus: false,
+		style: 'border-radius: 8px;--n-icon-color: red;--n-content-margin: 10px 0 16px 28px',
+		negativeButtonProps: {round: true, size: 'medium'},
+		positiveButtonProps: {round: true, size: 'medium', color: '#0052D9'},
 		onNegativeClick: () => {
-			console.log('2');
+			console.log('cancel');
+		},
+		onPositiveClick: () => {
+			proxy.$hiui.call('relayd', 'delHistory', item).then((result) => {
+				console.log(result);
+			});
 		}
 	});
 }
-
-function scanlist() {
-	proxy.$hiui.call('relayd', 'scan').then(({result}) => {
-		Object.keys(result).map((key) => {
-			result[key].forEach((item) => {
-				item.device = key;
-			});
-			wifiList.value.push.apply(...result[key]);
-		});
-	});
-}
+//===================历史网络========================
 
 onBeforeMount(() => {
 	if (route.query.action === 'scan') {
-		proxy.$timer.create('scanlist', scanlist, {repeat: true, immediate: true, time: 5000});
+		proxy.$timer.create('scanlist', scanlist, {repeat: false, immediate: true, time: 30000});
+	} else if (route.query.action === 'check') {
+		proxy.$timer.create('historylist', getHistoryList, {repeat: false, immediate: true, time: 2000});
 	}
+	proxy.$timer.create('curNetwork', curNetwork, {repeat: true, immediate: true, time: 10000});
 });
 </script>
 <style scoped>

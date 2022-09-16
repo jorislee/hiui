@@ -1,13 +1,19 @@
 {
   "en-US": {
     "hello": "hello world!",
-    "input password": "Enter the password for {0}"
+    "input password": "Enter the password for {0}",
+    "enable network": "enable network",
+    "del": "delete"
   },
   "zh-CN": {
     "hello": "你好世界！",
-    "input password": "输入 {0} 的密码"
+    "input password": "输入 {0} 的密码",
+    "enable network": "启用网络",
+    "del": "删除"
   },
   "zh-TW": {
-    "hello": "你好世界！"
+    "hello": "你好世界！",
+    "enable network": "启用网络",
+    "del": "删除"
   }
 }

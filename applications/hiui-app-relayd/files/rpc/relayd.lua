@@ -103,6 +103,7 @@ function M.updateHistory(params)
         end
     end)
     uci:commit("hiui")
+    os.execute("/etc/init.d/network reload")
 end
 
 return M
