@@ -22,8 +22,7 @@ define Package/hiui-rpc-core
   CATEGORY:=Hiui
   TITLE:=Hiui rpc core
   URL:=https://github.com/zhaojh329/hiui
-  DEPENDS:=+liblua +libuci-lua +libiwinfo-lua +libubus-lua +lua-cjson +nginx-ssl \
-  	+@NGINX_HTTP_GZIP_STATIC +@NGINX_HTTP_ACCESS +@NGINX_HTTP_REWRITE +@NGINX_LUA
+  DEPENDS:=+liblua +libuci-lua +libiwinfo-lua +libubus-lua +lua-cjson 
 endef
 
 define Package/hiui-rpc-core/install

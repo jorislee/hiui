@@ -2,29 +2,30 @@ name: build-hiui
 on: workflow_dispatch
 
 jobs:
-  build:
-    name: Build ${{ matrix.arch }} ipk
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        arch:
-          - armvirt-64
-        version: [22.03.0]
+    build:
+        name: Build ${{ matrix.arch }} ipk
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                arch:
+                    - armvirt-64
+                version: [22.03.0]
 
-    steps:
-      - uses: actions/checkout@v3
+        steps:
+            - uses: actions/checkout@v3
 
-      - name: Build
-        uses: innet8/gh-action-sdk@master
-        env:
-          ARCH: ${{ matrix.arch }}-${{ matrix.version }}
-          MODE: all
-          FEEDNAME: hiui
+            - name: Build
+              uses: innet8/gh-action-sdk@master
+              env:
+                  ARCH: ${{ matrix.arch }}-${{ matrix.version }}
+                  MODE: all
+                  FEEDNAME: hiui
+                  V: s
 
-      - name: Save Build Result
-        uses: actions/upload-artifact@v2
-        with:
-          name: ipk
-          path: |
-            hiui*.ipk
+            - name: Save Build Result
+              uses: actions/upload-artifact@v2
+              with:
+                  name: ipk
+                  path: |
+                      hiui*.ipk

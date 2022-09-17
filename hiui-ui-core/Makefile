@@ -14,7 +14,7 @@ PKG_RELEASE:=1
 PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 PKG_LICENSE:=MIT
 
-PKG_BUILD_DEPENDS:=!HIUI_USE_HOST_NODE:node/host
+# PKG_BUILD_DEPENDS:=!HIUI_USE_HOST_NODE:node/host
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_HIUI_USE_HOST_NODE \
@@ -50,11 +50,11 @@ define Package/hiui-ui-core/config
 
   config HIUI_HOME_VIEW
 	string "Customize the home view"
-	default "home"
+	default "network"
 
   config HIUI_USE_HOST_NODE
 	bool "Use existing nodejs installation on the host system"
-	default n
+	default y
 	help
 	  This disables the build dependency on the node package from
 	  the OpenWrt packages feed, allowing for faster development
@@ -80,7 +80,7 @@ endef
 define Package/hiui-ui-core/install
 	$(INSTALL_DIR) $(1)/usr/share/hiui/menu.d $(1)/www
 	$(INSTALL_CONF) ./files/menu.json $(1)/usr/share/hiui/menu.d/base.json
-	$(CP) $(PKG_BUILD_DIR)//htdoc/dist/* $(1)/www
+	$(CP) $(PKG_BUILD_DIR)/htdoc/dist/* $(1)/www
 endef
 
 $(eval $(call BuildPackage,hiui-ui-core))
