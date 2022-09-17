@@ -21,7 +21,7 @@ jobs:
                   ARCH: ${{ matrix.arch }}-${{ matrix.version }}
                   MODE: all
                   FEEDNAME: hiui
-                  PACKAGES: hiui-app-layout
+                  PACKAGES: nginx
                   V: s
 
             - name: Save Build Result
@@ -29,4 +29,4 @@ jobs:
               with:
                   name: ipk
                   path: |
-                      hiui*.ipk
+                      nginx*.ipk
