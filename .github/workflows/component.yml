@@ -22,6 +22,7 @@ jobs:
                   MODE: all
                   FEEDNAME: hiui
                   PACKAGES: nginx
+                  CHECKS: no
                   V: s
 
             - name: Save Build Result
