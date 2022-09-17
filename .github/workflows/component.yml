@@ -1,4 +1,4 @@
-name: build-hiui
+name: component-hiui
 on: workflow_dispatch
 
 jobs:
@@ -15,16 +15,13 @@ jobs:
         steps:
             - uses: actions/checkout@v3
 
-            - run: echo "PKGS=$(ls $GITHUB_WORKSPACE/applications/|tr '\n' ' ')" >> $GITHUB_ENV
-
             - name: Build
               uses: innet8/gh-action-sdk@master
               env:
                   ARCH: ${{ matrix.arch }}-${{ matrix.version }}
                   MODE: all
                   FEEDNAME: hiui
-                  PACKAGES: hiui-ui-core hiui-rpc-core ${{env.PKGS}}
-                  CHECKS: no
+                  PACKAGES: hiui-app-layout
                   V: s
 
             - name: Save Build Result

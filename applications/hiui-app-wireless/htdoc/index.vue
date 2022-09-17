@@ -17,7 +17,6 @@
 </template>
 
 <script setup>
-import {faIR} from 'date-fns/locale';
 import TheWifiSettings from './components/TheWifiSettings.vue';
 /**
  * js 文件下使用这个做类型提示
