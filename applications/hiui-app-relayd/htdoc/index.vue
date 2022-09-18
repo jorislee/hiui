@@ -71,7 +71,8 @@
 <script setup>
 import {DeleteFilled} from '@vicons/antd';
 import {MdWifi} from '@vicons/ionicons4';
-const dialog = useDialog();
+const {proxy} = getCurrentInstance();
+const dialog = proxy.$dialog;
 const wifiList = ref([
 	{
 		encryption: {enabled: true, auth_algs: {}, description: 'mixed WPA/WPA2 PSK (TKIP, CCMP)', wep: false, auth_suites: ['PSK'], wpa: 3, pair_ciphers: ['TKIP', 'CCMP'], group_ciphers: ['TKIP']},
@@ -403,7 +404,6 @@ const historyList = ref([
 		quality: 37
 	}
 ]);
-const {proxy} = getCurrentInstance();
 const showModal = ref(false);
 const modalTitle = ref('');
 const route = useRoute();

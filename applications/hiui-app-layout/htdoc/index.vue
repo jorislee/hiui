@@ -58,9 +58,6 @@
 </template>
 
 <script setup>
-import {h, resolveComponent} from 'vue';
-import {Translate as TranslateIcon} from '@vicons/carbon';
-
 import {
 	PersonCircleOutline as UserIcon,
 	LogOutOutline as LogoutIcon,
@@ -82,9 +79,6 @@ let darkTheme = computed({
 		proxy.$hiui.setTheme(val ? 'dark' : 'light');
 	}
 });
-function renderIcon(icon) {
-	return () => h(resolveComponent('n-icon'), () => h(icon));
-}
 </script>
 
 <style scoped>

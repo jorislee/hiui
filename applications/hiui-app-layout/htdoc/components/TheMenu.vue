@@ -28,6 +28,7 @@
 </template>
 
 <script setup>
+import {getCurrentInstance} from 'vue';
 import {ContentDeliveryNetwork} from '@vicons/carbon';
 import {IconSvg} from './IconSvg.ts';
 import {PersonCircleOutline as UserIcon, LogOutOutline as LogoutIcon, PowerSharp as PowerSharpIcon, ChevronForward as ChevronForwardIcon} from '@vicons/ionicons5';
@@ -36,8 +37,8 @@ defineProps({
 	menus: Object
 });
 
-const router = useRouter();
 const {proxy} = getCurrentInstance();
+
 const titles = {
 	'en-US': 'English',
 	'ja-JP': '日本語',
@@ -88,7 +89,7 @@ const moreOptions = reactive([
 ]);
 const modalSpin = ref(false);
 const selectIndex = ref(-1);
-const dialog = useDialog();
+const dialog = proxy.$dialog;
 let menusicon = ref([]);
 function renderDropdownLabel(option) {
 	option.label = proxy.$t(option.label);
@@ -138,10 +139,10 @@ function handleSelect(key) {
 
 function menuClick(index, path) {
 	selectIndex.value = index;
-	router.push(path);
+	proxy.$router.push(path);
 }
 </script>
-<style scoped lang="less">
+<style scoped>
 .the-menu {
 	display: flex;
 	flex-direction: column;

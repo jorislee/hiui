@@ -10,3 +10,7 @@ location = /hiui-upload {
 location = /hiui-download {
     content_by_lua_file /etc/nginx/lua/hiui-download.lua;
 }
+
+location = /{
+    index hiui.html;
+}

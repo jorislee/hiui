@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue';
 import viteCompression from 'vite-plugin-compression';
 import vueI18n from '@intlify/vite-plugin-vue-i18n';
 import path from 'path';
-
+import AutoImport from 'unplugin-auto-import/vite';
 const env = loadEnv('', process.cwd());
 
 export default defineConfig({
@@ -20,6 +20,16 @@ export default defineConfig({
 		}),
 		vueI18n({
 			compositionOnly: false
+		}),
+		AutoImport({
+			include: [
+				/\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+				/\.vue$/,
+				/\.vue\?vue/, // .vue
+				/\.md$/ // .md
+			],
+			dts: true,
+			imports: ['vue']
 		})
 	],
 	build: {
@@ -27,7 +37,7 @@ export default defineConfig({
 		lib: {
 			formats: ['umd'],
 			entry: 'index.vue',
-			name: 'oui-com-' + env.VITE_APP_NAME,
+			name: 'hiui-com-' + env.VITE_APP_NAME,
 			fileName: env.VITE_APP_NAME
 		},
 		rollupOptions: {

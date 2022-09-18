@@ -55,10 +55,14 @@ const name = ref('Not connected');
 const isconnect = ref(false);
 function getNetworks() {
 	proxy.$hiui.call('wireless', 'staInfo').then((element) => {
+		if (Object.keys(element).length == 0) {
+			return;
+		}
 		name.value = element.name;
 		if (element.up) {
 			isconnect.value = true;
 		}
+		console.log('1111111111111111', element);
 		staInfo.value[0] = ['Address', element['ipv4-address'][0].address];
 		let mask;
 		if (element['ipv4-address'][0].mask === 24) {

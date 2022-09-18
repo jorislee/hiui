@@ -106,7 +106,8 @@ import {AndroidFilled, AppleFilled, DeleteFilled} from '@vicons/antd';
 defineProps({
 	datas: Object
 });
-const dialog = useDialog();
+const {proxy} = getCurrentInstance();
+const dialog = proxy.$dialog;
 const traffic = ref(false);
 const cur = ref('online');
 function handleChange(item) {

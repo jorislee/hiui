@@ -21,7 +21,7 @@ function loadView(name) {
 
 const loginView = import.meta.env.VITE_HIUI_LOGIN_VIEW || 'login';
 const layoutView = import.meta.env.VITE_HIUI_LAYOUT_VIEW || 'layout';
-const homeView = import.meta.env.VITE_HIUI_HOME_VIEW || 'home';
+const homeView = import.meta.env.VITE_HIUI_HOME_VIEW || 'network';
 
 const routes = [];
 
@@ -32,6 +32,7 @@ if (import.meta.env.MODE === 'development') {
 } else {
 	routes.push({
 		path: '/login',
+		name: 'login',
 		component: () => loadView(loginView)
 	});
 
@@ -42,7 +43,8 @@ if (import.meta.env.MODE === 'development') {
 		props: () => ({menus: hiui.menus}),
 		children: [
 			{
-				path: '/home',
+				path: '/network',
+				name: 'network',
 				component: () => loadView(homeView)
 			},
 			{
@@ -58,6 +60,7 @@ function addRoutes(menu) {
 	if (menu.view && menu.path !== '/')
 		router.addRoute('/', {
 			path: menu.path,
+			name: Symbol(),
 			component: () => loadView(menu.view),
 			meta: {menu: menu}
 		});
@@ -82,6 +85,11 @@ router.beforeEach(async (to) => {
 	if (import.meta.env.MODE === 'development') return;
 
 	if (!hiui.menus) {
+		router.getRoutes().forEach((r) => {
+			const name = r.name;
+			if (typeof name === 'string') return;
+			router.removeRoute(name);
+		});
 		const menus = await hiui.loadMenus();
 		menus.forEach((m) => addRoutes(m));
 		return to.fullPath;
@@ -89,7 +97,7 @@ router.beforeEach(async (to) => {
 });
 
 router.afterEach((to) => {
-	if (to.path === '/') router.push('/home');
+	if (to.path === '/') router.push('/network');
 });
 
 export default router;

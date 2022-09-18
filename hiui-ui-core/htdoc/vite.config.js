@@ -6,8 +6,6 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import fs from 'fs';
 import AutoImport from 'unplugin-auto-import/vite';
-import ViteComponents from 'unplugin-vue-components/vite';
-import {VantResolver, NaiveUiResolver} from 'unplugin-vue-components/resolvers';
 
 function transformRoutes() {
 	let config;
@@ -100,31 +98,21 @@ export default defineConfig(({mode}) => {
 					{
 						'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar']
 					}
-				],
-				// eslint报错解决
-				eslintrc: {
-					enabled: false, // Default `false`
-					filepath: './.eslintrc-auto-import.json', // Default `./.eslintrc-auto-import.json`
-					globalsPropValue: true // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
-				}
-			}),
-			ViteComponents({
-				dts: true,
-				resolvers: [VantResolver(), NaiveUiResolver()]
+				]
 			})
 		],
 		server: {
 			proxy: {
 				'/hiui-rpc': {
-					target: 'https://172.16.148.14',
+					target: 'https://127.0.0.1:2333',
 					secure: false
 				},
 				'/hiui-upload': {
-					target: 'https://172.16.148.14',
+					target: 'https://127.0.0.1:2333',
 					secure: false
 				},
 				'/hiui-download': {
-					target: 'https://172.16.148.14',
+					target: 'https://127.0.0.1:2333',
 					secure: false
 				}
 			}

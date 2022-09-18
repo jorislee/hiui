@@ -35,7 +35,7 @@ const themeOverrides = {
 	}
 };
 const {proxy} = getCurrentInstance();
-const wifiConfig = reactive({wifi2g: Object, wifi5g: Object});
+const wifiConfig = reactive({wifi2g: {}, wifi5g: {}});
 const test = {
 	wifi_2g: {
 		band: '2g',
@@ -73,7 +73,7 @@ const test = {
 		cell_density: '0',
 		'.anonymous': false,
 		htmode: 'HE20',
-		interface: [
+		interfaces: [
 			{'.name': 'default_radio0', '.anonymous': false, ssid: 'wr1800k', encryption: 'sae', device: 'radio0', '.index': 1, key: '88888888', mode: 'ap', '.type': 'wifi-iface', network: 'lan'}
 		]
 	},
@@ -114,15 +114,18 @@ const test = {
 		cell_density: '0',
 		'.type': 'wifi-device',
 		htmode: 'HE40',
-		interface: [
+		interfaces: [
 			{'.name': 'default_radio1', '.anonymous': false, ssid: 'OpenWrt-5g', encryption: 'psk2', device: 'radio1', '.index': 3, key: '88888888', mode: 'ap', network: 'lan2', '.type': 'wifi-iface'}
 		]
 	}
 };
 onBeforeMount(() => {
 	proxy.$hiui.call('wireless', 'getConfig').then((result) => {
-		wifiConfig.wifi2g = result.wifi_2g;
-		wifiConfig.wifi5g = result.wifi_5g;
+		console.log(result, '1111111111111111');
+		if (result) {
+			wifiConfig.wifi2g = result.wifi_2g ?? {};
+			wifiConfig.wifi5g = result.wifi_5g ?? {};
+		}
 	});
 	proxy.$timer.create(
 		'test',
