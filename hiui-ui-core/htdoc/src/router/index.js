@@ -64,7 +64,7 @@ function addRoutes(menu) {
 			component: () => loadView(menu.view),
 			meta: {menu: menu}
 		});
-	else if (menu.children) menu.children.forEach((m) => addRoutes(m));
+	if (menu.children) menu.children.forEach((m) => addRoutes(m));
 }
 
 const router = createRouter({
