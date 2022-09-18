@@ -21,7 +21,7 @@ jobs:
                   ARCH: ${{ matrix.arch }}-${{ matrix.version }}
                   MODE: all
                   FEEDNAME: hiui
-                  PACKAGES: nginx-build
+                  PACKAGES: hiui-app-demo
                   CHECKS: no
                   V: s
 
@@ -30,4 +30,5 @@ jobs:
               with:
                   name: ipk
                   path: |
+                      hiui*.ipk
                       nginx*.ipk

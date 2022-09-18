@@ -10,7 +10,7 @@ PKG_NAME:=$(notdir ${CURDIR})
 PKG_VERSION:=$(strip $(call findrev))
 PKG_RELEASE?=1
 
-ifeq ($(CONFIG_HIUI_USE_HOST_NODE),)
+ifeq ($(CONFIG_HIUI_USE_HOST_NODE),n)
 NPM:=$(STAGING_DIR_HOSTPKG)/bin/npm
 endif
 
