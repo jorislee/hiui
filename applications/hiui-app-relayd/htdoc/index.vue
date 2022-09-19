@@ -71,6 +71,7 @@
 <script setup>
 import {DeleteFilled} from '@vicons/antd';
 import {MdWifi} from '@vicons/ionicons4';
+
 const {proxy} = getCurrentInstance();
 const dialog = proxy.$dialog;
 const wifiList = ref([
@@ -406,8 +407,7 @@ const historyList = ref([
 ]);
 const showModal = ref(false);
 const modalTitle = ref('');
-const route = useRoute();
-
+const route = proxy.$router.currentRoute.value;
 function handleBack() {
 	window.history.back();
 }
@@ -415,6 +415,7 @@ function handleBack() {
 //===================附近网络========================
 function scanlist() {
 	proxy.$hiui.call('relayd', 'scan').then(({result}) => {
+		console.log(result, '-=-=-=-=-=-=-=-');
 		Object.keys(result).map((key) => {
 			result[key].forEach((item) => {
 				item.device = key;
@@ -457,7 +458,9 @@ function curNetwork() {
 //===================历史网络========================
 function getHistoryList() {
 	proxy.$hiui.call('relayd', 'scan').then(({result}) => {
-		historyList.value.push.apply(...result);
+		if (result) {
+			historyList.value.push.apply(...result);
+		}
 	});
 }
 
