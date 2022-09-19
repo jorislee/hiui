@@ -2,7 +2,7 @@
 	<n-layout has-sider position="absolute">
 		<n-layout-sider content-style="padding: 14px;" bordered :native-scrollbar="false" collapsed :collapsed-width="124" collapse-mode="width">
 			<div class="logo-name">
-				<router-link to="/">
+				<router-link to="/home">
 					<img src="@/assets/logo.svg" style="width: 64px" />
 				</router-link>
 			</div>

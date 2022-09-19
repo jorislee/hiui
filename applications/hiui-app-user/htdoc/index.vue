@@ -1,20 +1,22 @@
 <template>
-	<n-button type="primary" @click="showAdd">{{ $t('Add user') }}</n-button>
-	<n-modal v-model:show="model" preset="dialog" :title="modify ? $t('Change password') : $t('Add user')" :positive-text="$t('OK')" :negative-text="$t('Cancel')" @positive-click="addUser">
-		<n-form ref="form" :model="formValue" :rules="rules" label-placement="left" label-width="auto">
-			<n-form-item :label="$t('Username')" path="username">
-				<n-input v-model:value="formValue.username" :readonly="modify !== ''" />
-			</n-form-item>
-			<n-form-item :label="$t('Password')" path="password" type="password" show-password-on="mousedown">
-				<n-input v-model:value="formValue.password" />
-			</n-form-item>
-			<n-form-item :label="$t('ACL group')" path="acl">
-				<n-select v-model:value="formValue.acl" :options="aclGroups" />
-			</n-form-item>
-		</n-form>
-	</n-modal>
-	<n-divider></n-divider>
-	<n-data-table :row-key="(r) => r.id" :columns="columns" :data="users" />
+	<div>
+		<n-button type="primary" @click="showAdd">{{ $t('Add user') }}</n-button>
+		<n-modal v-model:show="model" preset="dialog" :title="modify ? $t('Change password') : $t('Add user')" :positive-text="$t('OK')" :negative-text="$t('Cancel')" @positive-click="addUser">
+			<n-form ref="form" :model="formValue" :rules="rules" label-placement="left" label-width="auto">
+				<n-form-item :label="$t('Username')" path="username">
+					<n-input v-model:value="formValue.username" :readonly="modify !== ''" />
+				</n-form-item>
+				<n-form-item :label="$t('Password')" path="password" type="password" show-password-on="mousedown">
+					<n-input v-model:value="formValue.password" />
+				</n-form-item>
+				<n-form-item :label="$t('ACL group')" path="acl">
+					<n-select v-model:value="formValue.acl" :options="aclGroups" />
+				</n-form-item>
+			</n-form>
+		</n-modal>
+		<n-divider></n-divider>
+		<n-data-table :row-key="(r) => r.id" :columns="columns" :data="users" />
+	</div>
 </template>
 
 <script>
@@ -67,6 +69,7 @@ export default {
 	methods: {
 		getUsers() {
 			this.$hiui.call('user', 'get_users').then(({users}) => {
+				console.log(users);
 				this.users = users;
 			});
 		},

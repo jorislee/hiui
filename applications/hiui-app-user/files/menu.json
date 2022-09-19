@@ -1,12 +1,12 @@
 {
-    "/settings/user": {
-        "title": "user",
-        "view": "user",
-        "index": 80,
-        "locales": {
-            "en-US": "User",
-            "zh-CN": "用户",
-            "zh-TW": "用戶"
-        }
-    }
+	"/user": {
+		"title": "user",
+		"view": "user",
+		"index": 80,
+		"locales": {
+			"en-US": "User",
+			"zh-CN": "用户",
+			"zh-TW": "用戶"
+		}
+	}
 }

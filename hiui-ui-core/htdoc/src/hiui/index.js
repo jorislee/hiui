@@ -20,7 +20,8 @@ class Hiui {
 		this.state = reactive({
 			locale: '',
 			theme: '',
-			hostname: ''
+			hostname: '',
+			username: ''
 		});
 	}
 
@@ -46,6 +47,7 @@ class Hiui {
 		const {nonce} = await this.rpc('challenge', {username});
 		const hash1 = md5(`${username}:${password}`);
 		const hash2 = md5(`${hash1}:${nonce}`);
+		this.state.username = username;
 		return this.rpc('login', {username, password: hash2});
 	}
 

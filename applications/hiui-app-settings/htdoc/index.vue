@@ -3,7 +3,7 @@
 		<n-layout>
 			<n-space align="center">
 				<div class="circle"></div>
-				<div class="font-24-size">{{ $t('Network Status') }}</div>
+				<div class="font-24-size">{{ $t('Settings') }}</div>
 			</n-space>
 		</n-layout>
 		<n-divider />
@@ -28,7 +28,7 @@
 							</template>
 						</n-input>
 					</n-form-item>
-					<n-button type="info" size="medium" round>{{ $t('save') }}</n-button>
+					<n-button type="info" size="medium" round @click="changePassword" :disabled="!verifyPd.validator()">{{ $t('save') }}</n-button>
 				</n-space>
 				<div class="pd-30"></div>
 				<n-space justify="center" style="width: 100%" class="pd-30">
@@ -61,34 +61,56 @@
 </template>
 
 <script setup>
+const {proxy} = getCurrentInstance();
+const dialog = proxy.$dialog;
+let user;
 const oldpd = ref('');
 const newpd = ref('');
 const newpd1 = ref('');
-const message = '它不在 Form 里面';
+const modalSpin = ref(false);
 const verifyPd = {
 	trigger: ['input', 'blur'],
 	validator() {
 		if (newpd.value !== newpd1.value) {
-			return new Error(message);
+			return false;
 		}
 	}
 };
-function doReset() {
-	// this.$dialog.warning({
-	// 	title: this.$t('Reset to defaults'),
-	// 	content: this.$t('ResettConfirm') + '?',
-	// 	positiveText: this.$t('OK'),
-	// 	onPositiveClick: () => {
-	// 		this.$hiui.ubus('system', 'reset').then(() => {
-	// 			this.modalSpin = true;
-	// 			this.$hiui.reconnect().then(() => {
-	// 				this.modalSpin = false;
-	// 				this.$router.push('/login');
-	// 			});
-	// 		});
-	// 	}
-	// });
+
+function changePassword() {
+	proxy.$hiui.call('user', 'change_password', {
+		oldpassword: oldpd.value,
+		password: newpd1.value,
+		id: user.id
+	});
 }
+
+function doReset() {
+	dialog.warning({
+		title: proxy.$t('Reset to defaults'),
+		content: proxy.$t('ResettConfirm') + '?',
+		positiveText: proxy.$t('comfirm reset'),
+		onPositiveClick: () => {
+			proxy.$hiui.ubus('system', 'reset').then(() => {
+				modalSpin.value = true;
+				proxy.$hiui.reconnect().then(() => {
+					modalSpin.value = false;
+					proxy.$router.push('/login');
+				});
+			});
+		}
+	});
+}
+onBeforeMount(() => {
+	proxy.$hiui.call('user', 'get_users').then(({users}) => {
+		console.log(users, proxy);
+		users.forEach((element) => {
+			if (element.username === proxy.$hiui.state.username) {
+				user = element;
+			}
+		});
+	});
+});
 </script>
 
 <style scoped>

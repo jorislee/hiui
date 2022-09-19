@@ -21,7 +21,7 @@ function loadView(name) {
 
 const loginView = import.meta.env.VITE_HIUI_LOGIN_VIEW || 'login';
 const layoutView = import.meta.env.VITE_HIUI_LAYOUT_VIEW || 'layout';
-const homeView = import.meta.env.VITE_HIUI_HOME_VIEW || 'network';
+const homeView = import.meta.env.VITE_HIUI_HOME_VIEW || 'home';
 
 const routes = [];
 

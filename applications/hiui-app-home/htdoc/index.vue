@@ -1,37 +1,39 @@
 <template>
-	<n-space justify="space-around">
-		<dashboard :label="$t('CPU Usage')" :percentage="cpuUsage['cpu']" :color="cpuUsageColor">
-			<div v-for="name in Object.keys(cpuUsage).sort()" :key="name">{{ name + ': ' + cpuUsage[name] + '%' }}</div>
-		</dashboard>
-		<dashboard :label="$t('Memory Usage')" :percentage="memUsage" :color="memUsageColor">
-			<div v-for="item in memInfo" :key="item[0]">{{ $t(item[0]) + ': ' + bytesToHuman(item[1]) }}</div>
-		</dashboard>
-		<dashboard v-if="sysinfo && sysinfo.root" :label="$t('Storage Usage')" :percentage="storageUsage" :color="storageUsageColor">
-			<div>{{ $t('Total') + ': ' + bytesToHuman(sysinfo.root.total * 1024) }}</div>
-			<div>{{ $t('Used') + ': ' + bytesToHuman(sysinfo.root.used * 1024) }}</div>
-		</dashboard>
-	</n-space>
-	<n-divider />
-	<n-space>
-		<n-descriptions label-placement="left" :title="$t('System')" bordered :column="1">
-			<n-descriptions-item v-for="item in renderSysinfo" :key="item[0]">
-				<template #label>{{ $t(item[0]) }}</template>
-				{{ item[1] }}
-			</n-descriptions-item>
-		</n-descriptions>
-		<n-descriptions v-for="net in wanNetworks" :key="net.interface" label-placement="left" :title="'IPv4 ' + $t('Upstream')" bordered :column="1">
-			<n-descriptions-item v-for="item in renderNetworkInfo(net)" :key="item[0]">
-				<template #label>{{ $t(item[0]) }}</template>
-				{{ item[1] }}
-			</n-descriptions-item>
-		</n-descriptions>
-		<n-descriptions v-for="net in wan6Networks" :key="net.interface" label-placement="left" :title="'IPv6 ' + $t('Upstream')" bordered :column="1">
-			<n-descriptions-item v-for="item in renderNetworkInfo(net, true)" :key="item[0]">
-				<template #label>{{ $t(item[0]) }}</template>
-				{{ item[1] }}
-			</n-descriptions-item>
-		</n-descriptions>
-	</n-space>
+	<div style="width: 100%">
+		<n-space justify="space-around">
+			<dashboard :label="$t('CPU Usage')" :percentage="cpuUsage['cpu']" :color="cpuUsageColor">
+				<div v-for="name in Object.keys(cpuUsage).sort()" :key="name">{{ name + ': ' + cpuUsage[name] + '%' }}</div>
+			</dashboard>
+			<dashboard :label="$t('Memory Usage')" :percentage="memUsage" :color="memUsageColor">
+				<div v-for="item in memInfo" :key="item[0]">{{ $t(item[0]) + ': ' + bytesToHuman(item[1]) }}</div>
+			</dashboard>
+			<dashboard v-if="sysinfo && sysinfo.root" :label="$t('Storage Usage')" :percentage="storageUsage" :color="storageUsageColor">
+				<div>{{ $t('Total') + ': ' + bytesToHuman(sysinfo.root.total * 1024) }}</div>
+				<div>{{ $t('Used') + ': ' + bytesToHuman(sysinfo.root.used * 1024) }}</div>
+			</dashboard>
+		</n-space>
+		<n-divider />
+		<n-space>
+			<n-descriptions label-placement="left" :title="$t('System')" bordered :column="1">
+				<n-descriptions-item v-for="item in renderSysinfo" :key="item[0]">
+					<template #label>{{ $t(item[0]) }}</template>
+					{{ item[1] }}
+				</n-descriptions-item>
+			</n-descriptions>
+			<n-descriptions v-for="net in wanNetworks" :key="net.interface" label-placement="left" :title="'IPv4 ' + $t('Upstream')" bordered :column="1">
+				<n-descriptions-item v-for="item in renderNetworkInfo(net)" :key="item[0]">
+					<template #label>{{ $t(item[0]) }}</template>
+					{{ item[1] }}
+				</n-descriptions-item>
+			</n-descriptions>
+			<n-descriptions v-for="net in wan6Networks" :key="net.interface" label-placement="left" :title="'IPv6 ' + $t('Upstream')" bordered :column="1">
+				<n-descriptions-item v-for="item in renderNetworkInfo(net, true)" :key="item[0]">
+					<template #label>{{ $t(item[0]) }}</template>
+					{{ item[1] }}
+				</n-descriptions-item>
+			</n-descriptions>
+		</n-space>
+	</div>
 </template>
 
 <script>
