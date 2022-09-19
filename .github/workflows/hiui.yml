@@ -9,8 +9,8 @@ jobs:
             fail-fast: false
             matrix:
                 arch:
-                    - armvirt-64
-                version: [22.03.0]
+                    - i386_pentium4
+                version: [21.02.3]
 
         steps:
             - uses: actions/checkout@v3
