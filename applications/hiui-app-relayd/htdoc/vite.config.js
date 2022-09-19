@@ -41,7 +41,7 @@ export default defineConfig({
 			fileName: env.VITE_APP_NAME
 		},
 		rollupOptions: {
-			external: ['vue'],
+			external: ['vue', 'vue-touer'],
 			output: {
 				globals: {
 					vue: 'Vue'

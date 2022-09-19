@@ -4,6 +4,7 @@ import viteCompression from 'vite-plugin-compression';
 import vueI18n from '@intlify/vite-plugin-vue-i18n';
 import path from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
+
 const env = loadEnv('', process.cwd());
 
 export default defineConfig({
