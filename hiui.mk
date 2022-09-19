@@ -38,14 +38,23 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/www/views
+	$(INSTALL_DIR) $(1)/www/views $(1)/etc/init.d $(1)/etc/uci-defaults $(1)/usr/bin
 	$(CP) $(PKG_BUILD_DIR)//htdoc/dist/* $(1)/www/views
 	if [ -f ./files/menu.json ]; then \
 		$(INSTALL_DIR) $(1)/usr/share/hiui/menu.d; \
 		$(INSTALL_CONF) ./files/menu.json $(1)/usr/share/hiui/menu.d/$(APP_NAME).json; \
 	fi
 	if [ -d ./files/rpc ]; then \
-		$(CP) ./files/rpc $(1)/usr/share/hiui/rpc; \
+		$(CP) ./files/rpc/* $(1)/usr/share/hiui/rpc; \
+	fi
+	if [ -d ./files/init.d ]; then \
+		$(INSTALL_BIN) ./files/init.d/* $(1)/etc/init.d/; \
+	fi
+	if [ -d ./files/uci-defaults ]; then \
+		$(INSTALL_BIN) ./files/uci-defaults/* $(1)/etc/uci-defaults/; \
+	fi
+	if [ -d ./files/bin ]; then \
+		$(INSTALL_BIN) ./files/bin/* $(1)/usr/bin/; \
 	fi
 endef
 

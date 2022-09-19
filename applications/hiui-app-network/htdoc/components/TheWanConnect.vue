@@ -55,7 +55,7 @@ const name = ref('Not connected');
 const isconnect = ref(false);
 function getNetworks() {
 	proxy.$hiui.call('wireless', 'staInfo').then((element) => {
-		if (Object.keys(element).length == 0) {
+		if (Object.keys(element).length === 0) {
 			return;
 		}
 		name.value = element.name;
