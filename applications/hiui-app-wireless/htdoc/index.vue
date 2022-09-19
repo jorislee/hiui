@@ -115,7 +115,7 @@ const test = {
 		'.type': 'wifi-device',
 		htmode: 'HE40',
 		interfaces: [
-			{'.name': 'default_radio1', '.anonymous': false, ssid: 'OpenWrt-5g', encryption: 'psk2', device: 'radio1', '.index': 3, key: '88888888', mode: 'ap', network: 'lan2', '.type': 'wifi-iface'}
+			{'.name': 'default_radio1', '.anonymous': false, ssid: 'OpenWrt-5g', encryption: 'psk2', device: 'radio1', '.index': 3, key: '88888888', mode: 'ap', network: 'lan', '.type': 'wifi-iface'}
 		]
 	}
 };
