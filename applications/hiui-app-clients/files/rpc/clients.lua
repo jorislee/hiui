@@ -25,27 +25,29 @@ end
 
 function M.getClients()
     if not fs.access('/tmp/tertf/tertfinfo') then
-        local f, err = io.open('/tmp/tertf/', 'r')
-        if not f then return nil, err end
-        local line = f:read("*l")
-        local clients = {}
-        while line do
-            local item = {}
-            local tmp = split(line, '%s', false)
-            item.mac = tmp[1]
-            item.ip = tmp[#item + 1]
-            item.name = tmp[#item + 1]
-            item.iface = tmp[#item + 1]
-            item.online = tmp[#item + 1]
-            item.alive = tmp[#item + 1]
-            item.blocked = tmp[#item + 1]
-            item.up = tmp[#item + 1]
-            item.down = tmp[#item + 1]
-            item.total = tmp[#item + 1]
-            item.item.table.insert(clients, item)
-            line = f:read("*l")
+        if fs.access('/etc/clients') then
+            local clients = {}
+            for line in io.lines("/etc/clients", "r") do
+                local item = {}
+                local tmp = split(line, '%s', false)
+                item.mac = tmp[1]
+                item.ip = tmp[#item + 1]
+                item.name = tmp[#item + 1]
+                item.iface = tmp[#item + 1]
+                item.online = tmp[#item + 1]
+                item.alive = tmp[#item + 1]
+                item.blocked = tmp[#item + 1]
+                item.up = tmp[#item + 1]
+                item.down = tmp[#item + 1]
+                item.total = tmp[#item + 1]
+                item.item.table.insert(clients, item)
+            end
+            return {clients = clients}
+
+        else
+            return {code = 404}
         end
-        return {clients = clients}
+
     else
         return glinetApi({}, "http://127.0.0.1/cgi-bin/api/client/list")
     end
