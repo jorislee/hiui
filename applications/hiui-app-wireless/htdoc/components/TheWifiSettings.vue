@@ -170,12 +170,20 @@ function dealWith(params) {
 		} else {
 			device.hwmode = params.hwmode;
 		}
-		params.encryptions?.forEach((element) => {
-			let tmp = {};
-			tmp.label = element.toString();
-			tmp.value = element;
-			encryptions.push(tmp);
-		});
+		// params.encryptions?.forEach((element) => {
+		// 	let tmp = {};
+		// 	tmp.label = element.toString();
+		// 	tmp.value = element;
+		// 	encryptions.push(tmp);
+		// });
+		for (const encr in params.encryptions) {
+			if (Object.hasOwnProperty.call(params, encr)) {
+				let tmp = {};
+				tmp.label = encr;
+				tmp.value = params[encr];
+				encryptions.push(tmp);
+			}
+		}
 		params.channels.forEach((element) => {
 			let tmp = {};
 			tmp.label = element.toString();
