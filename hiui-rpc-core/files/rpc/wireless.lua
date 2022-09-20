@@ -3,6 +3,8 @@ local M = {}
 local iwinfo = require 'iwinfo'
 local ubus = require 'ubus'
 local uci = require 'uci'
+local json = require 'cjson'
+local fs = require 'hiui.fs'
 
 function M.status()
     local devs = {}
@@ -123,7 +125,31 @@ function M.staInfo()
     return status
 end
 
+local function glinetApi(item, url)
+    local http = require("socket.http")
+    local _f, err = io.popen("basename /tmp/gl_token* |awk -F'_' '{print $3}'")
+    if not _f then return nil, err end
+    local token = _f:read()
+    _f:close()
+    local request_body = {}
+    local response_body = {}
+    http.request {
+        url = url,
+        method = "POST",
+        headers = {["Authorization"] = token},
+        source = ltn12.source.string(request_body),
+        sink = ltn12.sink.table(response_body)
+    }
+    local result = json.decode(table.concat(response_body))
+    return {result = result}
+end
+
+local function glinetConfig() end
+
 function M.getConfig()
+    if fs.access('/www/cgi-bin/api') then
+        return glinetApi({}, "http://127.0.0.1/cgi-bin/api/ap/config")
+    end
     local c = uci.cursor()
     local result = {}
     c:foreach("wireless", "wifi-device", function(s)
@@ -132,15 +158,14 @@ function M.getConfig()
         local freqlist = iwinfo[driver_type]["freqlist"](s[".name"])
         local hwmodelist = iwinfo[driver_type]["hwmodelist"](s[".name"])
         local txpwrlist = iwinfo[driver_type]["txpwrlist"](s[".name"])
-        local encryptions = iwinfo[driver_type]["encryption"](s[".name"])
         s.htmodelist = {}
         for key, value in pairs(htmodelist) do
             if value then table.insert(s.htmodelist, key) end
         end
-        s.freqlist = {}
+        s.channels = {}
         for key, value in pairs(freqlist) do
             if not value.restricted then
-                table.insert(s.freqlist, value.channel)
+                table.insert(s.channels, value.channel)
             end
         end
         s.hwmodelist = {}
@@ -150,9 +175,21 @@ function M.getConfig()
         s.interfaces = {}
         c:foreach("wireless", "wifi-iface", function(res)
             if res.device == s[".name"] then
+                if res.hidden and res.hidden == "1" then
+                    res.hidden = true
+                else
+                    res.hidden = false
+                end
+                if s.disabled and s.disabled == "1" then
+                    s.enable = false
+                else
+                    s.enable = true
+                end
                 table.insert(s.interfaces, res)
             end
         end)
+        s.txpwrlist = txpwrlist
+
         if string.lower(s.band) == "2g" then
             result["wifi_2g"] = s
         elseif string.lower(s.band) == "5g" then
@@ -160,6 +197,31 @@ function M.getConfig()
         end
     end)
     return result
+end
+
+function M.updateConfig(item)
+    if fs.access('/www/cgi-bin/api') then
+        return glinetApi(item, "http://127.0.0.1/cgi-bin/api/ap/config")
+    end
+    local c = uci.cursor()
+    if item.ssid then c:set('wireless', item.id, 'ssid', item.ssid) end
+    if item.encrypt then
+        c:set('wireless', item.id, 'encryption', item.encrypt)
+    end
+    if item.key then c:set('wireless', item.id, 'key', item.key) end
+    if item.hidden then c:set('wireless', item.id, 'hidden', item.hidden) end
+    if item.channel then
+        c:set('wireless', item.device, 'channel', item.channel)
+    end
+    if item.htmode then c:set('wireless', item.device, 'htmode', item.htmode) end
+
+    if item.disabled then
+        c:set('wireless', item.device, 'disabled', item.disabled)
+        c:set('wireless', item.id, 'disabled', item.disabled)
+    end
+    c:commit('wireless')
+    os.execute('wifi reload')
+    return {code = 0}
 end
 
 return M

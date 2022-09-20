@@ -75,6 +75,10 @@
 	--n-color: rgba(73, 87, 112, 0.15) !important;
 }
 
+.font-18 {
+	font-size: 18px;
+}
+
 .font-24-size {
 	font-size: 24px;
 }

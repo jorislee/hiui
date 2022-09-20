@@ -100,7 +100,4 @@ function pushRelayd(params) {
 .pd-30 {
 	padding: 18px 30px 30px 30px;
 }
-.font-18 {
-	font-size: 18px;
-}
 </style>

@@ -3,52 +3,85 @@
 		<n-layout>
 			<n-space align="center">
 				<div class="circle"></div>
-				<div class="font-24-size">{{ $t('Network Status') }}</div>
+				<div class="font-24-size">{{ $t('Upgrade') }}</div>
 			</n-space>
 		</n-layout>
 		<n-divider />
 		<div class="flex-hor bg-color-dark bg-border-dark">
 			<n-list class="width-fill pd-30">
 				<template #header>
-					<div class="font-18">{{ $t('广域网信息-WAN') }}</div>
+					<div class="font-18">{{ $t('线上信息') }}</div>
 				</template>
-				<n-list-item v-for="i in 2" :key="i">
-					<template #prefix>
-						<n-button>{{ i }}</n-button>
-					</template>
+				<n-list-item>
+					<n-thing :title="$t('当前版本')" :title-extra="remoteFrimwareInfo.version" />
+				</n-list-item>
+				<n-list-item>
+					<n-thing :title="$t('编译时间')" :title-extra="remoteFrimwareInfo.create_time" />
+				</n-list-item>
+				<n-list-item>
 					<template #suffix>
-						<n-button>Suffix</n-button>
+						<n-button text ghost>{{ $t('立即下载') }}</n-button>
 					</template>
-					<n-thing title="Thing" title-extra="extra" />
+					<n-thing :title="$t('最新版本')" :title-extra="remoteFrimwareInfo.version" />
 				</n-list-item>
 			</n-list>
 			<n-divider vertical />
 
 			<n-list class="width-fill pd-30">
 				<template #header>
-					<div class="font-18">{{ $t('局域网信息-LAN') }}</div>
+					<div class="font-18">{{ $t('软件信息') }}</div>
 				</template>
-				<n-list-item v-for="i in 4" :key="i">
-					<template #prefix>
-						<n-button>{{ i }}</n-button>
-					</template>
+				<n-list-item>
+					<n-thing :title="$t('当前版本')" :title-extra="remoteWebUiInfo.version" />
+				</n-list-item>
+				<n-list-item>
+					<n-thing :title="$t('CPU 架构')" :title-extra="remoteWebUiInfo.arch" />
+				</n-list-item>
+				<n-list-item>
 					<template #suffix>
-						<n-button>Suffix</n-button>
+						<n-button text ghost>{{ $t('立即更新') }}</n-button>
 					</template>
-					<n-thing title="Thing" title-extra="extra" />
+					<n-thing :title="$t('远程版本')" :title-extra="remoteWebUiInfo.version" />
 				</n-list-item>
 			</n-list>
 		</div>
 		<div class="bg-border-dark pd-30">
-			<h2>{{ $t('local upload') }}</h2>
-			<n-upload ref="upload" directory-dnd action="/hiui-upload" :data="{path: '/tmp/firmware.bin'}" :on-finish="onUploadFinish">
-				<n-upload-dragger>
-					<div>
-						<n-icon size="48"><arrow-up-circle-icon /></n-icon>
-					</div>
-					<n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
-				</n-upload-dragger>
-			</n-upload>
+			<div v-if="downloading > 0 && downloading < 100">
+				<n-progress type="line" :percentage="downloading" :indicator-placement="'inside'" processing />
+			</div>
+			<div v-else>
+				<h2>{{ $t('local upload') }}</h2>
+				<n-upload ref="upload" directory-dnd action="/hiui-upload" :data="{path: '/tmp/firmware.bin'}" :on-finish="onUploadFinish">
+					<n-upload-dragger>
+						<div>
+							<n-icon size="48"><arrow-up-circle-icon /></n-icon>
+						</div>
+						<n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
+					</n-upload-dragger>
+				</n-upload>
+			</div>
+		</div>
+		<div v-if="downloading === 100" class="bg-border-dark pd-30">
+			<n-list class="width-fill">
+				<template #header>
+					<div class="font-18">{{ $t('固件验证') }}</div>
+				</template>
+				<n-list-item>
+					<n-thing :title="$t('版本')" :title-extra="remoteFrimwareInfo.version" />
+				</n-list-item>
+				<n-list-item>
+					<n-thing :title="$t('MD5')" :title-extra="md5" />
+				</n-list-item>
+				<n-list-item>
+					<n-thing :title="$t('验证结果')" :title-extra="verification" />
+				</n-list-item>
+				<n-list-item>
+					<template #suffix>
+						<n-switch v-model:value="keepConfig" size="medium" />
+					</template>
+					<n-thing :title="$t('保存配置')" />
+				</n-list-item>
+			</n-list>
 		</div>
 	</n-space>
 
@@ -63,68 +96,72 @@
 	<n-modal v-model:show="modalSpin" :close-on-esc="false" :mask-closable="false">
 		<n-spin size="large">
 			<template #description>
-				<n-el style="color: var(--primary-color)">{{ $t('Upgrading') }}...</n-el>
+				<div style="color: var(--primary-color)">{{ $t('Upgrading') }}...</div>
 			</template>
 		</n-spin>
 	</n-modal>
 </template>
 
-<script>
+<script setup>
 import {ArrowUpCircle as ArrowUpCircleIcon} from '@vicons/ionicons5';
-
-export default {
-	components: {
-		ArrowUpCircleIcon
-	},
-	data() {
-		return {
-			modalConfirm: false,
-			modalSpin: false,
-			size: 0,
-			md5: '',
-			keepConfig: true
-		};
-	},
-	methods: {
-		bytesToHuman(bytes) {
-			if (isNaN(bytes)) return '';
-
-			if (bytes < 0) return '';
-
-			let units = '';
-
-			const k = Math.floor(Math.log2(bytes) / 10);
-			if (k > 0) units = 'KMGTPEZY'[k - 1] + 'iB';
-
-			return (bytes / Math.pow(1024, k)).toFixed(2) + ' ' + units;
-		},
-		onUploadFinish({event}) {
-			const response = JSON.parse(event.target.response);
-			this.size = response.size;
-			this.md5 = response.md5;
-			this.$refs.upload.clear();
-
-			this.$hiui.ubus('system', 'validate_firmware_image', {path: '/tmp/firmware.bin'}).then(({valid}) => {
-				if (!valid) {
-					this.$dialog.error({
-						content: this.$t('Firmware verification failed. Please upload the firmware again')
-					});
-				} else {
-					this.keepConfig = true;
-					this.modalConfirm = true;
-				}
-			});
-		},
-		doUpgrade() {
-			this.$hiui.call('system', 'sysupgrade', {keep: this.keepConfig}).then(() => {
-				this.modalSpin = true;
-				this.$hiui.reconnect().then(() => {
-					this.$router.push('/login');
-				});
-			});
-		}
+const {proxy} = getCurrentInstance();
+const modalConfirm = ref(false);
+const modalSpin = ref(false);
+const size = ref(0);
+const md5 = ref('');
+const keepConfig = ref(true);
+const remoteFrimwareInfo = reactive({});
+const remoteWebUiInfo = reactive({});
+const verification = ref(false);
+const downloading = ref(99);
+function bytesToHuman(bytes) {
+	if (isNaN(bytes)) {
+		return '';
 	}
-};
+
+	if (bytes < 0) {
+		return '';
+	}
+
+	let units = '';
+
+	const k = Math.floor(Math.log2(bytes) / 10);
+	if (k > 0) units = 'KMGTPEZY'[k - 1] + 'iB';
+
+	return (bytes / Math.pow(1024, k)).toFixed(2) + ' ' + units;
+}
+function onUploadFinish({event}) {
+	const response = JSON.parse(event.target.response);
+	size.value = response.size;
+	md5.value = response.md5;
+	proxy.$refs.upload.clear();
+
+	proxy.$hiui.ubus('system', 'validate_firmware_image', {path: '/tmp/firmware.bin'}).then(({valid}) => {
+		verification.value = valid;
+		if (!valid) {
+			proxy.$dialog.error({
+				content: proxy.$t('Firmware verification failed. Please upload the firmware again')
+			});
+		} else {
+			keepConfig.value = true;
+			modalConfirm.value = true;
+		}
+	});
+}
+function doUpgrade() {
+	proxy.$hiui.call('system', 'sysupgrade', {keep: keepConfig.value}).then(() => {
+		modalSpin.value = true;
+		proxy.$hiui.reconnect().then(() => {
+			proxy.$router.push('/login');
+		});
+	});
+}
+
+onBeforeMount(() => {
+	proxy.$hiui.call('upgrade', 'checkFirmwareVersion').then((result) => {
+		console.log(result);
+	});
+});
 </script>
 
 <i18n src="./locale.json" />

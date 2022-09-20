@@ -465,6 +465,12 @@ function getHistoryList() {
 }
 
 function changeNetwork(params) {
+	historyList.value.forEach((item) => {
+		console.log(params);
+		if (item.bssid !== params.bssid) {
+			item.auto = false;
+		}
+	});
 	proxy.$hiui.call('relayd', 'updateHistory', params).then(({result}) => {
 		console.log(result);
 	});

@@ -90,7 +90,6 @@ const moreOptions = reactive([
 const modalSpin = ref(false);
 const selectIndex = ref(-1);
 const dialog = proxy.$dialog;
-let menusicon = ref([]);
 function renderDropdownLabel(option) {
 	option.label = proxy.$t(option.label);
 	if ('children' in option && option.children.length === 0) {

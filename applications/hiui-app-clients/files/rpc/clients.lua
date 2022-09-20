@@ -2,6 +2,26 @@ local M = {}
 local split = require "hiui.split"
 local fs = require 'hiui.fs'
 local json = require 'cjson'
+local uci = require 'uci'
+
+local function glinetApi(item, url)
+    local http = require("socket.http")
+    local _f, err = io.popen("basename /tmp/gl_token* |awk -F'_' '{print $3}'")
+    if not _f then return nil, err end
+    local token = _f:read()
+    _f:close()
+    local request_body = item
+    local response_body = {}
+    http.request {
+        url = url,
+        method = "POST",
+        headers = {["Authorization"] = token},
+        source = ltn12.source.string(request_body),
+        sink = ltn12.sink.table(response_body)
+    }
+    local result = json.decode(table.concat(response_body))
+    return {result = result}
+end
 
 function M.getClients()
     if not fs.access('/tmp/tertf/tertfinfo') then
@@ -27,23 +47,7 @@ function M.getClients()
         end
         return {clients = clients}
     else
-        local socket = require("socket")
-        local _f, err = io.popen(
-                            "basename /tmp/gl_token* |awk -F'_' '{print $3}'")
-        if not _f then return nil, err end
-        local token = _f:read()
-        _f:close()
-        local request_body = {}
-        local response_body = {}
-        socket.http.request {
-            url = "http://127.0.0.1/cgi-bin/api/client/list",
-            method = "GET",
-            headers = {["Authorization"] = token},
-            source = ltn12.source.string(request_body),
-            sink = ltn12.sink.table(response_body)
-        }
-        local result = json.decode(table.concat(response_body))
-        return {result = result}
+        return glinetApi({}, "http://127.0.0.1/cgi-bin/api/client/list")
     end
 
 end
@@ -53,23 +57,8 @@ function M.delClient(item)
         os.execute("sed -i '/%s/d' /etc/clients" % item.mac)
         return {code = 0}
     else
-        local socket = require("socket")
-        local _f, err = io.popen(
-                            "basename /tmp/gl_token* |awk -F'_' '{print $3}'")
-        if not _f then return nil, err end
-        local token = _f:read()
-        _f:close()
-        local request_body = item
-        local response_body = {}
-        socket.http.request {
-            url = "http://127.0.0.1/cgi-bin/api/client/offline_client/del",
-            method = "POST",
-            headers = {["Authorization"] = token},
-            source = ltn12.source.string(request_body),
-            sink = ltn12.sink.table(response_body)
-        }
-        local result = json.decode(table.concat(response_body))
-        return {result = result}
+        return glinetApi(item,
+                         "http://127.0.0.1/cgi-bin/api/client/offline_client/del")
     end
 end
 
@@ -84,16 +73,31 @@ function M.delBlocked(item)
 end
 
 function M.setQos(item)
-    os.execute("ehco %s" % item.mac)
+    if fs.access('/www/cgi-bin/api') then
+        return glinetApi(item, "/cgi-bin/api/client/qos/set")
+    end
     return {code = 0}
 end
 
-function M.traffic(params)
-    if params.action == 'start' then
-        print('start')
-    elseif params.action == 'stop' then
-        print('stop')
+function M.setTraffic(params)
+    local c = uci.cursor()
+    if fs.access('/www/cgi-bin/api') then
+        c:set('hiui', 'global', 'traffic', params.enable)
+        c:commit('hiui')
+        return glinetApi(params, "/cgi-bin/api/client/qos/set")
     end
+end
+
+function M.getTraffic(params)
+    local c = uci.cursor()
+    local result = {}
+    local tmp = c:get('hiui', 'global', 'traffic')
+    if tmp then
+        result.enable = tmp
+    else
+        result.enable = false
+    end
+    return result
 end
 
 return M
