@@ -22,7 +22,8 @@ jobs:
                   ARCH: ${{ matrix.arch }}
                   MODE: glinet
                   FEEDNAME: hiui
-                  PACKAGES: hiui-ui-core hiui-rpc-core ${{env.PKGS}} nginx-build
+                  PACKAGES: hiui-rpc-core nginx-build nginx-util
+                  DEPENDENCES: uwsgi uwsgi-luci-support
                   CHECKS: no
                   V: s
 
@@ -33,3 +34,4 @@ jobs:
                   path: |
                       hiui*.ipk
                       nginx*.ipk
+                      uwsgi*.ipk
