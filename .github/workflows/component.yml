@@ -21,7 +21,7 @@ jobs:
                   ARCH: ${{ matrix.arch }}-${{ matrix.version }}
                   MODE: all
                   FEEDNAME: hiui
-                  PACKAGES: nginx-build nginx-util
+                  PACKAGES: nginx-19.07
                   CHECKS: no
                   V: s
 
