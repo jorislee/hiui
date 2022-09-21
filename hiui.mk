@@ -23,7 +23,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=Hiui
   SUBMENU:=Applications
   TITLE:=$(APP_TITLE)
-  DEPENDS:=+hiui-ui-core $(APP_DEPENDS)
+  DEPENDS:=$(APP_DEPENDS)
   PKGARCH:=all
 endef
 
