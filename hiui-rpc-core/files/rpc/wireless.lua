@@ -108,7 +108,7 @@ function M.stations(param)
     return {stations = stations}
 end
 
-function M.staInfo()
+function M.relayInfo()
     local c = uci.cursor()
     local interface = c:get("wireless", "sta", "network")
     local status = {}
@@ -132,22 +132,20 @@ local function encryptions(hwtype)
     }
     local hostapd = {}
     local wpasupplicant = {}
-    local result={}
-    if fs.access("/usr/sbin/hostapd") then
-        result['psk']='WPA-PSK'
-        result['psk2']='WPA2-PSK'
-        result['psk-mixed']='WPA-PSK/WPA2-PSK Mixed Mode'
+    local result = {}
+    result[1] = 'none'
+    if fs.access("/usr/sbin/hostapd") or fs.access("/usr/sbin/wpa_supplicant") then
+        -- result['psk'] = 'WPA-PSK'
+        -- result['psk2'] = 'WPA2-PSK'
+        -- result['psk-mixed'] = 'WPA-PSK/WPA2-PSK Mixed Mode'
+        result[#result + 1] = 'psk'
+        result[#result + 1] = 'psk2'
+        result[#result + 1] = 'psk-mixed'
         for _, feature in ipairs(wifi_features) do
             hostapd[feature] = (os.execute(string.format(
                                                "/usr/sbin/hostapd -v%s >/dev/null 2>/dev/null",
                                                feature)) == 0)
         end
-    end
-
-    if fs.access("/usr/sbin/wpa_supplicant") then
-        result['psk']='WPA-PSK'
-        result['psk2']='WPA2-PSK'
-        result['psk-mixed']='WPA-PSK/WPA2-PSK Mixed Mode'
         for _, feature in ipairs(wifi_features) do
             wpasupplicant[feature] = (os.execute(string.format(
                                                      "/usr/sbin/wpa_supplicant -v%s >/dev/null 2>/dev/null",
@@ -156,18 +154,12 @@ local function encryptions(hwtype)
     end
 
     if hostapd['sae'] or wpasupplicant['sae'] then
-        result['sae']='WPA3-SAE'
-        result['sae-mixed']='WPA2-PSK/WPA3-SAE Mixed Mode'
+        -- result['sae'] = 'WPA3-SAE'
+        -- result['sae-mixed'] = 'WPA2-PSK/WPA3-SAE Mixed Mode'
+        result[#result + 1] = 'sae'
+        result[#result + 1] = 'sae-mixed'
     end
-    if hostapd['sae'] or wpasupplicant['sae'] then
-        result['sae']='WPA3-SAE'
-        result['sae-mixed']='WPA2-PSK/WPA3-SAE Mixed Mode'
-    end
-    if hostapd['wep'] or wpasupplicant['wep'] then
-        result['wep-open']='WEP Open System'
-        result['wep-shared']='WEP Shared Key'
-    end
-    
+
     return result
 end
 
@@ -259,6 +251,13 @@ function M.updateConfig(item)
         c:set('wireless', item.device, 'channel', item.channel)
     end
     if item.htmode then c:set('wireless', item.device, 'htmode', item.htmode) end
+    if item.txpower then
+        if item.txpower == 0 then
+            c:delete('wireless', item.device, 'txpower')
+        else
+            c:set('wireless', item.device, 'txpower', item.txpower)
+        end
+    end
 
     if item.disabled then
         c:set('wireless', item.device, 'disabled', item.disabled)

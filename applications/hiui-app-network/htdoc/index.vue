@@ -13,11 +13,15 @@
 					<img src="@/assets/router.png" height="157" />
 					<div>{{ $t('Router') }}</div>
 					<n-button type="default" @click="showInfo('router')" class="bt-bg">
-						<div class="circle"></div>
-						<span>&ensp;5G:dddddfsfsdfs</span>
-						<n-divider vertical />
-						<div class="circle"></div>
-						<span>&ensp;2.4G:ddddsfsdfsf</span>
+						<div v-if="wifiInfo.wifi2g" class="flex-hor-ac">
+							<div class="circle" :class="{gray: wifiInfo.wifi2g.up}"></div>
+							<span>&ensp;{{ wifiInfo.wifi2g.name }}</span>
+						</div>
+						<n-divider vertical v-if="wifiInfo.wifi5g" />
+						<div v-if="wifiInfo.wifi5g" class="flex-hor-ac">
+							<div class="circle"></div>
+							<span>&ensp;{{ wifiInfo.wifi5g.name }}</span>
+						</div>
 					</n-button>
 				</n-space>
 				<div ref="dividerLocal" style="width: 100%">
@@ -28,8 +32,10 @@
 					<img src="@/assets/internal.png" height="157" />
 					<div>{{ $t('Internal') }}</div>
 					<n-button type="default" @click="showInfo('internal')" class="bt-bg">
-						<div class="circle"></div>
-						<span>&ensp;dddd</span>
+						<n-space align="center" v-if="wired.up">
+							<div class="circle"></div>
+							<span>{{ wired.name }}</span>
+						</n-space>
 					</n-button>
 				</n-space>
 				<div ref="dividerSpeed" style="width: 100%">
@@ -50,20 +56,28 @@
 			</div>
 		</n-layout>
 		<n-layout>
-			<the-lan-info v-if="infoType === 1"></the-lan-info>
-			<the-wan-connect v-else-if="infoType === 2"></the-wan-connect>
+			<the-lan-info v-if="infoType === 1" :lan-info="lanInfo" :wan-info="wanInfo"></the-lan-info>
+			<the-relay-connect v-else-if="infoType === 2" :relay-info="relay"></the-relay-connect>
 		</n-layout>
 	</n-space>
 </template>
 <script setup>
 import TheLanInfo from './components/TheLanInfo.vue';
-import TheWanConnect from './components/TheWanConnect.vue';
+import TheRelayConnect from './components/TheRelayConnect.vue';
 
+const {proxy} = getCurrentInstance();
 const conLocal = ref(true);
 const conSpeed = ref(false);
 const infoType = ref(1);
 const dividerLocal = ref(null);
 const dividerSpeed = ref(null);
+const wired = reactive({up: false, name: 'Wired'});
+const relay = reactive({up: false, name: '', info: []});
+const lanInfo = ref([]);
+const wanInfo = ref([]);
+const wifiInfo = reactive({});
+const speedInfo = reactive({});
+
 function showInfo(params) {
 	if (params === 'router') {
 		infoType.value = 1;
@@ -73,8 +87,103 @@ function showInfo(params) {
 		console.log(params);
 	}
 }
-onMounted(() => {
-	console.log(dividerLocal);
+
+function getNetworks() {
+	proxy.$hiui.call('network', 'get_networks').then(({networks}) => {
+		networks.forEach((element) => {
+			let mask;
+			if (element.interface === 'lan') {
+				lanInfo.value[0] = ['Address', element['ipv4-address'][0].address];
+				if (element['ipv4-address'][0].mask === 24) {
+					mask = '255.255.255.0';
+				} else if (element['ipv4-address'][0].mask === 16) {
+					mask = '255.255.0.0';
+				}
+				lanInfo.value[1] = ['Mask', mask];
+				lanInfo.value[2] = ['DHCP', element.proto === 'dhcp' ? 'yes' : 'no'];
+			}
+			for (const v of element.route) {
+				if (v.target === '0.0.0.0' && v.mask === 0) {
+					wanInfo.value[0] = ['Address', element['ipv4-address'][0].address];
+					if (element['ipv4-address'][0].mask === 24) {
+						mask = '255.255.255.0';
+					} else if (element['ipv4-address'][0].mask === 16) {
+						mask = '255.255.0.0';
+					}
+					wanInfo.value[1] = ['Mask', mask];
+					wanInfo.value[2] = ['Gateway', element.route.filter((r) => r.target === '0.0.0.0' && r.mask === 0).map((r) => r.nexthop)[0]];
+					wanInfo.value[3] = ['DNS', element['dns-server'].join(', ')];
+					wanInfo.value[4] = ['Mac', element.mac];
+				}
+			}
+		});
+	});
+}
+
+function getRelayInfo() {
+	proxy.$hiui.call('wireless', 'relayInfo').then((element) => {
+		if (Object.keys(element).length === 0) {
+			return;
+		}
+		relay.name = element.name;
+		relay.up = element.up;
+		relay.info[0] = ['Address', element['ipv4-address'][0].address];
+		let mask;
+		if (element['ipv4-address'][0].mask === 24) {
+			mask = '255.255.255.0';
+		} else if (element['ipv4-address'][0].mask === 16) {
+			mask = '255.255.0.0';
+		}
+		relay.info[1] = ['Mask', mask];
+		relay.info[2] = ['Gateway', element.route.filter((r) => r.target === '0.0.0.0' && r.mask === 0).map((r) => r.nexthop)[0]];
+		relay.info[3] = ['DNS', element['dns-server'].join(', ')];
+	});
+}
+
+function getWifiInfo() {
+	proxy.$hiui.call('wireless', 'getConfig').then((element) => {
+		if (element) {
+			if (element.wifi_2g) {
+				element.wifi_2g.interfaces.forEach((item) => {
+					if (item.network === 'lan') {
+						wifiInfo.wifi2g = {};
+						wifiInfo.wifi2g.name = item.ssid;
+						wifiInfo.wifi2g.up = item.enable ?? item.up;
+					}
+				});
+			}
+			if (element.wifi_5g) {
+				element.wifi_5g.interfaces.forEach((item) => {
+					if (item.network === 'lan') {
+						wifiInfo.wifi5g = {};
+						wifiInfo.wifi5g.name = item.ssid;
+						wifiInfo.wifi5g.up = item.enable ?? item.up;
+					}
+				});
+			}
+		}
+	});
+}
+
+function getSpeedInfo() {
+	proxy.$hiui.call('speed', 'speedStatus').then((element) => {
+		console.log(element);
+		speedInfo.wg = element.wg;
+		speedInfo.service = element.service;
+		if (speedInfo.wg?.length > 10) {
+			conSpeed.value = true;
+		}
+		if (Object.hasOwnProperty.call(element.service, 'peer')) {
+			console.log('22222222');
+		}
+	});
+}
+
+onBeforeMount(() => {
+	proxy.$timer.create('getNetworks', getNetworks, {repeat: true, immediate: true, time: 5000});
+	proxy.$timer.create('getRelayInfo', getRelayInfo, {repeat: true, immediate: true, time: 5000});
+	proxy.$timer.create('getWifiInfo', getWifiInfo, {repeat: true, immediate: true, time: 5000});
+	proxy.$timer.create('getSpeedInfo', getSpeedInfo, {repeat: true, immediate: true, time: 5000});
 });
 </script>
 <style scoped>
@@ -84,6 +193,9 @@ onMounted(() => {
 }
 .pd-0-55 {
 	padding: 0 60px;
+}
+.gray {
+	background: gray;
 }
 .bt-bg {
 	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);

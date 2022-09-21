@@ -22,43 +22,9 @@
 </template>
 
 <script setup>
-const {proxy} = getCurrentInstance();
-const lanInfo = ref([]);
-const wanInfo = ref([]);
-
-function getNetworks() {
-	proxy.$hiui.call('network', 'get_networks').then(({networks}) => {
-		networks.forEach((element) => {
-			let mask;
-			if (element.interface === 'lan') {
-				lanInfo.value[0] = ['Address', element['ipv4-address'][0].address];
-				if (element['ipv4-address'][0].mask === 24) {
-					mask = '255.255.255.0';
-				} else if (element['ipv4-address'][0].mask === 16) {
-					mask = '255.255.0.0';
-				}
-				lanInfo.value[1] = ['Mask', mask];
-				lanInfo.value[2] = ['DHCP', element.proto === 'dhcp' ? 'yes' : 'no'];
-			}
-			for (const v of element.route) {
-				if (v.target === '0.0.0.0' && v.mask === 0) {
-					wanInfo.value[0] = ['Address', element['ipv4-address'][0].address];
-					if (element['ipv4-address'][0].mask === 24) {
-						mask = '255.255.255.0';
-					} else if (element['ipv4-address'][0].mask === 16) {
-						mask = '255.255.0.0';
-					}
-					wanInfo.value[1] = ['Mask', mask];
-					wanInfo.value[2] = ['Gateway', element.route.filter((r) => r.target === '0.0.0.0' && r.mask === 0).map((r) => r.nexthop)[0]];
-					wanInfo.value[3] = ['DNS', element['dns-server'].join(', ')];
-					wanInfo.value[4] = ['Mac', element.mac];
-				}
-			}
-		});
-	});
-}
-onBeforeMount(() => {
-	proxy.$timer.create('getNetworks', getNetworks, {repeat: true, immediate: true, time: 5000});
+defineProps({
+	lanInfo: Array,
+	wanInfo: Array
 });
 </script>
 <style scoped>

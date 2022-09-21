@@ -145,6 +145,14 @@ let changeStatus = {
 	hidden: false,
 	enable: false
 };
+const encryptionDes = {
+	none: 'No Encryption',
+	psk: 'WPA-PSK',
+	psk2: 'WPA2-PSK',
+	'psk-mixed': 'WPA-PSK/WPA2-PSK Mixed Mode',
+	sae: 'WPA3-SAE',
+	'sae-mixed': 'WPA2-PSK/WPA3-SAE Mixed Mode'
+};
 
 function handleUpdateValue(key) {
 	if (key === 'hwmode') {
@@ -170,20 +178,12 @@ function dealWith(params) {
 		} else {
 			device.hwmode = params.hwmode;
 		}
-		// params.encryptions?.forEach((element) => {
-		// 	let tmp = {};
-		// 	tmp.label = element.toString();
-		// 	tmp.value = element;
-		// 	encryptions.push(tmp);
-		// });
-		for (const encr in params.encryptions) {
-			if (Object.hasOwnProperty.call(params, encr)) {
-				let tmp = {};
-				tmp.label = encr;
-				tmp.value = params[encr];
-				encryptions.push(tmp);
-			}
-		}
+		params.encryptions?.forEach((element) => {
+			let tmp = {};
+			tmp.label = encryptionDes[element];
+			tmp.value = element;
+			encryptions.push(tmp);
+		});
 		params.channels.forEach((element) => {
 			let tmp = {};
 			tmp.label = element.toString();
@@ -210,7 +210,7 @@ function dealWith(params) {
 				iface.enable = element.enable ?? element.up;
 			}
 		});
-		params.txpwrlist.forEach((element) => {
+		params.txpwrlist?.forEach((element) => {
 			let tmp = {};
 			if (element.dbm === 0) {
 				tmp.label = proxy.$t('Driver default');
@@ -220,6 +220,18 @@ function dealWith(params) {
 			tmp.value = element.dbm;
 			txpwrlist.push(tmp);
 		});
+		if (params.txpower_max) {
+			for (let index = 0; index < parseInt(params.txpower_max) + 1; index++) {
+				let tmp = {};
+				if (index === 0) {
+					tmp.label = proxy.$t('Driver default');
+				} else {
+					tmp.label = index.toString();
+				}
+				tmp.value = index;
+				txpwrlist.push(tmp);
+			}
+		}
 	}
 }
 

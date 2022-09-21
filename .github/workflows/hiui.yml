@@ -9,8 +9,8 @@ jobs:
             fail-fast: false
             matrix:
                 arch:
-                    - i386_pentium4
-                version: [21.02.3]
+                    - mips_24kc
+                version: [19.07.8]
 
         steps:
             - uses: actions/checkout@v3
