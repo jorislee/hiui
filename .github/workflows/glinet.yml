@@ -19,10 +19,10 @@ jobs:
             - name: Build
               uses: innet8/gh-action-sdk@master
               env:
-                  ARCH: ${{ matrix.arch }}-${{ matrix.version }}
+                  ARCH: ${{ matrix.arch }}
                   MODE: glinet
                   FEEDNAME: hiui
-                  PACKAGES: hiui-ui-core hiui-rpc-core ${{env.PKGS}}
+                  PACKAGES: hiui-ui-core hiui-rpc-core ${{env.PKGS}} nginx-build
                   CHECKS: no
                   V: s
 
@@ -32,3 +32,4 @@ jobs:
                   name: ipk
                   path: |
                       hiui*.ipk
+                      nginx*.ipk
