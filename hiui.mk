@@ -45,7 +45,7 @@ define Package/$(PKG_NAME)/install
 		$(INSTALL_CONF) ./files/menu.json $(1)/usr/share/hiui/menu.d/$(APP_NAME).json; \
 	fi
 	if [ -d ./files/rpc ]; then \
-		$(CP) ./files/rpc/* $(1)/usr/share/hiui/rpc; \
+		$(CP) ./files/rpc $(1)/usr/share/hiui/rpc; \
 	fi
 	if [ -d ./files/init.d ]; then \
 		$(INSTALL_BIN) ./files/init.d/* $(1)/etc/init.d/; \
