@@ -95,7 +95,6 @@ function renderDropdownLabel(option) {
 	if ('children' in option && option.children.length === 0) {
 		option.children = localeOptions();
 	}
-	console.log(option);
 	return option.label;
 }
 
@@ -103,12 +102,10 @@ function renderIcon(icon) {
 	return () => h(resolveComponent('n-icon'), () => h(icon));
 }
 function handleSelect(key) {
-	console.log(key, proxy);
 	if (key === 'logout') {
 		proxy.$hiui.logout();
 		proxy.$router.push('/login');
 	} else if (key === 'reboot') {
-		console.log(dialog);
 		dialog.warning({
 			title: proxy.$t('Reboot'),
 			content: proxy.$t('RebootConfirm'),

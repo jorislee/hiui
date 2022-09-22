@@ -79,7 +79,16 @@ const infoType = ref(1);
 const dividerInternal = ref(null);
 const dividerSpeed = ref(null);
 const wired = reactive({up: false, name: 'Wired'});
-const relay = reactive({up: false, name: '', info: []});
+const relay = reactive({
+	up: false,
+	name: null,
+	info: [
+		['Address', ''],
+		['Mask', ''],
+		['Gateway', ''],
+		['DNS', '']
+	]
+});
 const lanInfo = ref([]);
 const wanInfo = ref([]);
 const wifiInfo = reactive({});
