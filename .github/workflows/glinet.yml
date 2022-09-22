@@ -23,7 +23,6 @@ jobs:
                   MODE: glinet
                   FEEDNAME: hiui
                   PACKAGES: hiui-rpc-core nginx-19.07 
-                  DEPENDENCES: uwsgi uwsgi-luci-support nginx 
                   CHECKS: no
                   V: s
 
