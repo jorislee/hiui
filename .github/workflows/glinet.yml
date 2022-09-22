@@ -22,7 +22,7 @@ jobs:
                   ARCH: ${{ matrix.arch }}
                   MODE: glinet
                   FEEDNAME: hiui
-                  PACKAGES: hiui-rpc-core nginx-19.07
+                  PACKAGES: hiui-rpc-core nginx-19.07 nginx 
                   DEPENDENCES: uwsgi uwsgi-luci-support
                   CHECKS: no
                   V: s
