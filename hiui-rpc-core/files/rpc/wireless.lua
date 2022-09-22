@@ -134,30 +134,40 @@ local function encryptions(hwtype)
     local wpasupplicant = {}
     local result = {}
     result[1] = 'none'
-    if fs.access("/usr/sbin/hostapd") or fs.access("/usr/sbin/wpa_supplicant") then
-        -- result['psk'] = 'WPA-PSK'
-        -- result['psk2'] = 'WPA2-PSK'
-        -- result['psk-mixed'] = 'WPA-PSK/WPA2-PSK Mixed Mode'
-        result[#result + 1] = 'psk'
-        result[#result + 1] = 'psk2'
-        result[#result + 1] = 'psk-mixed'
-        for _, feature in ipairs(wifi_features) do
-            hostapd[feature] = (os.execute(string.format(
-                                               "/usr/sbin/hostapd -v%s >/dev/null 2>/dev/null",
-                                               feature)) == 0)
+    if hwtype == 'mac80211' then
+        if fs.access("/usr/sbin/hostapd") or
+            fs.access("/usr/sbin/wpa_supplicant") then
+            -- result['psk'] = 'WPA-PSK'
+            -- result['psk2'] = 'WPA2-PSK'
+            -- result['psk-mixed'] = 'WPA-PSK/WPA2-PSK Mixed Mode'
+            result[#result + 1] = 'psk'
+            result[#result + 1] = 'psk2'
+            result[#result + 1] = 'psk-mixed'
+            for _, feature in ipairs(wifi_features) do
+                hostapd[feature] = (os.execute(string.format(
+                                                   "/usr/sbin/hostapd -v%s >/dev/null 2>/dev/null",
+                                                   feature)) == 0)
+            end
+            for _, feature in ipairs(wifi_features) do
+                wpasupplicant[feature] =
+                    (os.execute(string.format(
+                                    "/usr/sbin/wpa_supplicant -v%s >/dev/null 2>/dev/null",
+                                    feature)) == 0)
+            end
         end
-        for _, feature in ipairs(wifi_features) do
-            wpasupplicant[feature] = (os.execute(string.format(
-                                                     "/usr/sbin/wpa_supplicant -v%s >/dev/null 2>/dev/null",
-                                                     feature)) == 0)
-        end
-    end
 
-    if hostapd['sae'] or wpasupplicant['sae'] then
-        -- result['sae'] = 'WPA3-SAE'
-        -- result['sae-mixed'] = 'WPA2-PSK/WPA3-SAE Mixed Mode'
-        result[#result + 1] = 'sae'
-        result[#result + 1] = 'sae-mixed'
+        if hostapd['sae'] or wpasupplicant['sae'] then
+            -- result['sae'] = 'WPA3-SAE'
+            -- result['sae-mixed'] = 'WPA2-PSK/WPA3-SAE Mixed Mode'
+            result[#result + 1] = 'sae'
+            result[#result + 1] = 'sae-mixed'
+        end
+    elseif hwtype == 'broadcom' then
+        result[#result + 1] = 'psk'
+        result[#result + 1] = 'psk+psk2'
+        result[#result + 1] = 'psk2'
+        result[#result + 1] = 'wep-open'
+        result[#result + 1] = 'wep-shared'
     end
 
     return result
@@ -171,21 +181,27 @@ local function glinetApi(item, url)
     _f:close()
     local request_body = {}
     local response_body = {}
-    http.request {
+    http.request({
         url = url,
         method = "POST",
-        headers = {["Authorization"] = token},
+        headers = {Authorization = token},
         source = ltn12.source.string(request_body),
         sink = ltn12.sink.table(response_body)
-    }
+    })
+    local body, code, headers, status = http.request({
+        method = "GET",
+        url = "http://www.baidu.com",
+        headers = {jap = "", eng = "hello", dict = "edict"},
+        sink = ltn12.sink.table(response)
+    })
     local result = json.decode(table.concat(response_body))
     return {result = result}
 end
 
 function M.getConfig()
-    if fs.access('/www/cgi-bin/api') then
-        return glinetApi({}, "http://127.0.0.1/cgi-bin/api/ap/config")
-    end
+    -- if fs.access('/www/cgi-bin/api') then
+    --     return glinetApi({}, "http://127.0.0.1/cgi-bin/api/ap/config")
+    -- end
     local c = uci.cursor()
     local result = {}
     c:foreach("wireless", "wifi-device", function(s)
@@ -237,9 +253,9 @@ function M.getConfig()
 end
 
 function M.updateConfig(item)
-    if fs.access('/www/cgi-bin/api') then
-        return glinetApi(item, "http://127.0.0.1/cgi-bin/api/ap/config")
-    end
+    -- if fs.access('/www/cgi-bin/api') then
+    --     return glinetApi(item, "http://127.0.0.1/cgi-bin/api/ap/config")
+    -- end
     local c = uci.cursor()
     if item.ssid then c:set('wireless', item.id, 'ssid', item.ssid) end
     if item.encrypt then

@@ -1,16 +1,14 @@
 #!/usr/lib/lua
 
 local M = {}
-local split = require "hiui.split"
 local fs = require 'hiui.fs'
-local json = require 'cjson'
 local uci = require 'uci'
 local http = require 'socket.http'
-
 function M.checkFirmwareVersion()
     local c = uci.cursor()
     local url = c:get('hiui', 'global', 'host')
-    local result = http.request(url .. "/api/publish/device/checkver")
+    local result = {}
+    if url then result = http.request(url .. "/api/publish/device/checkver") end
     return result
 end
 

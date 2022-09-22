@@ -6,7 +6,7 @@
 					<n-space class="font-18" align="center">
 						<div class="circle"></div>
 						{{ $t(relayInfo.name ?? 'Not connected') }}
-						<n-tag :bordered="false" size="small">{{ $t('current network') }}</n-tag>
+						<n-tag :bordered="false" size="small" :type="relayInfo?.up ? 'info' : ''">{{ $t('current network') }}</n-tag>
 					</n-space>
 					<n-button v-if="relayInfo.up" ghost round color="red" size="medium" @click="disconnect">{{ $t('Disconnect') }}</n-button>
 				</n-space>

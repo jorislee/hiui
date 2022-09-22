@@ -149,9 +149,12 @@ const encryptionDes = {
 	none: 'No Encryption',
 	psk: 'WPA-PSK',
 	psk2: 'WPA2-PSK',
-	'psk-mixed': 'WPA-PSK/WPA2-PSK Mixed Mode',
 	sae: 'WPA3-SAE',
-	'sae-mixed': 'WPA2-PSK/WPA3-SAE Mixed Mode'
+	'psk-mixed': 'WPA-PSK/WPA2-PSK Mixed Mode',
+	'sae-mixed': 'WPA2-PSK/WPA3-SAE Mixed Mode',
+	'psk+psk2': 'WPA-PSK/WPA2-PSK Mixed Mode',
+	'wep-open': 'WEP Open System',
+	'wep-shared': 'WEP Shared Key'
 };
 
 function handleUpdateValue(key) {

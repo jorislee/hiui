@@ -12,7 +12,7 @@
 				<n-space vertical align="center" size="large">
 					<img src="@/assets/router.png" height="157" />
 					<div>{{ $t('Router') }}</div>
-					<n-button type="default" @click="showInfo('router')" class="bt-bg">
+					<n-button v-if="!noWifi" type="default" @click="showInfo('router')" class="bt-bg">
 						<div v-if="wifiInfo.wifi2g" class="flex-hor-ac">
 							<div class="circle" :class="{gray: wifiInfo.wifi2g.up}"></div>
 							<span>&ensp;{{ wifiInfo.wifi2g.name }}</span>
@@ -24,18 +24,24 @@
 						</div>
 					</n-button>
 				</n-space>
-				<div ref="dividerLocal" style="width: 100%">
-					<img v-if="conLocal" src="@/assets/connect-success.svg" />
+				<div ref="dividerInternal" style="width: 100%">
+					<img v-if="conInternal" src="@/assets/connect-success.svg" />
 					<n-divider v-else style="padding-top: 55px" />
 				</div>
 				<n-space vertical align="center" size="large" class="pd-0-55">
 					<img src="@/assets/internal.png" height="157" />
 					<div>{{ $t('Internal') }}</div>
 					<n-button type="default" @click="showInfo('internal')" class="bt-bg">
-						<n-space align="center" v-if="wired.up">
+						<div class="flex-hor-ac" v-if="wired.up">
 							<div class="circle"></div>
-							<span>{{ wired.name }}</span>
-						</n-space>
+							<span>&ensp;{{ wired.name }}</span>
+						</div>
+						<n-divider vertical v-if="relay.up" />
+						<div class="flex-hor-ac" v-if="relay.up">
+							<div class="circle"></div>
+							<span>&ensp;{{ relay.name }}</span>
+						</div>
+						<div v-if="!wired.up && !relay.up">{{ $t('settings') }}</div>
 					</n-button>
 				</n-space>
 				<div ref="dividerSpeed" style="width: 100%">
@@ -66,10 +72,11 @@ import TheLanInfo from './components/TheLanInfo.vue';
 import TheRelayConnect from './components/TheRelayConnect.vue';
 
 const {proxy} = getCurrentInstance();
-const conLocal = ref(true);
+const conInternal = ref(true);
 const conSpeed = ref(false);
+const noWifi = ref(false);
 const infoType = ref(1);
-const dividerLocal = ref(null);
+const dividerInternal = ref(null);
 const dividerSpeed = ref(null);
 const wired = reactive({up: false, name: 'Wired'});
 const relay = reactive({up: false, name: '', info: []});
@@ -102,7 +109,8 @@ function getNetworks() {
 				lanInfo.value[1] = ['Mask', mask];
 				lanInfo.value[2] = ['DHCP', element.proto === 'dhcp' ? 'yes' : 'no'];
 			}
-			for (const v of element.route) {
+
+			element.route?.forEach((v) => {
 				if (v.target === '0.0.0.0' && v.mask === 0) {
 					wanInfo.value[0] = ['Address', element['ipv4-address'][0].address];
 					if (element['ipv4-address'][0].mask === 24) {
@@ -114,8 +122,11 @@ function getNetworks() {
 					wanInfo.value[2] = ['Gateway', element.route.filter((r) => r.target === '0.0.0.0' && r.mask === 0).map((r) => r.nexthop)[0]];
 					wanInfo.value[3] = ['DNS', element['dns-server'].join(', ')];
 					wanInfo.value[4] = ['Mac', element.mac];
+					if (element.interface === 'wan') {
+						wired.up = true;
+					}
 				}
-			}
+			});
 		});
 	});
 }
@@ -142,25 +153,26 @@ function getRelayInfo() {
 
 function getWifiInfo() {
 	proxy.$hiui.call('wireless', 'getConfig').then((element) => {
-		if (element) {
-			if (element.wifi_2g) {
-				element.wifi_2g.interfaces.forEach((item) => {
-					if (item.network === 'lan') {
-						wifiInfo.wifi2g = {};
-						wifiInfo.wifi2g.name = item.ssid;
-						wifiInfo.wifi2g.up = item.enable ?? item.up;
-					}
-				});
-			}
-			if (element.wifi_5g) {
-				element.wifi_5g.interfaces.forEach((item) => {
-					if (item.network === 'lan') {
-						wifiInfo.wifi5g = {};
-						wifiInfo.wifi5g.name = item.ssid;
-						wifiInfo.wifi5g.up = item.enable ?? item.up;
-					}
-				});
-			}
+		if (element?.wifi_2g) {
+			element.wifi_2g.interfaces.forEach((item) => {
+				if (item.network === 'lan') {
+					wifiInfo.wifi2g = {};
+					wifiInfo.wifi2g.name = item.ssid;
+					wifiInfo.wifi2g.up = item.enable ?? item.up;
+				}
+			});
+		}
+		if (element?.wifi_5g) {
+			element.wifi_5g.interfaces.forEach((item) => {
+				if (item.network === 'lan') {
+					wifiInfo.wifi5g = {};
+					wifiInfo.wifi5g.name = item.ssid;
+					wifiInfo.wifi5g.up = item.enable ?? item.up;
+				}
+			});
+		}
+		if (Object.keys(element).length === 0) {
+			noWifi.value = true;
 		}
 	});
 }
