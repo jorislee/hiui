@@ -1,0 +1,22 @@
+#!/bin/sh
+
+cat >/etc/hotplug.d/dhcp/20-det-clients <<EOF
+#!/bin/sh
+[ ! -e '/etc/clients' ] && touch /etc/clients
+[ "\$ACTION" = "update" -o "\$ACTION" = "add" ] && {
+    flock -x /tmp/test.lock -c "lua /usr/share/hiui/rpc/device.lua \$MACADDR \$IPADDR \$HOSTNAME"
+}
+EOF
+
+[ -d /etc/hotplug.d/firewall ] || mkdir /etc/hotplug.d/firewall
+cat >/etc/hotplug.d/firewall/80-add-block <<EOF
+#!/bin/sh
+[[ -e '/tmp/add-block.lock' && \$ACTION == 'add' ]] && exit 0
+
+if [ \$ACTION == 'add' ]; then
+    flock -xn /tmp/add-block.lock -c "/usr/bin/block-and-qos.sh addBlockList"
+fi
+EOF
+
+chmod +x /etc/hotplug.d/dhcp/20-det-clients
+chmod +x /etc/hotplug.d/firewall/80-add-block

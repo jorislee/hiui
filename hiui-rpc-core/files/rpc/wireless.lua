@@ -134,7 +134,7 @@ local function encryptions(hwtype)
     local wpasupplicant = {}
     local result = {}
     result[1] = 'none'
-    if hwtype == 'mac80211' then
+    if hwtype == 'mac80211' or hwtype == 'qcawificfg80211' then
         if fs.access("/usr/sbin/hostapd") or
             fs.access("/usr/sbin/wpa_supplicant") then
             -- result['psk'] = 'WPA-PSK'
@@ -175,6 +175,7 @@ end
 
 local function glinetApi(item, url)
     local http = require("socket.http")
+    local ltn12 = require("ltn12")
     local _f, err = io.popen("basename /tmp/gl_token* |awk -F'_' '{print $3}'")
     if not _f then return nil, err end
     local token = _f:read()
@@ -188,14 +189,16 @@ local function glinetApi(item, url)
         source = ltn12.source.string(request_body),
         sink = ltn12.sink.table(response_body)
     })
-    local body, code, headers, status = http.request({
-        method = "GET",
-        url = "http://www.baidu.com",
-        headers = {jap = "", eng = "hello", dict = "edict"},
-        sink = ltn12.sink.table(response)
-    })
     local result = json.decode(table.concat(response_body))
     return {result = result}
+end
+
+local function getInfo(func, name)
+    local driver_type = iwinfo.type(name)
+    if driver_type and iwinfo[driver_type][func] then
+        return iwinfo[driver_type][func](name)
+    end
+    return nil
 end
 
 function M.getConfig()
@@ -205,25 +208,33 @@ function M.getConfig()
     local c = uci.cursor()
     local result = {}
     c:foreach("wireless", "wifi-device", function(s)
-        local driver_type = iwinfo.type(s[".name"])
-        local htmodelist = iwinfo[driver_type]["htmodelist"](s[".name"])
-        local freqlist = iwinfo[driver_type]["freqlist"](s[".name"])
-        local hwmodelist = iwinfo[driver_type]["hwmodelist"](s[".name"])
-        local txpwrlist = iwinfo[driver_type]["txpwrlist"](s[".name"])
+        local htmodelist = getInfo("htmodelist", s[".name"])
+        local freqlist = getInfo("freqlist", s[".name"])
+        local hwmodelist = getInfo("hwmodelist", s[".name"])
+        local txpwrlist = getInfo("txpwrlist", s[".name"])
         s.htmodelist = {}
-        for key, value in pairs(htmodelist) do
-            if value then table.insert(s.htmodelist, key) end
+        if htmodelist then
+            for key, value in pairs(htmodelist) do
+                if value then table.insert(s.htmodelist, key) end
+            end
         end
         s.channels = {}
-        for key, value in pairs(freqlist) do
-            if not value.restricted then
-                table.insert(s.channels, value.channel)
+        if freqlist then
+            for key, value in pairs(freqlist) do
+                if not value.restricted then
+                    table.insert(s.channels, value.channel)
+                end
             end
         end
         s.hwmodelist = {}
-        for key, value in pairs(hwmodelist) do
-            if value then table.insert(s.hwmodelist, "802.11" .. key) end
+        if hwmodelist then
+            for key, value in pairs(hwmodelist) do
+                if value then
+                    table.insert(s.hwmodelist, "802.11" .. key)
+                end
+            end
         end
+
         s.interfaces = {}
         c:foreach("wireless", "wifi-iface", function(res)
             if res.device == s[".name"] then
@@ -232,16 +243,16 @@ function M.getConfig()
                 else
                     res.hidden = false
                 end
-                if s.disabled and s.disabled == "1" then
-                    s.enable = false
+                if res.disabled and res.disabled == "1" then
+                    res.enable = false
                 else
-                    s.enable = true
+                    res.enable = true
                 end
                 table.insert(s.interfaces, res)
             end
         end)
         s.txpwrlist = txpwrlist
-        s.encryptions = encryptions(driver_type)
+        s.encryptions = encryptions(s.type)
 
         if string.lower(s.band) == "2g" then
             result["wifi_2g"] = s
@@ -276,7 +287,6 @@ function M.updateConfig(item)
     end
 
     if item.disabled then
-        c:set('wireless', item.device, 'disabled', item.disabled)
         c:set('wireless', item.id, 'disabled', item.disabled)
     end
     c:commit('wireless')

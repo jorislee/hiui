@@ -21,10 +21,10 @@
 		</n-list-item>
 		<n-list-item>
 			<n-space justify="end" align="center" class="des">{{ $t('加密方式') }}</n-space>
-			<n-select v-model:value="iface.encrypt" :options="encryptions" @update:value="handleUpdateValue('encrypt')"></n-select>
+			<n-select v-model:value="iface.encryption" :options="encryptions" @update:value="handleUpdateValue('encryption')"></n-select>
 		</n-list-item>
 		<n-list-item>
-			<n-input v-model:value="iface.password" type="password" show-password-on="mousedown" :minlenght="8" @update:value="handleUpdateValue('password')">
+			<n-input v-model:value="iface.key" type="password" show-password-on="mousedown" :minlenght="8" @update:value="handleUpdateValue('key')">
 				<template #suffix>
 					<div style="padding: 0 8px 0 0; color: #98a3b7">{{ $t('password') }}</div>
 				</template>
@@ -50,7 +50,7 @@
 			<n-space justify="space-between" align="center">
 				<n-checkbox v-model:checked="iface.hidden" @update:checked="handleUpdateValue('hidden')">{{ $t('隐藏网络不被发现') }}</n-checkbox>
 				<n-space>
-					<n-button type="text" ghost>{{ $t('信道优化') }}</n-button>
+					<n-button type="text" ghost @click="channelOptimize">{{ $t('信道优化') }}</n-button>
 					<n-button type="info" round size="medium" @click="updateConfig">{{ $t('save') }}</n-button>
 				</n-space>
 			</n-space>
@@ -137,8 +137,8 @@ const htmodelist = computed({
 
 let changeStatus = {
 	ssid: false,
-	encrypt: false,
-	password: false,
+	encryption: false,
+	key: false,
 	htmode: false,
 	channel: false,
 	txpower: false,
@@ -204,13 +204,13 @@ function dealWith(params) {
 		});
 		params.interfaces.forEach((element) => {
 			if (element.network === 'lan') {
-				iface.id = element['.name'] ?? element.id;
+				iface.id = element['.name'];
 				iface.ssid = element.ssid;
-				iface.password = element.key ?? element.password;
-				iface.encrypt = element.encryption ?? element.encrypt;
+				iface.key = element.key;
+				iface.encryption = element.encryption;
 				iface.device = element.device;
 				iface.hidden = element.hidden;
-				iface.enable = element.enable ?? element.up;
+				iface.enable = element.enable ?? true;
 			}
 		});
 		params.txpwrlist?.forEach((element) => {
@@ -220,22 +220,14 @@ function dealWith(params) {
 			} else {
 				tmp.label = element.dbm.toString();
 			}
-			tmp.value = element.dbm;
+			tmp.value = element.dbm.toString();
 			txpwrlist.push(tmp);
 		});
-		if (params.txpower_max) {
-			for (let index = 0; index < parseInt(params.txpower_max) + 1; index++) {
-				let tmp = {};
-				if (index === 0) {
-					tmp.label = proxy.$t('Driver default');
-				} else {
-					tmp.label = index.toString();
-				}
-				tmp.value = index;
-				txpwrlist.push(tmp);
-			}
-		}
 	}
+}
+
+function channelOptimize() {
+	proxy.$message.success('success');
 }
 
 function updateConfig() {
@@ -245,20 +237,21 @@ function updateConfig() {
 			params[key] = device[key] ?? iface[key];
 		}
 	}
-	if (Object.hasOwnProperty.call(params, 'disabled')) {
-		params.disabled = params.disabled ? '1' : '0';
+	if (Object.hasOwnProperty.call(params, 'enable')) {
+		params.disabled = params.enable ? '0' : '1';
 	}
 	if (Object.hasOwnProperty.call(params, 'hidden')) {
 		params.hidden = params.hidden ? '1' : '0';
 	}
+	params.id = iface.id;
+	params.device = iface.device;
 	console.log(params);
 
-	console.log(changeStatus);
 	proxy.$hiui.call('wireless', 'updateConfig', params).then((result) => {
 		for (const key in changeStatus) {
 			changeStatus[key] = false;
 		}
-		console.log(changeStatus);
+		proxy.$message.success('success');
 	});
 }
 

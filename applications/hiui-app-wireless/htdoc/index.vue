@@ -38,6 +38,7 @@ const {proxy} = getCurrentInstance();
 const wifiConfig = reactive({wifi2g: {}, wifi5g: {}});
 onBeforeMount(() => {
 	proxy.$hiui.call('wireless', 'getConfig').then((result) => {
+		console.log(result);
 		if (result) {
 			wifiConfig.wifi2g = result.wifi_2g ?? {};
 			wifiConfig.wifi5g = result.wifi_5g ?? null;
