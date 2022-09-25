@@ -134,6 +134,7 @@ function getNetworks() {
 					if (element.interface === 'wan') {
 						wired.up = true;
 					}
+					console.log(element);
 				}
 			});
 		});
@@ -141,29 +142,29 @@ function getNetworks() {
 }
 
 function getRelayInfo() {
-	proxy.$hiui.call('wireless', 'relayInfo').then((element) => {
-		if (Object.keys(element).length === 0) {
+	proxy.$hiui.call('wireless', 'relayInfo').then((result) => {
+		if (Object.keys(result).length === 0 || !result.up) {
 			return;
 		}
-		relay.name = element.name;
-		relay.up = element.up;
-		relay.info[0] = ['Address', element['ipv4-address'][0].address];
+		relay.name = result.name;
+		relay.up = result.up;
+		relay.info[0] = ['Address', result['ipv4-address'][0].address];
 		let mask;
-		if (element['ipv4-address'][0].mask === 24) {
+		if (result['ipv4-address'][0].mask === 24) {
 			mask = '255.255.255.0';
-		} else if (element['ipv4-address'][0].mask === 16) {
+		} else if (result['ipv4-address'][0].mask === 16) {
 			mask = '255.255.0.0';
 		}
 		relay.info[1] = ['Mask', mask];
-		relay.info[2] = ['Gateway', element.route.filter((r) => r.target === '0.0.0.0' && r.mask === 0).map((r) => r.nexthop)[0]];
-		relay.info[3] = ['DNS', element['dns-server'].join(', ')];
+		relay.info[2] = ['Gateway', result.route.filter((r) => r.target === '0.0.0.0' && r.mask === 0).map((r) => r.nexthop)[0]];
+		relay.info[3] = ['DNS', result['dns-server'].join(', ')];
 	});
 }
 
 function getWifiInfo() {
-	proxy.$hiui.call('wireless', 'getConfig').then((element) => {
-		if (element?.wifi_2g) {
-			element.wifi_2g.interfaces.forEach((item) => {
+	proxy.$hiui.call('wireless', 'getConfig').then((result) => {
+		if (result?.wifi_2g) {
+			result.wifi_2g.interfaces.forEach((item) => {
 				if (item.network === 'lan') {
 					wifiInfo.wifi2g = {};
 					wifiInfo.wifi2g.name = item.ssid;
@@ -171,8 +172,8 @@ function getWifiInfo() {
 				}
 			});
 		}
-		if (element?.wifi_5g) {
-			element.wifi_5g.interfaces.forEach((item) => {
+		if (result?.wifi_5g) {
+			result.wifi_5g.interfaces.forEach((item) => {
 				if (item.network === 'lan') {
 					wifiInfo.wifi5g = {};
 					wifiInfo.wifi5g.name = item.ssid;
@@ -180,21 +181,21 @@ function getWifiInfo() {
 				}
 			});
 		}
-		if (Object.keys(element).length === 0) {
+		if (Object.keys(result).length === 0) {
 			noWifi.value = true;
 		}
 	});
 }
 
 function getSpeedInfo() {
-	proxy.$hiui.call('speed', 'speedStatus').then((element) => {
-		console.log(element);
-		speedInfo.wg = element.wg;
-		speedInfo.service = element.service;
+	proxy.$hiui.call('speed', 'speedStatus').then((result) => {
+		console.log(result);
+		speedInfo.wg = result.wg;
+		speedInfo.service = result.service;
 		if (speedInfo.wg?.length > 10) {
 			conSpeed.value = true;
 		}
-		if (Object.hasOwnProperty.call(element.service, 'peer')) {
+		if (Object.hasOwnProperty.call(result.service, 'peer')) {
 			console.log('22222222');
 		}
 	});

@@ -114,7 +114,7 @@ onBeforeMount(() => {
 		() => {
 			proxy.$hiui.call('clients', 'getClients').then((result) => {
 				console.log(result);
-				if (Object.keys(result).length > 0) {
+				if (result.code === 0) {
 					empty.value = false;
 					result.clients.forEach((item) => {
 						addItem(item);

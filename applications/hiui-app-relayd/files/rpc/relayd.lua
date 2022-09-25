@@ -13,14 +13,20 @@ local function isIntable(value, tb)
 end
 
 local function addHistory(params)
+    uci:foreach("hiui", "history-sta",
+                function(s) uci:set("hiui", s['.name'], "auto", "1") end)
     uci:set("hiui", trim(params.bssid), "history-sta")
-    uci:set("hiui", "history-sta", "ssid", params.ssid)
-    uci:set("hiui", "history-sta", "bssid", params.bssid)
-    uci:set("hiui", "history-sta", "key", params.key)
-    uci:set("hiui", "history-sta", "device", params.device)
-    uci:set("hiui", "history-sta", "encryption", params.encryption)
-    uci:set("hiui", "history-sta", "channel", params.channel)
-    uci:set("hiui", "history-sta", "auto", params.auto)
+    uci:set("hiui", trim(params.bssid), "ssid", params.ssid)
+    uci:set("hiui", trim(params.bssid), "bssid", params.bssid)
+    uci:set("hiui", trim(params.bssid), "key", params.key)
+    uci:set("hiui", trim(params.bssid), "device", params.device)
+    uci:set("hiui", trim(params.bssid), "encryption", params.encryption)
+    uci:set("hiui", trim(params.bssid), "channel", params.channel)
+    if params.auto then
+        uci:set("hiui", trim(params.bssid), "auto", '0')
+    else
+        uci:set("hiui", trim(params.bssid), "auto", '1')
+    end
     uci:commit("hiui")
 end
 
@@ -34,8 +40,10 @@ function M.scan()
     end)
     for key, value in pairs(devices) do
         local driver_type = iwinfo.type(value)
-        local tmp = iwinfo[driver_type]["scanlist"](value)
-        scanResult[value] = tmp
+        if driver_type and iwinfo[driver_type]["scanlist"] then
+            local tmp = iwinfo[driver_type]["scanlist"](value)
+            scanResult[value] = tmp
+        end
     end
 
     return scanResult
@@ -50,25 +58,31 @@ function M.join(params)
     assert(params.ssid, "no ssid")
     uci:set("wireless", "sta", "ssid", params.ssid)
     assert(params.bssid, "no bssid")
-    uci:set("wireless", "sta", "device", params.bssid)
+    uci:set("wireless", "sta", "bssid", params.bssid)
     assert(params.encryption, "no encryption")
     uci:set("wireless", "sta", "encryption", params.encryption)
     assert(params.channel, "no channel")
     uci:set("wireless", "sta", "channel", params.channel)
     uci:set("wireless", params.device, "channel", params.channel)
     assert(params.key, "no key")
-    uci:set("wireless", "sta", "encryption", params.key)
+    uci:set("wireless", "sta", "key", params.key)
+    uci:set("wireless", "sta", "disabled", '0')
+    uci:set("wireless", params.device, "disabled", '0')
 
     uci:set("network", "wwan", "interface")
     uci:set("network", "wwan", "proto", "dhcp")
 
     local section
-    local _tmp = {}
+    local _tmp
     uci:foreach("firewall", "zone", function(s)
         if s.name == 'wan' then
             section = s['.name']
             _tmp = s.network
-            table.insert(_tmp, "wwan")
+            if type(_tmp) == "string" and not string.find(_tmp, 'wwan') then
+                _tmp = _tmp .. ' wwan'
+            elseif type(_tmp) == "table" and not isIntable("wwan", _tmp) then
+                table.insert(_tmp, "wwan")
+            end
             return
         end
     end)
@@ -79,8 +93,9 @@ function M.join(params)
     uci:commit("network")
     uci:commit("wireless")
     addHistory(params)
-    os.execute("/etc/init.d/firewall reload && /etc/init.d/network reload")
-    return {code = true}
+    os.execute(
+        "/etc/init.d/firewall reload && /etc/init.d/network reload ; wifi reload")
+    return {code = 0}
 end
 
 function M.history()
@@ -92,7 +107,7 @@ end
 function M.delHistory(params)
     uci:delete("hiui", params[".name"])
     uci.commit("hiui")
-    return {code = true}
+    return {code = 0}
 end
 
 function M.updateHistory(params)
@@ -102,8 +117,27 @@ function M.updateHistory(params)
             uci:set("hiui", s[".name"], "auto", false)
         end
     end)
+    assert(params.device, "no device")
+    uci:set("wireless", "sta", "device", params.device)
+    uci:set("wireless", "sta", "mode", "sta")
+    uci:set("wireless", "sta", "network", "wwan")
+    assert(params.ssid, "no ssid")
+    uci:set("wireless", "sta", "ssid", params.ssid)
+    assert(params.bssid, "no bssid")
+    uci:set("wireless", "sta", "bssid", params.bssid)
+    assert(params.encryption, "no encryption")
+    uci:set("wireless", "sta", "encryption", params.encryption)
+    assert(params.channel, "no channel")
+    uci:set("wireless", "sta", "channel", params.channel)
+    uci:set("wireless", params.device, "channel", params.channel)
+    assert(params.key, "no key")
+    uci:set("wireless", "sta", "key", params.key)
+    uci:set("wireless", "sta", "disabled", '0')
+    uci:set("wireless", params.device, "disabled", '0')
+    uci:commit("wireless")
     uci:commit("hiui")
-    os.execute("/etc/init.d/network reload")
+    os.execute("wifi reload")
+    return {code = 0}
 end
 
 return M

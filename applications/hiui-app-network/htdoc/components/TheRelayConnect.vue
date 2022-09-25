@@ -54,7 +54,7 @@ const autoConnect = ref(false);
 const {proxy} = getCurrentInstance();
 
 function disconnect() {
-	proxy.$hiui.call('wireless', 'disStaConnect').then((element) => {});
+	proxy.$hiui.call('wireless', 'disRelaydConnect').then((element) => {});
 }
 function pushRelayd(params) {
 	let data;

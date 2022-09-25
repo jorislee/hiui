@@ -125,6 +125,13 @@ function M.relayInfo()
     return status
 end
 
+function M.disRelaydConnect()
+    local c = uci.cursor()
+    c:set("wireless", "sta", "disabled", "1")
+    c:commit("wireless")
+    os.execute("wifi reload")
+end
+
 local function encryptions(hwtype)
     local wifi_features = {
         "eap", "11n", "11ac", "11r", "acs", "sae", "owe", "suiteb192", "wep",

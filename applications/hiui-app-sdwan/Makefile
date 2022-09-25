@@ -6,8 +6,8 @@
 
 include $(TOPDIR)/rules.mk
 
-APP_TITLE:=System Configure
-APP_NAME:=system
+APP_TITLE:=SD-WAN
+APP_NAME:=sdwan
 
 include ../../hiui.mk
 

@@ -1,0 +1,12 @@
+{
+	"/sdwan": {
+		"title": "SD-WAN",
+		"view": "sdwan",
+		"index": 50,
+		"locales": {
+			"en-US": "SD-WAN",
+			"zh-CN": "SD-WAN",
+			"zh-TW": "SD-WAN"
+		}
+	}
+}
