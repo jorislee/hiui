@@ -1,9 +1,9 @@
 #!/usr/bin/lua
 
-local json = require "cjson"
 local iwinfo = require "iwinfo"
 local uci = require('uci').cursor()
 local split = require "hiui.split"
+local json = require 'cjson'
 
 local mac = string.upper(arg[1])
 local ip = arg[2]
@@ -11,7 +11,7 @@ local name = arg[3]
 local con_type = arg[4]
 
 local function conType(_mac)
-    local device
+    local device = 'Wired'
     if con_type then
         device = 'Wired'
     else
@@ -37,11 +37,10 @@ local function writeFile(clients)
     local tmp = io.open("/etc/clients", "w")
     io.output(tmp)
     for index, value in ipairs(clients) do
-        local line = string.format("%s  %s  %s  %s  %s  %s  %s  %s\n", value[1],
-                                   value[2], value[3], value[4], value[5],
-                                   value[6], value[7], value[8], value[9],
-                                   value[10])
-        print(line)
+        local line = string.format("%s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
+                                   value[1], value[2], value[3], value[4],
+                                   value[5], value[6], value[7], value[8],
+                                   value[9], value[10])
         io.write(line)
     end
     io.close(tmp)
@@ -52,9 +51,10 @@ local function updateDatas()
     local hasMac = false
 
     for line in io.lines("/etc/clients", "r") do
-        if string.find(line, 'mac') then
+
+        local client = split(line, '%s+', false)
+        if string.find(line, mac) then
             hasMac = true
-            local client = split(line, '%s', false)
             client[1] = mac
             if ip and name then
                 client[2] = ip
@@ -62,10 +62,9 @@ local function updateDatas()
             end
             client[4] = conType(mac)
             client[5] = 1
-            clients[#clients + 1] = client
-        else
-            clients[#clients + 1] = line
         end
+        clients[#clients + 1] = client
+
     end
 
     if not hasMac then
@@ -74,8 +73,6 @@ local function updateDatas()
     end
 
     writeFile(clients)
-    print(os.clock())
-    print("-----------------------")
 end
 
 updateDatas()

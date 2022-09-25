@@ -29,7 +29,7 @@ function M.getClients()
         local clients = {}
         for line in io.lines("/etc/clients", "r") do
             local item = {}
-            local tmp = split(line, '%s', false)
+            local tmp = split(line, '%s+', false)
             item.mac = tmp[1]
             item.ip = tmp[#item + 1]
             item.name = tmp[#item + 1]
