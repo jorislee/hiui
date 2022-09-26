@@ -46,12 +46,12 @@
 			</n-list>
 		</div>
 		<div class="bg-border pd-30">
-			<div v-if="downloading > 0 && downloading < 100">
-				<n-progress type="line" :percentage="downloading" :indicator-placement="'inside'" processing />
+			<div v-if="progress > 0 && progress < 100">
+				<n-progress type="line" :percentage="progress" :indicator-placement="'inside'" processing />
 			</div>
 			<div v-else>
 				<h2>{{ $t('local upload') }}</h2>
-				<n-upload ref="upload" directory-dnd action="/hiui-upload" :data="{path: '/tmp/firmware.bin'}" :on-finish="onUploadFinish">
+				<n-upload ref="upload" directory-dnd action="/hiui-upload" :data="{path: '/tmp/firmware.bin'}" :on-finish="onUploadFinish" :show-file-list="false" :max="1" :on-change="handleChange">
 					<n-upload-dragger>
 						<div>
 							<n-icon size="48"><arrow-up-circle-icon /></n-icon>
@@ -61,7 +61,7 @@
 				</n-upload>
 			</div>
 		</div>
-		<div v-if="downloading === 100" class="bg-border pd-30">
+		<div v-if="progress === 100" class="bg-border pd-30">
 			<n-list class="width-fill">
 				<template #header>
 					<div class="font-18">{{ $t('固件验证') }}</div>
@@ -82,17 +82,18 @@
 					<n-thing :title="$t('保存配置')" />
 				</n-list-item>
 			</n-list>
+			<n-button v-if="modalConfirm" type="info" size="large" @click="doUpgrade" style="width: 100%; padding-top: 20px">{{ $t('Upgrade') }}</n-button>
 		</div>
 	</n-space>
 
-	<n-modal v-model:show="modalConfirm" preset="dialog" :title="$t('Upgrade')" :positive-text="$t('OK')" :negative-text="$t('Cancel')" @positive-click="doUpgrade">
+	<!-- <n-modal v-model:show="modalConfirm" preset="dialog" :title="$t('Upgrade')" :positive-text="$t('OK')" :negative-text="$t('Cancel')" @positive-click="doUpgrade">
 		<n-space vertical>
 			<p>{{ $t('flash-confirm', {btn: this.$t('OK')}) }}</p>
 			<n-text type="info">{{ this.$t('Size') + ': ' + bytesToHuman(this.size) }}</n-text>
 			<n-text type="info">{{ 'MD5: ' + this.md5 }}</n-text>
 			<n-checkbox v-model:checked="keepConfig">{{ $t('Keep settings and retain the current configuration') }}</n-checkbox>
 		</n-space>
-	</n-modal>
+	</n-modal> -->
 	<n-modal v-model:show="modalSpin" :close-on-esc="false" :mask-closable="false">
 		<n-spin size="large">
 			<template #description>
@@ -105,6 +106,7 @@
 <script setup>
 import {ArrowUpCircle as ArrowUpCircleIcon} from '@vicons/ionicons5';
 const {proxy} = getCurrentInstance();
+const upload = ref(null);
 const modalConfirm = ref(false);
 const modalSpin = ref(false);
 const size = ref(0);
@@ -113,7 +115,7 @@ const keepConfig = ref(true);
 const remoteFrimwareInfo = reactive({});
 const remoteWebUiInfo = reactive({});
 const verification = ref(false);
-const downloading = ref(0);
+const progress = ref(0);
 function bytesToHuman(bytes) {
 	if (isNaN(bytes)) {
 		return '';
@@ -130,12 +132,12 @@ function bytesToHuman(bytes) {
 
 	return (bytes / Math.pow(1024, k)).toFixed(2) + ' ' + units;
 }
-function onUploadFinish({event}) {
+function onUploadFinish({event, file}) {
 	const response = JSON.parse(event.target.response);
 	size.value = response.size;
 	md5.value = response.md5;
-	console.log(proxy.$refs.upload);
-	proxy.$refs.upload.clear();
+	console.log(file);
+	upload.value.clear();
 
 	proxy.$hiui.ubus('system', 'validate_firmware_image', {path: '/tmp/firmware.bin'}).then(({valid}) => {
 		verification.value = valid;
@@ -158,6 +160,10 @@ function doUpgrade() {
 	});
 }
 
+function handleChange({file}) {
+	progress.value = file.percentage;
+	console.log(progress.value);
+}
 onBeforeMount(() => {
 	proxy.$hiui.call('upgrade', 'checkFirmwareVersion').then((result) => {
 		console.log(result);

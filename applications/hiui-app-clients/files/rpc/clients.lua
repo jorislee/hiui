@@ -4,25 +4,25 @@ local fs = require 'hiui.fs'
 local json = require 'cjson'
 local uci = require 'uci'
 
-local function glinetApi(item, url)
-    local http = require("socket.http")
-    local ltn12 = require("ltn12")
-    local _f, err = io.popen("basename /tmp/gl_token* |awk -F'_' '{print $3}'")
-    if not _f then return nil, err end
-    local token = _f:read()
-    _f:close()
-    local request_body = item
-    local response_body = {}
-    http.request({
-        url = url,
-        method = "POST",
-        headers = {["Authorization"] = token},
-        source = ltn12.source.string(request_body),
-        sink = ltn12.sink.table(response_body)
-    })
-    local result = json.decode(table.concat(response_body))
-    return {result = result}
-end
+-- local function glinetApi(item, url)
+--     local http = require("socket.http")
+--     local ltn12 = require("ltn12")
+--     local _f, err = io.popen("basename /tmp/gl_token* |awk -F'_' '{print $3}'")
+--     if not _f then return nil, err end
+--     local token = _f:read()
+--     _f:close()
+--     local request_body = item
+--     local response_body = {}
+--     http.request({
+--         url = url,
+--         method = "POST",
+--         headers = {["Authorization"] = token},
+--         source = ltn12.source.string(request_body),
+--         sink = ltn12.sink.table(response_body)
+--     })
+--     local result = json.decode(table.concat(response_body))
+--     return {result = result}
+-- end
 
 local function stringToBoolean(param, s)
     if param == s then
@@ -33,6 +33,7 @@ local function stringToBoolean(param, s)
 end
 
 function M.getClients()
+    local c = uci.cursor()
     if fs.access('/etc/clients') then
         local clients = {}
         for line in io.lines("/etc/clients", "r") do
@@ -49,6 +50,13 @@ function M.getClients()
                 item.up = tmp[8]
                 item.down = tmp[9]
                 item.total = tmp[10]
+                item.bind = false
+                c:foreach('dhcp', 'host', function(s)
+                    if s.mac == item.mac then
+                        item.bind = true
+                        return
+                    end
+                end)
                 table.insert(clients, item)
             end
         end
@@ -130,19 +138,13 @@ function M.delBlocked(item)
     return {code = 0}
 end
 
-function M.setQos(item)
-    if fs.access('/www/cgi-bin/api') then
-        return glinetApi(item, "/cgi-bin/api/client/qos/set")
-    end
-    return {code = 0}
-end
+function M.setQos(item) return {code = 0} end
 
 function M.setTraffic(params)
     local c = uci.cursor()
     if fs.access('/www/cgi-bin/api') then
         c:set('hiui', 'global', 'traffic', params.enable)
         c:commit('hiui')
-        return glinetApi(params, "/cgi-bin/api/client/qos/set")
     end
 end
 

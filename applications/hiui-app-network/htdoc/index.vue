@@ -9,7 +9,7 @@
 		<n-divider />
 		<n-layout embedded>
 			<div class="dis-fle-nowrap">
-				<n-space vertical align="center" size="large">
+				<n-space vertical align="center" size="large" style="min-width: 260px">
 					<img src="@/assets/router.png" height="157" />
 					<div>{{ $t('Router') }}</div>
 					<n-button v-if="!noWifi" type="default" @click="showInfo('router')" class="bt-bg">

@@ -4,7 +4,7 @@
 			<div class="menu-item" v-for="(item, index) in menus" :key="index" :class="selectIndex == index ? 'active' : ''" @click="menuClick(index, item.path)">
 				<div>
 					<n-icon v-if="item.svg" :size="48">
-						<IconSvg :opt="item.svg" class="fff" />
+						<IconSvg :opt="item.svg" />
 					</n-icon>
 				</div>
 				<div>{{ $t('menus.' + item.title) }}</div>
@@ -150,8 +150,6 @@ function menuClick(index, path) {
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
-	left: 14px;
-	top: 130px;
 	width: 96px;
 	height: 96px;
 	transition: background-color 3s;
@@ -167,7 +165,7 @@ function menuClick(index, path) {
 	border-radius: 8px;
 	background: linear-gradient(174deg, rgba(231, 232, 239, 0.15) 4%, rgba(198, 202, 222, 0.359) 95%);
 	box-shadow: -4px -4px 10px 0px rgba(54, 62, 77, 0.5), 4px 4px 10px 0px rgba(18, 21, 26, 0.6), inset 0px 2px 10px 0px rgba(36, 41, 51, 0.5);
-	--icon-active-color: #f5f7fa;
+	--icon-active-color: var(--n-text-color);
 }
 .more {
 	position: absolute;

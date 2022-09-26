@@ -28,22 +28,25 @@
 					</n-tooltip>
 				</n-space>
 			</n-layout-header>
-			<n-layout-content embedded content-style="padding: 30px;" :native-scrollbar="false">
-				<router-view>
-					<template #default="{Component}">
-						<transition name="zoom-fade" mode="out-in">
-							<div :key="$route.path" style="display: flex; justify-content: center">
-								<n-message-provider>
-									<n-dialog-provider>
-										<component :is="Component" />
-									</n-dialog-provider>
-								</n-message-provider>
-							</div>
-						</transition>
-					</template>
-				</router-view>
-				<n-back-top />
-			</n-layout-content>
+			<n-config-provider :theme="null">
+				<n-layout-content embedded content-style="padding: 30px;" :native-scrollbar="false">
+					<router-view>
+						<template #default="{Component}">
+							<transition name="zoom-fade" mode="out-in">
+								<div :key="$route.path" style="display: flex; justify-content: center">
+									<n-message-provider>
+										<n-dialog-provider>
+											<component :is="Component" />
+										</n-dialog-provider>
+									</n-message-provider>
+								</div>
+							</transition>
+						</template>
+					</router-view>
+					<n-back-top />
+				</n-layout-content>
+			</n-config-provider>
+
 			<n-layout-footer position="absolute" bordered style="padding: 4px">
 				<div class="copyright">
 					<n-text type="info">{{ $t('© 2021 SpeedBox版权所有') }}</n-text>

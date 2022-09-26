@@ -25,10 +25,18 @@
 								{{ $t('IP地址') }}:
 								<div>{{ item.ip }}</div>
 							</n-space>
-							<n-space size="small">
-								{{ $t('mac地址') }}:
-								<div>{{ item.mac }}</div>
-							</n-space>
+							<div class="flex-hor-ac">
+								<n-tooltip trigger="hover">
+									<template #trigger>
+										<n-icon :size="18" :component="IosLink" :color="item.bind ? 'green' : ''"></n-icon>
+									</template>
+									{{ $t('关闭后用户将无法使用网络') }}
+								</n-tooltip>
+								<n-space>
+									<div>{{ $t('mac地址') }}:</div>
+									<div>{{ item.mac }}</div>
+								</n-space>
+							</div>
 							<n-space style="width: 220px" size="small">
 								{{ $t('speed') }}:
 								<div>↑ {{ bytesToSizeList(item.up) }} | ↓ {{ bytesToSizeList(item.down) }}</div>
@@ -83,6 +91,8 @@
 
 <script setup>
 import {DeviceUnknownOutlined} from '@vicons/material';
+import {IosLink} from '@vicons/ionicons4';
+
 const {proxy} = getCurrentInstance();
 const dialog = proxy.$dialog;
 defineProps({
