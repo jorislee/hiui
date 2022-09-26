@@ -36,6 +36,8 @@ const datas = reactive({
 	device5g: [],
 	device2g: []
 });
+let rawdata;
+
 const empty = ref(true);
 
 const traffic = ref(false);
@@ -63,7 +65,7 @@ function addItem(item) {
 				datas.device5g.push(item);
 			}
 			break;
-		case 'CABLE':
+		case 'WIRED':
 			for (let index = 0; index < datas.deviceCable.length; index++) {
 				if (datas.deviceCable[index].mac === item.mac) {
 					return;
@@ -92,6 +94,16 @@ function handleOnlineChange() {
 	datas.device2g = [];
 	datas.device5g = [];
 	datas.deviceCable = [];
+	if (rawdata) {
+		rawdata.forEach((item) => {
+			addItem(item);
+		});
+		if (datas.device2g.length === 0 && datas.device5g.length === 0 && datas.deviceCable.length === 0) {
+			empty.value = true;
+		} else {
+			empty.value = false;
+		}
+	}
 }
 
 function setTrafficStatus() {
@@ -116,6 +128,7 @@ onBeforeMount(() => {
 				console.log(result);
 				if (result.code === 0) {
 					empty.value = false;
+					rawdata = result.clients;
 					result.clients.forEach((item) => {
 						addItem(item);
 					});

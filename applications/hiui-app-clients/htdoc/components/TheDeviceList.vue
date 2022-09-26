@@ -3,7 +3,7 @@
 		<template #header>
 			<n-space justify="space-between" class="pd-0-15">
 				<div>{{ $t(title) + $t('device') }}</div>
-				<n-space :size="50">
+				<!-- <n-space :size="50">
 					<n-tooltip trigger="hover">
 						<template #trigger>
 							<div>{{ $t('internet') }}</div>
@@ -11,14 +11,14 @@
 						{{ $t('关闭后用户将无法使用网络') }}
 					</n-tooltip>
 					<div v-if="!online">{{ $t('operate') }}</div>
-				</n-space>
+				</n-space> -->
 			</n-space>
 		</template>
 		<n-list-item v-for="(item, index) in data" :key="index" class="list-item-border mg-bt-10">
 			<n-space align="center" justify="space-between">
-				<n-space>
-					<n-icon size="40" :component="LogoAndroid"></n-icon>
-					<n-space vertical size="small">
+				<div class="flex-hor-ac">
+					<n-icon size="40" :component="DeviceUnknownOutlined"></n-icon>
+					<n-space vertical size="small" class="pd-0-15">
 						<div>{{ item.name }}</div>
 						<n-space :size="24">
 							<n-space size="small">
@@ -33,23 +33,23 @@
 								{{ $t('speed') }}:
 								<div>↑ {{ bytesToSizeList(item.up) }} | ↓ {{ bytesToSizeList(item.down) }}</div>
 							</n-space>
-							<n-space style="width: 210px" size="small">
+							<n-space style="width: 220px" size="small">
 								{{ $t('total') }}:
 								<div>↑ {{ bytesToSizeList(item.total_up) }} | ↓ {{ bytesToSizeList(item.total_down) }}</div>
 							</n-space>
-							<n-space size="small">
+							<!-- <n-space size="small">
 								{{ $t('Qos') }}:
 								<n-button type="primary" text ghost @click="setQos(item)">{{ $t('settings') }}</n-button>
-							</n-space>
+							</n-space> -->
 						</n-space>
 					</n-space>
-				</n-space>
-				<n-space :size="50">
+				</div>
+				<!-- <n-space :size="50">
 					<n-switch v-model:value="item.blocked" size="medium" @update:value="handleChange(item)" />
 					<n-button text v-if="!online" @click="delClient(item)">
 						<n-icon size="18"><Delete20Filled /></n-icon>
 					</n-button>
-				</n-space>
+				</n-space> -->
 			</n-space>
 		</n-list-item>
 	</n-list>
@@ -82,8 +82,7 @@
 </template>
 
 <script setup>
-import {LogoAndroid, LogoApple} from '@vicons/ionicons4';
-import {Delete20Filled} from '@vicons/fluent';
+import {DeviceUnknownOutlined} from '@vicons/material';
 const {proxy} = getCurrentInstance();
 const dialog = proxy.$dialog;
 defineProps({

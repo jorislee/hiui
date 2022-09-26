@@ -259,6 +259,7 @@ function M.getConfig()
             end
         end)
         s.txpwrlist = txpwrlist
+        s.encrypt = s.encryption
         s.encryptions = encryptions(s.type)
 
         if string.lower(s.band) == "2g" then

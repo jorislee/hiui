@@ -7,7 +7,7 @@ local json = require 'cjson'
 
 local mac = string.upper(arg[1])
 local ip = arg[2]
-local name = arg[3]
+local name = string.gsub(arg[3], '%s+', '')
 local con_type = arg[4]
 
 local function conType(_mac)

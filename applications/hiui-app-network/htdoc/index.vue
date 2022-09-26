@@ -143,7 +143,16 @@ function getNetworks() {
 
 function getRelayInfo() {
 	proxy.$hiui.call('wireless', 'relayInfo').then((result) => {
+		console.log(result, 'relay');
 		if (Object.keys(result).length === 0 || !result.up) {
+			relay.name = null;
+			relay.up = false;
+			relay.info = [
+				['Address', ''],
+				['Mask', ''],
+				['Gateway', ''],
+				['DNS', '']
+			];
 			return;
 		}
 		relay.name = result.name;

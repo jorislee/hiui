@@ -44,17 +44,26 @@
 			</n-list-item>
 		</n-list>
 	</div>
+	<n-modal v-model:show="loading" :close-on-esc="false" :mask-closable="false">
+		<n-spin size="large">
+			<template #description>
+				<div style="color: var(--primary-color)">{{ $t('Upgrading') }}...</div>
+			</template>
+		</n-spin>
+	</n-modal>
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
 	relayInfo: Object
 });
 const autoConnect = ref(false);
+const loading = ref(false);
 const {proxy} = getCurrentInstance();
 
 function disconnect() {
-	proxy.$hiui.call('wireless', 'disRelaydConnect').then((element) => {});
+	loading.value = true;
+	proxy.$hiui.call('wireless', 'disRelaydConnect').then((result) => {});
 }
 function pushRelayd(params) {
 	let data;
@@ -65,6 +74,18 @@ function pushRelayd(params) {
 	}
 	proxy.$router.push({path: '/network/relayd', query: data});
 }
+onMounted(() => {
+	proxy.$hiui.call('relayd', 'history').then((result) => {
+		console.log(result, 'test');
+		if (result) {
+			result.forEach((item) => {
+				if (item.ssid === props.relayInfo.name) {
+					autoConnect.value = item.auto === '0';
+				}
+			});
+		}
+	});
+});
 </script>
 <style scoped>
 :deep(.n-divider.n-divider--vertical) {

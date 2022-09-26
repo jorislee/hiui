@@ -24,3 +24,6 @@ A `framework` used to develop Web interface for OpenWrt.
 [English](https://zhaojh329.github.io/oui/)
 
 [中文](https://zhaojh329.github.io/oui/zh/)
+
+awk '$1=="48:65:EE:12:AA:3D" {sub(/0/,"test",$9);print}' clients
+sed "/48:65:EE:12:AA:3D/c $res" clients

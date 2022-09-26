@@ -1,5 +1,5 @@
 <template>
-	<n-space class="components-bg-dark pd-30" vertical>
+	<n-space class="components-bg pd-30" vertical>
 		<n-layout>
 			<n-space align="center">
 				<div class="circle"></div>
@@ -7,22 +7,22 @@
 			</n-space>
 		</n-layout>
 		<n-divider />
-		<div class="flex-hor bg-color-dark bg-border-dark">
+		<div class="flex-hor bg-color bg-border">
 			<n-list class="width-fill pd-30">
 				<template #header>
 					<div class="font-18">{{ $t('线上信息') }}</div>
 				</template>
 				<n-list-item>
-					<n-thing :title="$t('当前版本')" :title-extra="remoteFrimwareInfo.version" />
+					<n-thing :title="$t('当前版本')" :title-extra="remoteFrimwareInfo.curVer" />
 				</n-list-item>
 				<n-list-item>
-					<n-thing :title="$t('编译时间')" :title-extra="remoteFrimwareInfo.create_time" />
+					<n-thing :title="$t('编译时间')" :title-extra="remoteFrimwareInfo.compileTime" />
 				</n-list-item>
 				<n-list-item>
-					<template #suffix>
-						<n-button text ghost>{{ $t('立即下载') }}</n-button>
+					<template v-if="remoteFrimwareInfo.ver" #suffix>
+						<n-button text ghost style="padding-bottom: 8px">{{ $t('立即下载') }}</n-button>
 					</template>
-					<n-thing :title="$t('最新版本')" :title-extra="remoteFrimwareInfo.version" />
+					<n-thing :title="$t('最新版本')" :title-extra="remoteFrimwareInfo.ver ?? remoteFrimwareInfo.curVer" />
 				</n-list-item>
 			</n-list>
 			<n-divider vertical />
@@ -32,20 +32,20 @@
 					<div class="font-18">{{ $t('软件信息') }}</div>
 				</template>
 				<n-list-item>
-					<n-thing :title="$t('当前版本')" :title-extra="remoteWebUiInfo.version" />
+					<n-thing :title="$t('当前版本')" :title-extra="remoteWebUiInfo.curVer" />
 				</n-list-item>
 				<n-list-item>
 					<n-thing :title="$t('CPU 架构')" :title-extra="remoteWebUiInfo.arch" />
 				</n-list-item>
 				<n-list-item>
-					<template #suffix>
+					<template v-if="remoteWebUiInfo.ver" #suffix>
 						<n-button text ghost>{{ $t('立即更新') }}</n-button>
 					</template>
-					<n-thing :title="$t('远程版本')" :title-extra="remoteWebUiInfo.version" />
+					<n-thing :title="$t('远程版本')" :title-extra="remoteWebUiInfo.ver" />
 				</n-list-item>
 			</n-list>
 		</div>
-		<div class="bg-border-dark pd-30">
+		<div class="bg-border pd-30">
 			<div v-if="downloading > 0 && downloading < 100">
 				<n-progress type="line" :percentage="downloading" :indicator-placement="'inside'" processing />
 			</div>
@@ -61,13 +61,13 @@
 				</n-upload>
 			</div>
 		</div>
-		<div v-if="downloading === 100" class="bg-border-dark pd-30">
+		<div v-if="downloading === 100" class="bg-border pd-30">
 			<n-list class="width-fill">
 				<template #header>
 					<div class="font-18">{{ $t('固件验证') }}</div>
 				</template>
 				<n-list-item>
-					<n-thing :title="$t('版本')" :title-extra="remoteFrimwareInfo.version" />
+					<n-thing :title="$t('版本')" :title-extra="remoteFrimwareInfo.ver" />
 				</n-list-item>
 				<n-list-item>
 					<n-thing :title="$t('MD5')" :title-extra="md5" />
@@ -113,7 +113,7 @@ const keepConfig = ref(true);
 const remoteFrimwareInfo = reactive({});
 const remoteWebUiInfo = reactive({});
 const verification = ref(false);
-const downloading = ref(99);
+const downloading = ref(0);
 function bytesToHuman(bytes) {
 	if (isNaN(bytes)) {
 		return '';
@@ -134,6 +134,7 @@ function onUploadFinish({event}) {
 	const response = JSON.parse(event.target.response);
 	size.value = response.size;
 	md5.value = response.md5;
+	console.log(proxy.$refs.upload);
 	proxy.$refs.upload.clear();
 
 	proxy.$hiui.ubus('system', 'validate_firmware_image', {path: '/tmp/firmware.bin'}).then(({valid}) => {
@@ -160,6 +161,15 @@ function doUpgrade() {
 onBeforeMount(() => {
 	proxy.$hiui.call('upgrade', 'checkFirmwareVersion').then((result) => {
 		console.log(result);
+		remoteFrimwareInfo.curVer = result.curVer;
+		remoteFrimwareInfo.compileTime = result.compileTime;
+		remoteFrimwareInfo.ver = result.ver;
+	});
+	proxy.$hiui.call('upgrade', 'checkWebVersion').then((result) => {
+		console.log(result);
+		remoteWebUiInfo.curVer = result.curVer;
+		remoteWebUiInfo.arch = result.arch;
+		remoteWebUiInfo.ver = result.ver;
 	});
 });
 </script>

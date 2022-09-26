@@ -58,14 +58,7 @@
 </template>
 
 <script setup>
-import {
-	PersonCircleOutline as UserIcon,
-	LogOutOutline as LogoutIcon,
-	PowerSharp as PowerSharpIcon,
-	ChevronForward as ChevronForwardIcon,
-	Moon as MoonIcon,
-	SunnySharp as SunnySharpIcon
-} from '@vicons/ionicons5';
+import {Moon as MoonIcon, SunnySharp as SunnySharpIcon} from '@vicons/ionicons5';
 import TheMenu from './components/TheMenu.vue';
 const proxy = getCurrentInstance().appContext.config.globalProperties;
 defineProps({
