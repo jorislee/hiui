@@ -10,6 +10,8 @@ jobs:
             matrix:
                 arch:
                     - mips_24kc
+                    - mipsel_24kc
+                    - mvebu-cortexa53
                 version: [19.07.8]
 
         steps:
