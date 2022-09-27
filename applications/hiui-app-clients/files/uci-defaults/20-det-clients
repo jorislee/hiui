@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cat >/mnt/20-det-clients <<EOF
+cat >/etc/hotplug.d/dhcp/20-det-clients <<EOF
 #!/bin/sh
 [ ! -e '/etc/clients' ] && touch /etc/clients
 [ "\$ACTION" = "update" -o "\$ACTION" = "add" ] && {
@@ -22,5 +22,17 @@ if [ \$ACTION == 'add' ]; then
 fi
 EOF
 
+cat >/etc/hotplug.d/iface/99-wrtbwmon <<EOF
+#!/bin/sh
+
+[ "\$ACTION" = ifup -o "\$ACTION" = ifupdate ] || exit 0
+[ "\$ACTION" = ifupdate -a -z "\$IFUPDATE_ADDRESSES" -a -z "\$IFUPDATE_DATA" ] && exit 0
+
+/etc/init.d/wrtbwmon restart
+
+logger -t wrtbwmon "Restart for \$ACTION of \$INTERFACE (\$DEVICE)"
+EOF
+
 chmod +x /etc/hotplug.d/dhcp/20-det-clients
 chmod +x /etc/hotplug.d/firewall/80-add-block
+chmod +x /etc/hotplug.d/firewall/99-wrtbwmon
