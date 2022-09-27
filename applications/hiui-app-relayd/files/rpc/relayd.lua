@@ -13,8 +13,6 @@ local function isIntable(value, tb)
 end
 
 local function addHistory(params)
-    uci:foreach("hiui", "history-sta",
-                function(s) uci:set("hiui", s['.name'], "auto", "1") end)
     uci:set("hiui", trim(params.bssid), "history-sta")
     uci:set("hiui", trim(params.bssid), "ssid", params.ssid)
     uci:set("hiui", trim(params.bssid), "bssid", params.bssid)
@@ -22,11 +20,6 @@ local function addHistory(params)
     uci:set("hiui", trim(params.bssid), "device", params.device)
     uci:set("hiui", trim(params.bssid), "encryption", params.encryption)
     uci:set("hiui", trim(params.bssid), "channel", params.channel)
-    if params.auto then
-        uci:set("hiui", trim(params.bssid), "auto", '0')
-    else
-        uci:set("hiui", trim(params.bssid), "auto", '1')
-    end
     uci:commit("hiui")
 end
 
@@ -106,17 +99,11 @@ end
 
 function M.delHistory(params)
     uci:delete("hiui", params[".name"])
-    uci.commit("hiui")
+    uci:commit("hiui")
     return {code = 0}
 end
 
 function M.updateHistory(params)
-    uci:set("hiui", params[".name"], "auto", true)
-    uci:foreach("hiui", "history-sta", function(s)
-        if s[".name"] ~= params[".name"] then
-            uci:set("hiui", s[".name"], "auto", false)
-        end
-    end)
     assert(params.device, "no device")
     uci:set("wireless", "sta", "device", params.device)
     uci:set("wireless", "sta", "mode", "sta")
@@ -130,8 +117,12 @@ function M.updateHistory(params)
     assert(params.channel, "no channel")
     uci:set("wireless", "sta", "channel", params.channel)
     uci:set("wireless", params.device, "channel", params.channel)
-    assert(params.key, "no key")
-    uci:set("wireless", "sta", "key", params.key)
+    if params.key then
+        uci:set("wireless", "sta", "key", params.key)
+    else
+        uci:set("wireless", "sta", "key", 'none')
+    end
+
     uci:set("wireless", "sta", "disabled", '0')
     uci:set("wireless", params.device, "disabled", '0')
     uci:commit("wireless")

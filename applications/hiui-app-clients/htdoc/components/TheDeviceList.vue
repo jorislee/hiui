@@ -2,7 +2,7 @@
 	<n-list v-if="data.length > 0" class="bg">
 		<template #header>
 			<n-space justify="space-between" class="pd-0-15">
-				<div>{{ $t(title) + $t('device') }}</div>
+				<div class="secondary-text">{{ $t(title) + $t('device') }}</div>
 				<!-- <n-space :size="50">
 					<n-tooltip trigger="hover">
 						<template #trigger>
@@ -17,10 +17,12 @@
 		<n-list-item v-for="(item, index) in data" :key="index" class="list-item-border mg-bt-10">
 			<n-space align="center" justify="space-between">
 				<div class="flex-hor-ac">
-					<n-icon size="40" :component="DeviceUnknownOutlined"></n-icon>
-					<n-space vertical size="small" class="pd-0-15">
+					<div class="icon-bg">
+						<n-icon size="24" :component="DeviceUnknownOutlined"></n-icon>
+					</div>
+					<n-space vertical size="small" class="pd-0-20">
 						<div>{{ item.name }}</div>
-						<n-space :size="24">
+						<n-space :size="24" class="secondary-text">
 							<n-space size="small">
 								{{ $t('IP地址') }}:
 								<div>{{ item.ip }}</div>
@@ -28,7 +30,7 @@
 							<div class="flex-hor-ac">
 								<n-tooltip trigger="hover">
 									<template #trigger>
-										<n-icon :size="18" :component="IosLink" :color="item.bind ? 'green' : ''"></n-icon>
+										<n-icon :size="18" :component="item.bind ? LinkOutlined : DisconnectOutlined" :color="item.bind ? 'green' : ''"></n-icon>
 									</template>
 									{{ $t('关闭后用户将无法使用网络') }}
 								</n-tooltip>
@@ -37,18 +39,20 @@
 									<div>{{ item.mac }}</div>
 								</n-space>
 							</div>
-							<n-space style="width: 220px" size="small">
-								{{ $t('speed') }}:
-								<div>↑ {{ bytesToSizeList(item.up) }} | ↓ {{ bytesToSizeList(item.down) }}</div>
+							<n-space v-if="traffic">
+								<n-space style="width: 220px" size="small">
+									{{ $t('speed') }}:
+									<div>↑ {{ bytesToSizeList(item.up) }} | ↓ {{ bytesToSizeList(item.down) }}</div>
+								</n-space>
+								<n-space style="width: 220px" size="small">
+									{{ $t('total') }}:
+									<div>↑ {{ bytesToSizeList(item.total_up) }} | ↓ {{ bytesToSizeList(item.total_down) }}</div>
+								</n-space>
+								<!-- <n-space size="small">
+									{{ $t('Qos') }}:
+									<n-button type="primary" text ghost @click="setQos(item)">{{ $t('settings') }}</n-button>
+								</n-space> -->
 							</n-space>
-							<n-space style="width: 220px" size="small">
-								{{ $t('total') }}:
-								<div>↑ {{ bytesToSizeList(item.total_up) }} | ↓ {{ bytesToSizeList(item.total_down) }}</div>
-							</n-space>
-							<!-- <n-space size="small">
-								{{ $t('Qos') }}:
-								<n-button type="primary" text ghost @click="setQos(item)">{{ $t('settings') }}</n-button>
-							</n-space> -->
 						</n-space>
 					</n-space>
 				</div>
@@ -91,11 +95,8 @@
 
 <script setup>
 import {DeviceUnknownOutlined} from '@vicons/material';
-import {IosLink} from '@vicons/ionicons4';
-
-const {proxy} = getCurrentInstance();
-const dialog = proxy.$dialog;
-defineProps({
+import {LinkOutlined, DisconnectOutlined} from '@vicons/antd';
+const props = defineProps({
 	data: {
 		type: Array,
 		default: function () {
@@ -103,9 +104,11 @@ defineProps({
 		}
 	},
 	title: String,
-	online: Boolean
+	online: Boolean,
+	traffic: Boolean
 });
-
+const {proxy} = getCurrentInstance();
+const dialog = proxy.$dialog;
 const showQosMoal = ref(false);
 const qos_up = ref('0');
 const qos_down = ref('0');
@@ -172,7 +175,6 @@ function cancelQos() {
 }
 
 function handleChange(item) {
-	console.log(item.blocked);
 	proxy.$hiui.call('clients', 'addBlocked', {mac: item.mac}).then((result) => {
 		console.log(result);
 	});
@@ -195,5 +197,17 @@ function delClient(item) {
 <style scoped>
 .w-100 {
 	width: 100px;
+}
+.icon-bg {
+	width: 40px;
+	height: 40px;
+	border-radius: 6px;
+	background: rgba(73, 87, 112, 0.15);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.secondary-text {
+	color: #98a3b7;
 }
 </style>

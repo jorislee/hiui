@@ -15,7 +15,7 @@
 	min-width: 1256px;
 	align-self: stretch;
 	border-radius: 8px;
-	background: linear-gradient(180deg, #f3f5f8 0%, var(--n-color) 100%);
+	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);
 	box-sizing: border-box;
 	border: 2px solid #ffffff;
 	box-shadow: -4px -4px 10px 0px #ffffff, 4px 4px 10px 0px rgba(55, 99, 170, 0.05);
@@ -33,7 +33,7 @@
 
 .bg-color {
 	width: -webkit-fill-available;
-	background: linear-gradient(180deg, #f3f5f8 0%, var(--n-color) 100%);
+	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);
 }
 
 .bg-color-dark {
@@ -54,7 +54,7 @@
 }
 
 .list-item-border {
-	padding: 15px 20px 15px 15px !important;
+	padding: 15px !important;
 	border-radius: 4px !important;
 	background: #ffffff;
 	box-sizing: border-box;
@@ -73,6 +73,10 @@
 
 .__divider {
 	--n-color: rgba(73, 87, 112, 0.15) !important;
+}
+
+.gray {
+	background: gray;
 }
 
 .font-18 {
@@ -99,6 +103,10 @@
 	padding: 0 15px;
 }
 
+.pd-0-20 {
+	padding: 0 20px;
+}
+
 .mg-bt-10 {
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -108,4 +116,11 @@
 }
 .n-list {
 	background: transparent !important;
+}
+.n-list__header {
+	border-bottom: 0px !important;
+}
+
+.n-list-item div {
+	--n-text-color: #495770;
 }

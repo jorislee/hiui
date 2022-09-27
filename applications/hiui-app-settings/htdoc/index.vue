@@ -1,5 +1,5 @@
 <template>
-	<div class="components-bg-dark pd-30" vertical>
+	<div class="components-bg pd-30" vertical>
 		<n-layout>
 			<n-space align="center">
 				<div class="circle"></div>
@@ -8,7 +8,7 @@
 		</n-layout>
 		<n-divider />
 		<n-space vertical :size="20">
-			<div class="flex-hor-ac bg-color-dark bg-border-dark">
+			<div class="flex-hor-ac bg-color bg-border">
 				<n-space vertical style="width: 100%" class="pd-30" size="large">
 					<div class="font-18-size">{{ $t('管理员密码') }}</div>
 					<n-input v-model:value="oldpd" type="password" placeholder="必填" show-password-on="mousedown" :minlenght="8">
@@ -35,7 +35,7 @@
 					<img src="@/assets/setting.png" />
 				</n-space>
 			</div>
-			<n-space vertical class="bg-color-dark bg-border-dark pd-30" :size="15">
+			<n-space vertical class="bg-color bg-border pd-30" :size="15">
 				<div class="font-18-size">{{ $t('Reset to defaults') }}</div>
 				<div>
 					<n-space class="tips-info-bg">
@@ -71,6 +71,9 @@ const modalSpin = ref(false);
 const verifyPd = {
 	trigger: ['input', 'blur'],
 	validator() {
+		if (newpd.value === newpd1.value && newpd.value !== '') {
+			return true;
+		}
 		if (newpd.value !== newpd1.value) {
 			return false;
 		}
@@ -78,11 +81,19 @@ const verifyPd = {
 };
 
 function changePassword() {
-	proxy.$hiui.call('user', 'change_password', {
-		oldpassword: oldpd.value,
-		password: newpd1.value,
-		id: user.id
-	});
+	proxy.$hiui
+		.call('user', 'change_password', {
+			oldpassword: oldpd.value,
+			password: newpd1.value,
+			id: user.id
+		})
+		.then((result) => {
+			if (result.code !== 0) {
+				proxy.$message.error(result.message);
+			} else {
+				proxy.$message.success(proxy.$t('success'));
+			}
+		});
 }
 
 function doReset() {
@@ -101,16 +112,16 @@ function doReset() {
 		}
 	});
 }
-onBeforeMount(() => {
+onMounted(() => {
 	proxy.$hiui.call('user', 'get_users').then(({users}) => {
-		console.log(users, proxy);
 		users.forEach((element) => {
-			if (element.username === proxy.$hiui.state.username) {
+			if (element.username === proxy.$hiui.username) {
 				user = element;
 			}
 		});
 	});
 });
+onBeforeMount(() => {});
 </script>
 
 <style scoped>

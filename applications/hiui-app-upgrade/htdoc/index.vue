@@ -20,7 +20,7 @@
 				</n-list-item>
 				<n-list-item>
 					<template v-if="remoteFrimwareInfo.ver" #suffix>
-						<n-button text ghost style="padding-bottom: 8px">{{ $t('立即下载') }}</n-button>
+						<n-button text ghost style="padding-bottom: 8px" text-color="#0052D9">{{ $t('立即下载') }}</n-button>
 					</template>
 					<n-thing :title="$t('最新版本')" :title-extra="remoteFrimwareInfo.ver ?? remoteFrimwareInfo.curVer" />
 				</n-list-item>

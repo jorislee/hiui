@@ -4,7 +4,7 @@
 			<template #header>
 				<n-space justify="space-between">
 					<n-space class="font-18" align="center">
-						<div class="circle"></div>
+						<div class="circle" :class="{gray: !relayInfo.up}"></div>
 						{{ $t(relayInfo.name ?? 'Not connected') }}
 						<n-tag :bordered="false" size="small" :type="relayInfo?.up ? 'info' : ''">{{ $t('current network') }}</n-tag>
 					</n-space>
@@ -63,8 +63,13 @@ const {proxy} = getCurrentInstance();
 
 function disconnect() {
 	loading.value = true;
-	proxy.$hiui.call('wireless', 'disRelaydConnect').then((result) => {});
+	proxy.$hiui.call('wireless', 'disRelaydConnect').then((result) => {
+		if (result.code === 0) {
+			loading.value = false;
+		}
+	});
 }
+
 function pushRelayd(params) {
 	let data;
 	if (params === 'scan') {
@@ -74,9 +79,9 @@ function pushRelayd(params) {
 	}
 	proxy.$router.push({path: '/network/relayd', query: data});
 }
+
 onMounted(() => {
 	proxy.$hiui.call('relayd', 'history').then((result) => {
-		console.log(result, 'test');
 		if (result) {
 			result.forEach((item) => {
 				if (item.ssid === props.relayInfo.name) {

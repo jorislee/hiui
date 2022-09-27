@@ -17,11 +17,11 @@ class Hiui {
 		window.Vue = Vue;
 		this.menus = null;
 		this.inited = false;
+		this.username = '';
 		this.state = reactive({
 			locale: '',
 			theme: '',
-			hostname: '',
-			username: ''
+			hostname: ''
 		});
 	}
 
@@ -47,7 +47,7 @@ class Hiui {
 		const {nonce} = await this.rpc('challenge', {username});
 		const hash1 = md5(`${username}:${password}`);
 		const hash2 = md5(`${hash1}:${nonce}`);
-		this.state.username = username;
+		this.username = username;
 		return this.rpc('login', {username, password: hash2});
 	}
 

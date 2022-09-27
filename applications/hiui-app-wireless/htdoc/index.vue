@@ -8,32 +8,16 @@
 		</n-layout>
 		<n-divider />
 
-		<n-config-provider :theme-overrides="themeOverrides" class="bg-color bg-border flex-hor-ac">
+		<div class="bg-color bg-border flex-hor-ac">
 			<the-wifi-settings :wifi-info="wifiConfig.wifi2g" :title="$t('2.4G WIFI')"></the-wifi-settings>
 			<n-divider vertical v-if="wifiConfig.wifi5g" />
 			<the-wifi-settings v-if="wifiConfig.wifi5g" :wifi-info="wifiConfig.wifi5g" :title="$t('5G WIFI')"></the-wifi-settings>
-		</n-config-provider>
+		</div>
 	</div>
 </template>
 
 <script setup>
 import TheWifiSettings from './components/TheWifiSettings.vue';
-/**
- * js 文件下使用这个做类型提示
- * @type import('naive-ui').GlobalThemeOverrides
- */
-const themeOverrides = {
-	Input: {
-		heightMedium: '48px'
-	},
-	Select: {
-		peers: {
-			InternalSelection: {
-				heightMedium: '48px'
-			}
-		}
-	}
-};
 const {proxy} = getCurrentInstance();
 const wifiConfig = reactive({wifi2g: {}, wifi5g: {}});
 onBeforeMount(() => {

@@ -1,5 +1,5 @@
 <template>
-	<n-space :class="$hiui.state.theme == 'dark' ? 'components-bg-dark' : 'components-bg'" class="pd-30" vertical size="large">
+	<n-space class="pd-30 components-bg" vertical size="large">
 		<n-layout>
 			<n-space align="center">
 				<div class="circle"></div>
@@ -7,14 +7,14 @@
 			</n-space>
 		</n-layout>
 		<n-divider />
-		<n-layout embedded>
+		<div embedded>
 			<div class="dis-fle-nowrap">
-				<n-space vertical align="center" size="large" style="min-width: 260px">
+				<n-space vertical align="center" size="large">
 					<img src="@/assets/router.png" height="157" />
 					<div>{{ $t('Router') }}</div>
 					<n-button v-if="!noWifi" type="default" @click="showInfo('router')" class="bt-bg">
 						<div v-if="wifiInfo.wifi2g" class="flex-hor-ac">
-							<div class="circle" :class="{gray: wifiInfo.wifi2g.up}"></div>
+							<div class="circle" :class="{gray: !wifiInfo.wifi2g.up}"></div>
 							<span>&ensp;{{ wifiInfo.wifi2g.name }}</span>
 						</div>
 						<n-divider vertical v-if="wifiInfo.wifi5g" />
@@ -60,11 +60,11 @@
 					</n-space>
 				</div>
 			</div>
-		</n-layout>
-		<n-layout>
+		</div>
+		<div>
 			<the-lan-info v-if="infoType === 1" :lan-info="lanInfo" :wan-info="wanInfo"></the-lan-info>
 			<the-relay-connect v-else-if="infoType === 2" :relay-info="relay"></the-relay-connect>
-		</n-layout>
+		</div>
 	</n-space>
 </template>
 <script setup>
@@ -143,7 +143,6 @@ function getNetworks() {
 
 function getRelayInfo() {
 	proxy.$hiui.call('wireless', 'relayInfo').then((result) => {
-		console.log(result, 'relay');
 		if (Object.keys(result).length === 0 || !result.up) {
 			relay.name = null;
 			relay.up = false;
@@ -225,9 +224,7 @@ onBeforeMount(() => {
 .pd-0-55 {
 	padding: 0 60px;
 }
-.gray {
-	background: gray;
-}
+
 .bt-bg {
 	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 100%);
 	box-sizing: border-box;

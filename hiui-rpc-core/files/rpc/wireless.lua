@@ -150,25 +150,25 @@ local function encryptions(hwtype)
             result[#result + 1] = 'psk'
             result[#result + 1] = 'psk2'
             result[#result + 1] = 'psk-mixed'
-            for _, feature in ipairs(wifi_features) do
-                hostapd[feature] = (os.execute(string.format(
-                                                   "/usr/sbin/hostapd -v%s >/dev/null 2>/dev/null",
-                                                   feature)) == 0)
-            end
-            for _, feature in ipairs(wifi_features) do
-                wpasupplicant[feature] =
-                    (os.execute(string.format(
-                                    "/usr/sbin/wpa_supplicant -v%s >/dev/null 2>/dev/null",
-                                    feature)) == 0)
-            end
-        end
-
-        if hostapd['sae'] or wpasupplicant['sae'] then
-            -- result['sae'] = 'WPA3-SAE'
-            -- result['sae-mixed'] = 'WPA2-PSK/WPA3-SAE Mixed Mode'
+            -- for _, feature in ipairs(wifi_features) do
+            --     hostapd[feature] = (os.execute(string.format(
+            --                                        "/usr/sbin/hostapd -v%s >/dev/null 2>/dev/null",
+            --                                        feature)) == 0)
+            -- end
+            -- for _, feature in ipairs(wifi_features) do
+            --     wpasupplicant[feature] =
+            --         (os.execute(string.format(
+            --                         "/usr/sbin/wpa_supplicant -v%s >/dev/null 2>/dev/null",
+            --                         feature)) == 0)
+            -- end
             result[#result + 1] = 'sae'
             result[#result + 1] = 'sae-mixed'
         end
+
+        -- if hostapd['sae'] or wpasupplicant['sae'] then
+        -- result['sae'] = 'WPA3-SAE'
+        -- result['sae-mixed'] = 'WPA2-PSK/WPA3-SAE Mixed Mode'
+        -- end
     elseif hwtype == 'broadcom' then
         result[#result + 1] = 'psk'
         result[#result + 1] = 'psk+psk2'

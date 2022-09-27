@@ -21,7 +21,7 @@
 		</n-space>
 		<div class="bg-color bg-border">
 			<div class="bg pd-8-20">
-				<the-device-list v-for="(item, index) in datas" :key="index" :data="item" :title="index" :online="cur === 'online'"></the-device-list>
+				<the-device-list v-for="(item, index) in datas" :key="index" :data="item" :title="index" :online="cur === 'online'" :traffic="traffic"></the-device-list>
 			</div>
 			<n-empty v-if="empty" description="什么也没有"></n-empty>
 		</div>
@@ -116,7 +116,7 @@ function setTrafficStatus() {
 function getTrafficStatus() {
 	proxy.$hiui.call('clients', 'getTraffic').then((result) => {
 		console.log(result);
-		traffic.value = result.enable;
+		// traffic.value = result.enable;
 	});
 }
 

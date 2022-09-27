@@ -3,6 +3,7 @@
 		<template #title>
 			{{ $t('Relayd Settings') }}
 		</template>
+		<!-- --------------------历史网络-------------------- -->
 		<n-space v-if="route.query.action === 'check'" vertical class="pd-20 bg-border">
 			<n-space justify="space-between" class="pd-0-15" style="font-size: 12px">
 				{{ $t('History connect network') }}
@@ -19,11 +20,11 @@
 								<n-icon size="24" :component="MdWifi"></n-icon>
 								<span class="pd-0-15">{{ item.ssid }}</span>
 								<span>({{ item.bssid }})</span>
-								<n-tag v-if="item.auto" type="info" size="small">{{ $t('current') }}</n-tag>
+								<n-tag v-if="item.up" type="info" size="small">{{ $t('current') }}</n-tag>
 							</div>
 							<div class="flex-hor-ac">
-								<n-switch style="padding-right: 45px" v-model:value="item.auto" size="medium" @update:value="changeNetwork(item)" />
-								<n-button text @click="removeWifi(item)">
+								<n-switch style="padding-right: 45px" v-model:value="item.up" size="medium" @update:value="changeNetwork(item)" />
+								<n-button text @click="removeWifi(index, item)">
 									<n-icon size="18"><DeleteFilled /></n-icon>
 								</n-button>
 							</div>
@@ -33,6 +34,9 @@
 			</n-list>
 			<n-empty v-if="historyList.length === 0" description="什么也没有"></n-empty>
 		</n-space>
+		<!-- ----------------------------------------------- -->
+
+		<!-- --------------------附近网络-------------------- -->
 		<n-space v-else-if="route.query.action === 'scan'" vertical class="pd-20 bg-border">
 			<n-space justify="space-between" class="pd-0-15">
 				<div>{{ $t('Nearby available network') }}</div>
@@ -48,7 +52,7 @@
 								<span>({{ item.bssid }})</span>
 							</div>
 							<div>
-								<n-switch v-model:value="item.auto" size="medium" @update:value="readyJoin(item)" />
+								<n-switch v-model:value="item.up" size="medium" @update:value="readyJoin(item)" />
 							</div>
 						</n-space>
 					</n-list-item>
@@ -56,24 +60,25 @@
 			</n-list>
 			<n-progress v-if="scaning > 0" type="line" :percentage="scaning" :indicator-placement="'inside'" processing />
 		</n-space>
+		<!-- ----------------------------------------------- -->
 	</n-page-header>
 	<n-modal :show="showModal" preset="dialog" :title="modalTitle" :show-icon="false">
 		<n-space vertical>
-			<n-input type="password" show-password-on="mousedown" placeholder="密码" :minlength="8" v-model:value="password" />
+			<n-input type="password" size="large" show-password-on="mousedown" placeholder="密码" :minlength="8" v-model:value="password" />
 			<n-checkbox v-model:checked="remember" :label="$t('remember network')" />
 		</n-space>
 
 		<template #action>
 			<n-space align="center">
 				<n-button round @click="cancelJoin">{{ $t('cancel') }}</n-button>
-				<n-button type="info" round @click="joinNetwork">{{ $t('join') }}</n-button>
+				<n-button type="info" round @click="joinNetwork" :disabled="!password">{{ $t('join') }}</n-button>
 			</n-space>
 		</template>
 	</n-modal>
 	<n-modal v-model:show="joining" :close-on-esc="false" :mask-closable="false">
 		<n-spin size="large">
 			<template #description>
-				<div style="color: var(--primary-color)">{{ $t('Joining') }}...</div>
+				<div>{{ $t('Joining') }}...</div>
 			</template>
 		</n-spin>
 	</n-modal>
@@ -101,7 +106,6 @@ function handleBack() {
 
 //===================附近网络========================
 function scanlist() {
-	console.log('================================================================');
 	proxy.$timer.create(
 		'scaning',
 		() => {
@@ -135,13 +139,12 @@ function scanlist() {
 
 function readyJoin(item) {
 	modalTitle.value = proxy.$t('input password', [item.ssid]);
-	showModal.value = item.auto;
+	showModal.value = item.up;
 	curItem = item;
 }
 
 function joinNetwork() {
 	curItem.key = password.value;
-	console.log(curItem);
 	let encryption = 'psk2';
 	switch (curItem.encryption.wpa) {
 		case 0:
@@ -156,7 +159,7 @@ function joinNetwork() {
 		case 3:
 			encryption = 'psk-mixed';
 			break;
-		case 5:
+		case 4:
 			encryption = 'sae';
 			break;
 		case 6:
@@ -177,13 +180,18 @@ function joinNetwork() {
 
 function cancelJoin() {
 	showModal.value = false;
-	curItem.auto = false;
+	curItem.up = false;
 }
 //===================附近网络========================
 
 function curNetwork() {
 	proxy.$hiui.call('wireless', 'relayInfo').then((result) => {
-		console.log(result, 'relayInfo');
+		console.log(result);
+		historyList.value.forEach((item) => {
+			if (result.name === item.ssid && !joining.value) {
+				item.up = result.up;
+			}
+		});
 		if (result.up && joining.value) {
 			joining.value = false;
 			proxy.$message.success('success');
@@ -199,32 +207,23 @@ function getHistoryList() {
 	proxy.$hiui.call('relayd', 'history').then((result) => {
 		console.log(result);
 		if (result) {
-			result.forEach((item) => {
-				item.auto = item.auto === '0';
-			});
 			historyList.value.push(...result);
 		}
 	});
 }
 
 function changeNetwork(params) {
-	historyList.value.forEach((item) => {
-		if (item.bssid !== params.bssid) {
-			item.auto = false;
-		}
-	});
 	proxy.$hiui.call('relayd', 'updateHistory', params).then((result) => {
-		if (result.code === 0) {
+		if (result.code === 0 && params.up) {
 			joining.value = true;
 		}
-		console.log(result);
 	});
 }
 
-function removeWifi(item) {
+function removeWifi(index, item) {
 	dialog.warning({
 		title: '移除网络',
-		content: '停止自动连接“GAOER-Mac”，再次连接时可能需要重新输入密码。',
+		content: '停止自动连接“GAOER-Mac”,再次连接时可能需要重新输入密码。',
 		positiveText: '确定',
 		negativeText: '取消',
 		autoFocus: false,
@@ -236,7 +235,10 @@ function removeWifi(item) {
 		},
 		onPositiveClick: () => {
 			proxy.$hiui.call('relayd', 'delHistory', item).then((result) => {
-				console.log(result);
+				if (result.code === 0) {
+					// historyList.value.slice(index, 1);
+					print(historyList.value);
+				}
 			});
 		}
 	});
@@ -246,7 +248,6 @@ function removeWifi(item) {
 onBeforeMount(() => {
 	if (route.query.action === 'scan') {
 		scanlist();
-		// test();
 	} else if (route.query.action === 'check') {
 		getHistoryList();
 	}
