@@ -1,5 +1,5 @@
 <template>
-	<n-space class="components-bg pd-30" vertical>
+	<div class="components-bg pd-30">
 		<n-layout>
 			<n-space align="center">
 				<div class="circle"></div>
@@ -7,84 +7,95 @@
 			</n-space>
 		</n-layout>
 		<n-divider />
-		<div class="flex-hor bg-color bg-border">
-			<n-list class="width-fill pd-30">
-				<template #header>
-					<div class="font-18">{{ $t('线上信息') }}</div>
-				</template>
-				<n-list-item>
-					<n-thing :title="$t('当前版本')" :title-extra="remoteFrimwareInfo.curVer" />
-				</n-list-item>
-				<n-list-item>
-					<n-thing :title="$t('编译时间')" :title-extra="remoteFrimwareInfo.compileTime" />
-				</n-list-item>
-				<n-list-item>
-					<template v-if="remoteFrimwareInfo.ver" #suffix>
-						<n-button text ghost style="padding-bottom: 8px" text-color="#0052D9">{{ $t('立即下载') }}</n-button>
+		<n-space vertical :size="20">
+			<div class="flex-hor bg-color bg-border">
+				<n-list class="width-fill pd-30">
+					<template #header>
+						<div class="font-18">{{ $t('线上信息') }}</div>
 					</template>
-					<n-thing :title="$t('最新版本')" :title-extra="remoteFrimwareInfo.ver ?? remoteFrimwareInfo.curVer" />
-				</n-list-item>
-			</n-list>
-			<n-divider vertical />
+					<n-list-item>
+						<n-thing :title="$t('当前版本')" :title-extra="remoteFrimwareInfo.curVer" />
+					</n-list-item>
+					<n-list-item>
+						<n-thing :title="$t('编译时间')" :title-extra="remoteFrimwareInfo.compileTime" />
+					</n-list-item>
+					<n-list-item>
+						<template v-if="remoteFrimwareInfo.ver" #suffix>
+							<n-button text ghost style="padding-bottom: 8px" text-color="#0052D9">{{ $t('立即下载') }}</n-button>
+						</template>
+						<n-thing :title="$t('最新版本')" :title-extra="remoteFrimwareInfo.ver ?? remoteFrimwareInfo.curVer" />
+					</n-list-item>
+				</n-list>
+				<n-divider vertical />
 
-			<n-list class="width-fill pd-30">
-				<template #header>
-					<div class="font-18">{{ $t('软件信息') }}</div>
-				</template>
-				<n-list-item>
-					<n-thing :title="$t('当前版本')" :title-extra="remoteWebUiInfo.curVer" />
-				</n-list-item>
-				<n-list-item>
-					<n-thing :title="$t('CPU 架构')" :title-extra="remoteWebUiInfo.arch" />
-				</n-list-item>
-				<n-list-item>
-					<template v-if="remoteWebUiInfo.ver" #suffix>
-						<n-button text ghost>{{ $t('立即更新') }}</n-button>
+				<n-list class="width-fill pd-30">
+					<template #header>
+						<div class="font-18">{{ $t('软件信息') }}</div>
 					</template>
-					<n-thing :title="$t('远程版本')" :title-extra="remoteWebUiInfo.ver" />
-				</n-list-item>
-			</n-list>
-		</div>
-		<div class="bg-border pd-30">
-			<div v-if="progress > 0 && progress < 100">
-				<n-progress type="line" :percentage="progress" :indicator-placement="'inside'" processing />
+					<n-list-item>
+						<n-thing :title="$t('当前版本')" :title-extra="remoteWebUiInfo.curVer" />
+					</n-list-item>
+					<n-list-item>
+						<n-thing :title="$t('CPU 架构')" :title-extra="remoteWebUiInfo.arch" />
+					</n-list-item>
+					<n-list-item>
+						<template v-if="remoteWebUiInfo.ver" #suffix>
+							<n-button text ghost>{{ $t('立即更新') }}</n-button>
+						</template>
+						<n-thing :title="$t('远程版本')" :title-extra="remoteWebUiInfo.ver" />
+					</n-list-item>
+				</n-list>
 			</div>
-			<div v-else>
-				<h2>{{ $t('local upload') }}</h2>
-				<n-upload ref="upload" directory-dnd action="/hiui-upload" :data="{path: '/tmp/firmware.bin'}" :on-finish="onUploadFinish" :show-file-list="false" :max="1" :on-change="handleChange">
-					<n-upload-dragger>
-						<div>
-							<n-icon size="48"><arrow-up-circle-icon /></n-icon>
-						</div>
-						<n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
-					</n-upload-dragger>
-				</n-upload>
+			<div class="bg-border bg-color pd-30">
+				<div v-if="progress > 0 && progress < 100">
+					<n-progress type="line" :percentage="progress" :indicator-placement="'inside'" processing />
+				</div>
+				<n-space vertical v-else>
+					<div class="font-18">{{ $t('local upload') }}</div>
+					<n-upload
+						ref="upload"
+						directory-dnd
+						action="/hiui-upload"
+						:data="{path: '/tmp/firmware.bin'}"
+						:on-finish="onUploadFinish"
+						:show-file-list="false"
+						:max="1"
+						:on-change="handleChange"
+					>
+						<n-upload-dragger class="upload-bg">
+							<div>
+								<n-icon size="48"><arrow-up-circle-icon /></n-icon>
+							</div>
+							<n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
+						</n-upload-dragger>
+					</n-upload>
+				</n-space>
 			</div>
-		</div>
-		<div v-if="progress === 100" class="bg-border pd-30">
-			<n-list class="width-fill">
-				<template #header>
-					<div class="font-18">{{ $t('固件验证') }}</div>
-				</template>
-				<n-list-item>
-					<n-thing :title="$t('版本')" :title-extra="remoteFrimwareInfo.ver" />
-				</n-list-item>
-				<n-list-item>
-					<n-thing :title="$t('MD5')" :title-extra="md5" />
-				</n-list-item>
-				<n-list-item>
-					<n-thing :title="$t('验证结果')" :title-extra="verification" />
-				</n-list-item>
-				<n-list-item>
-					<template #suffix>
-						<n-switch v-model:value="keepConfig" size="medium" />
+			<div v-if="progress === 100" class="bg-border pd-30">
+				<n-list class="width-fill">
+					<template #header>
+						<div class="font-18">{{ $t('固件验证') }}</div>
 					</template>
-					<n-thing :title="$t('保存配置')" />
-				</n-list-item>
-			</n-list>
-			<n-button v-if="modalConfirm" type="info" size="large" @click="doUpgrade" style="width: 100%; padding-top: 20px">{{ $t('Upgrade') }}</n-button>
-		</div>
-	</n-space>
+					<n-list-item>
+						<n-thing :title="$t('版本')" :title-extra="remoteFrimwareInfo.ver" />
+					</n-list-item>
+					<n-list-item>
+						<n-thing :title="$t('MD5')" :title-extra="md5" />
+					</n-list-item>
+					<n-list-item>
+						<n-thing :title="$t('验证结果')" :title-extra="verification" />
+					</n-list-item>
+					<n-list-item>
+						<template #suffix>
+							<n-switch v-model:value="keepConfig" size="medium" />
+						</template>
+						<n-thing :title="$t('保存配置')" />
+					</n-list-item>
+				</n-list>
+				<n-button v-if="modalConfirm" type="info" size="large" @click="doUpgrade" style="width: 100%; padding-top: 20px">{{ $t('Upgrade') }}</n-button>
+			</div>
+		</n-space>
+	</div>
 
 	<!-- <n-modal v-model:show="modalConfirm" preset="dialog" :title="$t('Upgrade')" :positive-text="$t('OK')" :negative-text="$t('Cancel')" @positive-click="doUpgrade">
 		<n-space vertical>
@@ -179,5 +190,13 @@ onBeforeMount(() => {
 	});
 });
 </script>
+<style scoped>
+.upload-bg {
+	border-radius: 8px;
+	background: #ffffff;
+	border: 1px dashed rgba(73, 87, 112, 0.15);
+	box-shadow: -4px -4px 10px 0px rgba(255, 255, 255, 0.3), 4px 4px 10px 0px rgba(55, 99, 170, 0.1);
+}
+</style>
 
 <i18n src="./locale.json" />

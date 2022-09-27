@@ -1,5 +1,5 @@
 <template>
-	<n-space class="pd-30 components-bg" vertical size="large">
+	<div class="pd-30 components-bg" vertical size="large">
 		<n-layout>
 			<n-space align="center">
 				<div class="circle"></div>
@@ -7,65 +7,64 @@
 			</n-space>
 		</n-layout>
 		<n-divider />
-		<div embedded>
-			<div class="dis-fle-nowrap">
-				<n-space vertical align="center" size="large">
-					<img src="@/assets/router.png" height="157" />
-					<div>{{ $t('Router') }}</div>
-					<n-button v-if="!noWifi" type="default" @click="showInfo('router')" class="bt-bg">
-						<div v-if="wifiInfo.wifi2g" class="flex-hor-ac">
-							<div class="circle" :class="{gray: !wifiInfo.wifi2g.up}"></div>
-							<span>&ensp;{{ wifiInfo.wifi2g.name }}</span>
-						</div>
-						<n-divider vertical v-if="wifiInfo.wifi5g" />
-						<div v-if="wifiInfo.wifi5g" class="flex-hor-ac">
-							<div class="circle"></div>
-							<span>&ensp;{{ wifiInfo.wifi5g.name }}</span>
-						</div>
-					</n-button>
-				</n-space>
-				<div ref="dividerInternal" style="width: 100%">
-					<img v-if="conInternal" src="@/assets/connect-success.svg" />
-					<n-divider v-else style="padding-top: 55px" />
-				</div>
-				<n-space vertical align="center" size="large" class="pd-0-55">
-					<img src="@/assets/internal.png" height="157" />
+
+		<div class="dis-fle-nowrap">
+			<n-space vertical align="center" size="large">
+				<img src="@/assets/router.png" height="157" class="pd-0-55" />
+				<div>{{ $t('Router') }}</div>
+				<n-button v-if="!noWifi" type="default" @click="showInfo('router')" class="bt-bg">
+					<div v-if="wifiInfo.wifi2g" class="flex-hor-ac">
+						<div class="circle" :class="{gray: !wifiInfo.wifi2g.up}"></div>
+						<span>&ensp;{{ wifiInfo.wifi2g.name }}</span>
+					</div>
+					<n-divider vertical v-if="wifiInfo.wifi5g" />
+					<div v-if="wifiInfo.wifi5g" class="flex-hor-ac">
+						<div class="circle"></div>
+						<span>&ensp;{{ wifiInfo.wifi5g.name }}</span>
+					</div>
+				</n-button>
+			</n-space>
+			<div ref="dividerInternal" style="width: 100%">
+				<img v-if="conInternal" src="@/assets/connect-success.svg" />
+				<n-divider v-else style="padding-top: 55px" />
+			</div>
+			<n-space vertical align="center" size="large" class="pd-0-55">
+				<img src="@/assets/internal.png" height="157" />
+				<div>{{ $t('Internal') }}</div>
+				<n-button type="default" @click="showInfo('internal')" class="bt-bg">
+					<div class="flex-hor-ac" v-if="wired.up">
+						<div class="circle"></div>
+						<span>&ensp;{{ wired.name }}</span>
+					</div>
+					<n-divider vertical v-if="relay.up" />
+					<div class="flex-hor-ac" v-if="relay.up">
+						<div class="circle"></div>
+						<span>&ensp;{{ relay.name }}</span>
+					</div>
+					<div v-if="!wired.up && !relay.up">{{ $t('settings') }}</div>
+				</n-button>
+			</n-space>
+			<div ref="dividerSpeed" style="width: 100%">
+				<img v-if="conSpeed" src="@/assets/connect-success.svg" />
+				<n-divider v-else style="padding-top: 55px" />
+			</div>
+			<div class="pd-0-55">
+				<n-space v-if="conSpeed" vertical align="center" size="large">
+					<img src="@/assets/speedserver.png" height="157" />
 					<div>{{ $t('Internal') }}</div>
-					<n-button type="default" @click="showInfo('internal')" class="bt-bg">
-						<div class="flex-hor-ac" v-if="wired.up">
-							<div class="circle"></div>
-							<span>&ensp;{{ wired.name }}</span>
-						</div>
-						<n-divider vertical v-if="relay.up" />
-						<div class="flex-hor-ac" v-if="relay.up">
-							<div class="circle"></div>
-							<span>&ensp;{{ relay.name }}</span>
-						</div>
-						<div v-if="!wired.up && !relay.up">{{ $t('settings') }}</div>
-					</n-button>
+					<n-button ghost round type="info" @click="showInfo('internal')">{{ $t('设置') }}</n-button>
 				</n-space>
-				<div ref="dividerSpeed" style="width: 100%">
-					<img v-if="conSpeed" src="@/assets/connect-success.svg" />
-					<n-divider v-else style="padding-top: 55px" />
-				</div>
-				<div class="pd-0-55">
-					<n-space v-if="conSpeed" vertical align="center" size="large">
-						<img src="@/assets/speedserver.png" height="157" />
-						<div>{{ $t('Internal') }}</div>
-						<n-button ghost round type="info" @click="showInfo('internal')">{{ $t('设置') }}</n-button>
-					</n-space>
-					<n-space v-else vertical align="center" size="large" style="padding-top: 40px">
-						<n-ellipsis style="width: 157px" :line-clamp="3">您可以开通互联网加速模块，以便更快速地访问互联网。</n-ellipsis>
-						<n-button type="info" @click="showInfo('speed')" color="#0052D9" round size="medium">{{ $t('开通加速') }}</n-button>
-					</n-space>
-				</div>
+				<n-space v-else vertical align="center" size="large" style="padding-top: 40px">
+					<n-ellipsis style="width: 157px" :line-clamp="3">您可以开通互联网加速模块，以便更快速地访问互联网。</n-ellipsis>
+					<n-button type="info" @click="showInfo('speed')" color="#0052D9" round size="medium">{{ $t('开通加速') }}</n-button>
+				</n-space>
 			</div>
 		</div>
 		<div>
 			<the-lan-info v-if="infoType === 1" :lan-info="lanInfo" :wan-info="wanInfo"></the-lan-info>
 			<the-relay-connect v-else-if="infoType === 2" :relay-info="relay"></the-relay-connect>
 		</div>
-	</n-space>
+	</div>
 </template>
 <script setup>
 import TheLanInfo from './components/TheLanInfo.vue';
@@ -203,7 +202,7 @@ function getSpeedInfo() {
 		if (speedInfo.wg?.length > 10) {
 			conSpeed.value = true;
 		}
-		if (Object.hasOwnProperty.call(result.service, 'peer')) {
+		if (result.service && Object.hasOwnProperty.call(result.service, 'peer')) {
 			console.log('22222222');
 		}
 	});
@@ -220,6 +219,7 @@ onBeforeMount(() => {
 .dis-fle-nowrap {
 	display: flex;
 	flex-wrap: nowrap;
+	padding-bottom: 20px;
 }
 .pd-0-55 {
 	padding: 0 60px;

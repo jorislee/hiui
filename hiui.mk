@@ -38,7 +38,7 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/www/views $(1)/etc/init.d $(1)/etc/uci-defaults $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/www/views $(1)/etc/init.d $(1)/etc/uci-defaults $(1)/usr/sbin
 	$(CP) $(PKG_BUILD_DIR)//htdoc/dist/* $(1)/www/views
 	if [ -f ./files/menu.json ]; then \
 		$(INSTALL_DIR) $(1)/usr/share/hiui/menu.d; \
@@ -53,8 +53,8 @@ define Package/$(PKG_NAME)/install
 	if [ -d ./files/uci-defaults ]; then \
 		$(INSTALL_BIN) ./files/uci-defaults/* $(1)/etc/uci-defaults/; \
 	fi
-	if [ -d ./files/bin ]; then \
-		$(INSTALL_BIN) ./files/bin/* $(1)/usr/bin/; \
+	if [ -d ./files/sbin ]; then \
+		$(INSTALL_BIN) ./files/sbin/* $(1)/usr/sbin/; \
 	fi
 endef
 

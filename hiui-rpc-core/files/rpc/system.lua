@@ -19,7 +19,7 @@ function M.get_cpu_time()
         end
     end
 
-    return { times = result }
+    return {times = result}
 end
 
 function M.sysupgrade(param)
@@ -38,29 +38,36 @@ function M.list_backup(param)
     local path = param.path
 
     local f = io.popen('tar -tzf ' .. path)
-    if not f then
-        return
-    end
+    if not f then return end
 
     local files = f:read('*a')
 
     f:close()
 
-    return { files = files }
+    return {files = files}
 end
 
 function M.restore_backup(param)
     os.execute('sysupgrade -r ' .. param.path)
 
-    ngx.timer.at(0.5, function()
-        os.execute('reboot')
-    end)
+    ngx.timer.at(0.5, function() os.execute('reboot') end)
 end
 
 function M.reset()
-    ngx.timer.at(0.5, function()
-        os.execute('firstboot -y && reboot')
-    end)
+    ngx.timer.at(0.5, function() os.execute('firstboot -y && reboot') end)
+end
+
+function M.getVersionAndSN()
+    local c = uci.cursor()
+    local f = io.popen(
+                  'opkg info hiui-ui-core|awk \'$1=="Version:" {print $2}\'')
+    local version
+    if f then
+        version = f:read('*a')
+        f:close()
+    end
+    local sn = c:get("rtty", "general", "id")
+    return {code = 0, sn = sn, version = version, date = os.time()}
 end
 
 return M

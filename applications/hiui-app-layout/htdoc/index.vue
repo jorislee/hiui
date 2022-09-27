@@ -1,22 +1,24 @@
 <template>
 	<n-config-provider :theme="undefined" :theme-overrides="themeOverrides">
 		<n-layout has-sider position="absolute">
-			<n-layout-sider content-style="padding: 14px;" bordered :native-scrollbar="false" collapsed :collapsed-width="124" collapse-mode="width">
-				<div class="logo-name">
-					<router-link to="/home">
-						<img src="@/assets/logo.svg" style="width: 64px" />
-					</router-link>
-				</div>
-				<n-dialog-provider>
-					<the-menu :menus="menus"></the-menu>
-				</n-dialog-provider>
-			</n-layout-sider>
+			<n-config-provider :theme="darkTheme">
+				<n-layout-sider content-style="padding: 14px;" bordered :native-scrollbar="false" collapsed :collapsed-width="124" collapse-mode="width">
+					<div class="logo-name">
+						<router-link to="/home">
+							<img src="@/assets/logo.svg" style="width: 64px" />
+						</router-link>
+					</div>
+					<n-dialog-provider>
+						<the-menu :menus="menus"></the-menu>
+					</n-dialog-provider>
+				</n-layout-sider>
+			</n-config-provider>
 			<n-layout>
-				<n-layout-header bordered style="padding: 4px">
+				<!-- <n-layout-header bordered style="padding: 4px">
 					<n-space justify="end" size="large">
 						<n-tooltip placement="bottom">
 							<template #trigger>
-								<n-switch v-model:value="darkTheme" :rail-style="() => 'background-color: #000e1c'">
+								<n-switch v-model:value="dark_theme" :rail-style="() => 'background-color: #000e1c'">
 									<template #checked>
 										<n-icon size="14" color="#ffd93b"><sunny-sharp-icon /></n-icon>
 									</template>
@@ -25,10 +27,10 @@
 									</template>
 								</n-switch>
 							</template>
-							<span>{{ $t((darkTheme ? 'Dark' : 'Light') + ' theme') }}</span>
+							<span>{{ $t((dark_theme ? 'Dark' : 'Light') + ' theme') }}</span>
 						</n-tooltip>
 					</n-space>
-				</n-layout-header>
+				</n-layout-header> -->
 
 				<n-layout-content embedded content-style="padding: 30px;" :native-scrollbar="false">
 					<router-view>
@@ -48,13 +50,13 @@
 				</n-layout-content>
 
 				<n-layout-footer position="absolute" bordered style="padding: 4px">
-					<div class="copyright">
-						<n-text type="info">{{ $t('© 2021 SpeedBox版权所有') }}</n-text>
+					<n-space justify="center" class="copyright">
+						<span type="primary">{{ $t('© 2021 SpeedBox版权所有') }}</span>
 						<n-divider vertical />
-						<n-text type="info">S/N: 1123123123123213213</n-text>
+						<span type="info">S/N: {{ info.sn }}</span>
 						<n-divider vertical />
-						<n-text type="info">version: 2.0.0-14</n-text>
-					</div>
+						<span>version: {{ info.version }}</span>
+					</n-space>
 				</n-layout-footer>
 			</n-layout>
 		</n-layout>
@@ -64,6 +66,10 @@
 <script setup>
 import {Moon as MoonIcon, SunnySharp as SunnySharpIcon} from '@vicons/ionicons5';
 import TheMenu from './components/TheMenu.vue';
+import {darkTheme} from 'naive-ui';
+defineProps({
+	menus: Array
+});
 const proxy = getCurrentInstance().appContext.config.globalProperties;
 /**
  * js 文件下使用这个做类型提示
@@ -122,16 +128,24 @@ const themeOverrides = {
 		boxShadow: 'none'
 	}
 };
-defineProps({
-	menus: Array
-});
-let darkTheme = computed({
+
+const info = reactive({});
+
+let dark_theme = computed({
 	get() {
 		return proxy.$hiui.state.theme === 'dark';
 	},
 	set(val) {
 		proxy.$hiui.setTheme(val ? 'dark' : 'light');
 	}
+});
+
+onBeforeMount(() => {
+	proxy.$hiui.call('system', 'getVersionAndSN').then((result) => {
+		console.log(result);
+		info.sn = result.sn;
+		info.version = result.version;
+	});
 });
 </script>
 
@@ -148,10 +162,11 @@ let darkTheme = computed({
 
 .copyright {
 	text-align: right;
-	font-size: medium;
+	font-size: 14px;
 	padding-right: 40px;
 	display: flex;
 	justify-content: center;
+	color: #98a3b7;
 }
 
 .copyright .n-a {
