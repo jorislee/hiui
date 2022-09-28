@@ -1,5 +1,5 @@
 <template>
-	<n-el style="background-color: var(--base-color); opacity: 0.8; width: 100%; height: 100vh">
+	<n-el style="background-color: var(--info-color); opacity: 0.8; width: 100%; height: 100vh">
 		<n-form class="login" size="large" ref="form" :model="formValue" :rules="rules">
 			<n-form-item path="username">
 				<n-input v-model:value="formValue.username" :placeholder="$t('Please enter username')">
@@ -22,10 +22,6 @@
 			<n-form-item>
 				<n-button type="primary" block :loading="loading" @click="handleSubmit">{{ $t('Login') }}</n-button>
 			</n-form-item>
-			<div class="copyright">
-				<n-text type="info">Copyright © 2022 Powered by</n-text>
-				<n-a href="https://github.com/zhaojh329/hiui" target="_blank">hiui</n-a>
-			</div>
 		</n-form>
 	</n-el>
 </template>
