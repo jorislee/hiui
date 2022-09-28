@@ -66,7 +66,6 @@
 <script setup>
 import {Moon as MoonIcon, SunnySharp as SunnySharpIcon} from '@vicons/ionicons5';
 import TheMenu from './components/TheMenu.vue';
-import {darkTheme} from 'naive-ui';
 defineProps({
 	menus: Array
 });
