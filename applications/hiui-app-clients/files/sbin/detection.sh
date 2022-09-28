@@ -4,10 +4,10 @@ function online {
     if [ -e "/tmp/tertf/tertfinfo" ]; then
         result="/tmp/tertf/tertfinfo"
         awk '{print $1}' /etc/clients | while read line; do
-            # local tmp=$(awk '$1==tolower("'$line'") {print $3,$4,%5,$6,$15}' $result)
-            awk '$1==tolower("'$line'") {print $3,$4,%5,$6,$15}' $result | while read up down total_up total_down online; do
+            # local tmp=$(awk '$1==tolower("'$line'") {print $3,$4,$5,$6,$15}' $result)
+            awk '$1==tolower("'$line'") {print $3,$4,$5,$6,$15}' $result | while read up down total_up total_down online; do
                 if [ -n "$online" ]; then
-                    res=$(awk '$1=="'$line'" {sub(/[0-1]/,"'$online'",$5);sub(/[0-9]+/,"'$up'",$8);sub(/[0-1]/,"'$down'",$9);sub(/[0-1]/,"'$total_up'",$10);sub(/[0-1]/,"'$total_down'",$11);print}' /etc/clients)
+                    res=$(awk '$1=="'$line'" {sub(/[0-1]/,"'$online'",$5);sub(/[0-9]+/,"'$up'",$8);sub(/[0-9]+/,"'$down'",$9);sub(/[0-9]+/,"'$total_up'",$10);sub(/[0-9]+/,"'$total_down'",$11);print}' /etc/clients)
                     sed -i "/$line/c $res" /etc/clients
                 fi
             done

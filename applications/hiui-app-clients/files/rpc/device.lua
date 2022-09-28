@@ -7,7 +7,12 @@ local json = require 'cjson'
 
 local mac = string.upper(arg[1])
 local ip = arg[2]
-local name = string.gsub(arg[3], '%s+', '')
+local name
+if arg[3] then
+    name = string.gsub(arg[3], '%s+', '')
+else
+    name = 'unknown'
+end
 local con_type = arg[4]
 
 local function conType(_mac)
@@ -69,7 +74,7 @@ local function updateDatas()
     end
 
     if not hasMac then
-        local client = {mac, ip, name, conType(mac), 1, 0, 0, 0, 0, 0}
+        local client = {mac, ip, name, conType(mac), 1, 0, 0, 0, 0, 0, 0}
         clients[#clients + 1] = client
     end
 

@@ -35,4 +35,4 @@ EOF
 
 chmod +x /etc/hotplug.d/dhcp/20-det-clients
 chmod +x /etc/hotplug.d/firewall/80-add-block
-chmod +x /etc/hotplug.d/firewall/99-wrtbwmon
+chmod +x /etc/hotplug.d/iface/99-wrtbwmon

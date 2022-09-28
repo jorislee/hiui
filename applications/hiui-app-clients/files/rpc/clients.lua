@@ -39,13 +39,13 @@ function M.getClients()
         for line in io.lines("/etc/clients", "r") do
             local item = {}
             local tmp = split(line, '%s+', false)
-            if #tmp == 10 then
+            if #tmp == 11 then
                 item.mac = tmp[1]
                 item.ip = tmp[2]
                 item.name = tmp[3]
                 item.iface = tmp[4]
                 item.online = stringToBoolean(tmp[5], '1')
-                item.alive = stringToBoolean(tmp[6], '1')
+                item.alive = tmp[6]
                 item.blocked = stringToBoolean(tmp[7], '1')
                 item.up = tmp[8]
                 item.down = tmp[9]

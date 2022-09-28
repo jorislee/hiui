@@ -127,6 +127,9 @@ onBeforeMount(() => {
 				if (result.code === 0) {
 					empty.value = false;
 					rawdata = result.clients;
+					datas.device2g = [];
+					datas.device5g = [];
+					datas.deviceCable = [];
 					result.clients.forEach((item) => {
 						addItem(item);
 					});
