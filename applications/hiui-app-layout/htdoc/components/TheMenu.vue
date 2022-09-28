@@ -143,6 +143,7 @@ function menuClick(index, path) {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	color: white;
 }
 .menu-item {
 	display: flex;

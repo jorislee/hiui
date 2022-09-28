@@ -1,18 +1,16 @@
 <template>
 	<n-config-provider :theme="undefined" :theme-overrides="themeOverrides">
 		<n-layout has-sider position="absolute">
-			<n-config-provider :theme="darkTheme">
-				<n-layout-sider content-style="padding: 14px;" bordered :native-scrollbar="false" collapsed :collapsed-width="124" collapse-mode="width">
-					<div class="logo-name">
-						<router-link to="/home">
-							<img src="@/assets/logo.svg" style="width: 64px" />
-						</router-link>
-					</div>
-					<n-dialog-provider>
-						<the-menu :menus="menus"></the-menu>
-					</n-dialog-provider>
-				</n-layout-sider>
-			</n-config-provider>
+			<n-layout-sider content-style="padding: 14px;" bordered :native-scrollbar="false" collapsed :collapsed-width="124" collapse-mode="width">
+				<div class="logo-name">
+					<router-link to="/home">
+						<img src="@/assets/logo.svg" style="width: 64px" />
+					</router-link>
+				</div>
+				<n-dialog-provider>
+					<the-menu :menus="menus"></the-menu>
+				</n-dialog-provider>
+			</n-layout-sider>
 			<n-layout>
 				<!-- <n-layout-header bordered style="padding: 4px">
 					<n-space justify="end" size="large">
@@ -93,7 +91,8 @@ const themeOverrides = {
 	Layout: {
 		color: '#f3f5f8',
 		colorEmbedded: '#f3f5f8',
-		footerColor: '#f3f5f8'
+		footerColor: '#f3f5f8',
+		siderColor: '#242933'
 	},
 	Input: {
 		heightMedium: '48px',
@@ -129,21 +128,21 @@ const themeOverrides = {
 
 const info = reactive({});
 
-let dark_theme = computed({
-	get() {
-		return proxy.$hiui.state.theme === 'dark';
-	},
-	set(val) {
-		proxy.$hiui.setTheme(val ? 'dark' : 'light');
-	}
-});
+// let dark_theme = computed({
+// 	get() {
+// 		return proxy.$hiui.state.theme === 'dark';
+// 	},
+// 	set(val) {
+// 		proxy.$hiui.setTheme(val ? 'dark' : 'light');
+// 	}
+// });
 
 onBeforeMount(() => {
-	proxy.$hiui.call('system', 'getVersionAndSN').then((result) => {
-		console.log(result);
-		info.sn = result.sn;
-		info.version = result.version;
-	});
+	// proxy.$hiui.call('system', 'getVersionAndSN').then((result) => {
+	// 	console.log(result);
+	// 	info.sn = result.sn;
+	// 	info.version = result.version;
+	// });
 });
 </script>
 

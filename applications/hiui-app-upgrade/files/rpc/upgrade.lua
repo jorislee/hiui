@@ -46,13 +46,11 @@ function M.checkWebVersion()
             result = json.decode(content)
         end
     end
-    local f = io.popen(
-                  "opkg info hiui-ui-core |grep -E 'Version|Architecture' |awk '{print $2=$2}'")
+    local f =
+        io.popen("awk '/hiui-ui/ {getline;print $2}' /usr/lib/opkg/status")
     if f then
         local ver = f:read()
-        local arch = f:read()
         result.curVer = ver
-        result.arch = arch
     end
     return result
 end

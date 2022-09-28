@@ -59,8 +59,8 @@ end
 
 function M.getVersionAndSN()
     local c = uci.cursor()
-    local f = io.popen(
-                  'opkg info hiui-ui-core|awk \'$1=="Version:" {print $2}\'')
+    local f =
+        io.popen("awk '/hiui-ui/ {getline;print $2}' /usr/lib/opkg/status")
     local version
     if f then
         version = f:read('*a')

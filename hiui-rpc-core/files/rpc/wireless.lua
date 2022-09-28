@@ -244,7 +244,7 @@ function M.getConfig()
 
         s.interfaces = {}
         c:foreach("wireless", "wifi-iface", function(res)
-            if res.device == s[".name"] then
+            if res.device == s[".name"] and res['.name'] ~= "sta" then
                 if res.hidden and res.hidden == "1" then
                     res.hidden = true
                 else
@@ -255,12 +255,13 @@ function M.getConfig()
                 else
                     res.enable = true
                 end
+                res.encrypt = res.encryption
                 table.insert(s.interfaces, res)
             end
         end)
         s.txpwrlist = txpwrlist
-        s.encrypt = s.encryption
         s.encryptions = encryptions(s.type)
+        s.device = s[".name"]
 
         if string.lower(s.band) == "2g" then
             result["wifi_2g"] = s
