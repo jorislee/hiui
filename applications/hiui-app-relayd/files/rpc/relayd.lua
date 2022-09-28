@@ -85,7 +85,7 @@ function M.join(params)
     uci:commit("firewall")
     uci:commit("network")
     uci:commit("wireless")
-    addHistory(params)
+    if params.remember then addHistory(params) end
     os.execute(
         "/etc/init.d/firewall reload && /etc/init.d/network reload ; wifi reload")
     return {code = 0}

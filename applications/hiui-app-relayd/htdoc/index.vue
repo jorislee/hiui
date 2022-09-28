@@ -169,6 +169,7 @@ function joinNetwork() {
 			break;
 	}
 	curItem.encryption = encryption;
+	curItem.remember = remember;
 	proxy.$hiui.call('relayd', 'join', curItem).then((result) => {
 		console.log(result, 'join');
 	});
@@ -236,8 +237,7 @@ function removeWifi(index, item) {
 		onPositiveClick: () => {
 			proxy.$hiui.call('relayd', 'delHistory', item).then((result) => {
 				if (result.code === 0) {
-					// historyList.value.slice(index, 1);
-					print(historyList.value);
+					historyList.value.splice(index, 1);
 				}
 			});
 		}

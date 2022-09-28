@@ -36,7 +36,7 @@
 						<div class="circle"></div>
 						<span>&ensp;{{ wired.name }}</span>
 					</div>
-					<n-divider vertical v-if="relay.up" />
+					<n-divider vertical v-if="relay.up && wired.up" />
 					<div class="flex-hor-ac" v-if="relay.up">
 						<div class="circle"></div>
 						<span>&ensp;{{ relay.name }}</span>

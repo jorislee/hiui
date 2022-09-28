@@ -138,11 +138,11 @@ const info = reactive({});
 // });
 
 onBeforeMount(() => {
-	// proxy.$hiui.call('system', 'getVersionAndSN').then((result) => {
-	// 	console.log(result);
-	// 	info.sn = result.sn;
-	// 	info.version = result.version;
-	// });
+	proxy.$hiui.call('system', 'getVersionAndSN').then((result) => {
+		console.log(result);
+		info.sn = result.sn;
+		info.version = result.version;
+	});
 });
 </script>
 

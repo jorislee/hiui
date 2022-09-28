@@ -166,7 +166,7 @@ function menuClick(index, path) {
 	border-radius: 8px;
 	background: linear-gradient(174deg, rgba(231, 232, 239, 0.15) 4%, rgba(198, 202, 222, 0.359) 95%);
 	box-shadow: -4px -4px 10px 0px rgba(54, 62, 77, 0.5), 4px 4px 10px 0px rgba(18, 21, 26, 0.6), inset 0px 2px 10px 0px rgba(36, 41, 51, 0.5);
-	--icon-active-color: var(--n-text-color);
+	--icon-active-color: var(--n-toggle-button-color);
 }
 .more {
 	position: absolute;
