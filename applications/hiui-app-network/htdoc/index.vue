@@ -45,16 +45,16 @@
 				</n-button>
 			</n-space>
 			<div ref="dividerSpeed" style="width: 100%">
-				<img v-if="conSpeed" src="@/assets/connect-success.svg" />
+				<img v-if="conSpeed > 1" src="@/assets/connect-success.svg" />
 				<n-divider v-else style="padding-top: 55px" />
 			</div>
 			<div class="pd-0-55">
-				<n-space v-if="conSpeed" vertical align="center" size="large">
+				<n-space v-if="conSpeed > 0" vertical align="center" size="large">
 					<img src="@/assets/speedserver.png" height="157" />
 					<div>{{ $t('Internal') }}</div>
-					<n-button ghost round type="info" @click="showInfo('internal')">{{ $t('设置') }}</n-button>
+					<n-button v-if="conSpeed === 1" ghost round type="info" @click="showInfo('internal')">{{ $t('enable') }}</n-button>
 				</n-space>
-				<n-space v-else vertical align="center" size="large" style="padding-top: 40px">
+				<n-space v-else-if="conSpeed === 0" vertical align="center" size="large" style="padding-top: 40px">
 					<n-ellipsis style="width: 157px" :line-clamp="3">您可以开通互联网加速模块，以便更快速地访问互联网。</n-ellipsis>
 					<n-button type="info" @click="showInfo('speed')" color="#0052D9" round size="medium">{{ $t('开通加速') }}</n-button>
 				</n-space>
@@ -72,7 +72,7 @@ import TheRelayConnect from './components/TheRelayConnect.vue';
 
 const {proxy} = getCurrentInstance();
 const conInternal = ref(true);
-const conSpeed = ref(false);
+const conSpeed = ref(0);
 const noWifi = ref(false);
 const infoType = ref(1);
 const dividerInternal = ref(null);
@@ -99,7 +99,7 @@ function showInfo(params) {
 	} else if (params === 'internal') {
 		infoType.value = 2;
 	} else if (params === 'speed') {
-		console.log(params);
+		proxy.$router.push('/sdwan');
 	}
 }
 
@@ -199,11 +199,11 @@ function getSpeedInfo() {
 		console.log(result);
 		speedInfo.wg = result.wg;
 		speedInfo.service = result.service;
-		if (speedInfo.wg?.length > 10) {
-			conSpeed.value = true;
-		}
 		if (result.service && Object.hasOwnProperty.call(result.service, 'peer')) {
-			console.log('22222222');
+			conSpeed.value = 1;
+		}
+		if (speedInfo.wg?.length > 10) {
+			conSpeed.value = 2;
 		}
 	});
 }

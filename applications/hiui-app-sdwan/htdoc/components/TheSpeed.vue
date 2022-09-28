@@ -4,7 +4,7 @@
 			<n-list-item>
 				<n-space align="center" justify="space-between">
 					<div>{{ $t('Enable Speed') }}</div>
-					<n-switch v-model:value="autoConnect" size="medium" @update:value="enableSpeed" />
+					<n-switch v-model:value="speedInfo.up" size="medium" @update:value="enableSpeed" />
 				</n-space>
 			</n-list-item>
 			<n-list-item>
@@ -25,13 +25,21 @@
 					<n-space>↑ {{ bytesToSizeList(netSpeed.up) }} | ↓ {{ bytesToSizeList(netSpeed.down) }}</n-space>
 				</n-space>
 			</n-list-item>
+			<n-list-item>
+				<n-space justify="flex-end">
+					<n-button type="info" round :disabled="!hasChange" @click="Apply">{{ $t('Apply') }}</n-button>
+				</n-space>
+			</n-list-item>
 		</n-list>
 	</div>
 </template>
 
 <script setup>
+const {proxy} = getCurrentInstance();
 const speedInfo = reactive({});
 const netSpeed = reactive({});
+const hasChange = ref(false);
+let curStatus;
 
 function bytesToSizeList(num) {
 	if (num === 0 || !num) return '0 B';
@@ -49,7 +57,21 @@ function bytesToSizeList(num) {
 }
 
 function enableSpeed(params) {
-	console.log(params);
+	if (curStatus !== speedInfo.up) {
+		hasChange.value = true;
+	} else {
+		hasChange.value = false;
+	}
 }
+
+function Apply() {
+	proxy.$hiui.call('sdwan', 'enableSpeed', {enable: speedInfo.up ? '0' : '1'});
+}
+
+onBeforeMount(() => {
+	proxy.$hiui.call('sdwan', 'status').then((result) => {
+		console.log(result);
+	});
+});
 </script>
 <style scoped lang="less"></style>
