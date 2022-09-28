@@ -107,16 +107,14 @@ function handleOnlineChange() {
 }
 
 function setTrafficStatus() {
-	proxy.$hiui.call('clients', 'setTraffic', {enable: traffic.value}).then((result) => {
-		console.log(result);
+	proxy.$hiui.call('clients', 'setTraffic', {enable: traffic.value ? '1' : '0'}).then((result) => {
 		traffic.value = result.enable;
 	});
 }
 
 function getTrafficStatus() {
 	proxy.$hiui.call('clients', 'getTraffic').then((result) => {
-		console.log(result);
-		// traffic.value = result.enable;
+		traffic.value = result.enable;
 	});
 }
 
@@ -135,7 +133,7 @@ onBeforeMount(() => {
 				}
 			});
 		},
-		{repeat: true, immediate: true, time: 10000}
+		{repeat: true, immediate: true, time: 5000}
 	);
 	getTrafficStatus();
 });

@@ -224,7 +224,7 @@ function changeNetwork(params) {
 function removeWifi(index, item) {
 	dialog.warning({
 		title: '移除网络',
-		content: '停止自动连接“GAOER-Mac”,再次连接时可能需要重新输入密码。',
+		content: '删除历史连接记录,再次连接时需要重新输入密码',
 		positiveText: '确定',
 		negativeText: '取消',
 		autoFocus: false,

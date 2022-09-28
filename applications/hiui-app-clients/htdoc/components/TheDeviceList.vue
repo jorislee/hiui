@@ -24,7 +24,7 @@
 						<div>{{ item.name }}</div>
 						<n-space :size="24" class="secondary-text">
 							<n-space size="small">
-								{{ $t('IP地址') }}:
+								{{ $t('IP Addr') }}:
 								<div>{{ item.ip }}</div>
 							</n-space>
 							<div class="flex-hor-ac">
@@ -32,20 +32,20 @@
 									<template #trigger>
 										<n-icon :size="18" :component="item.bind ? LinkOutlined : DisconnectOutlined" :color="item.bind ? 'green' : ''"></n-icon>
 									</template>
-									{{ $t('关闭后用户将无法使用网络') }}
+									{{ item.bind ? $t('bind') : $t('unbind') }}
 								</n-tooltip>
 								<n-space>
-									<div>{{ $t('mac地址') }}:</div>
+									<div>{{ $t('MAC Addr') }}:</div>
 									<div>{{ item.mac }}</div>
 								</n-space>
 							</div>
 							<n-space v-if="traffic">
 								<n-space style="width: 220px" size="small">
-									{{ $t('speed') }}:
+									{{ $t('Speed') }}:
 									<div>↑ {{ bytesToSizeList(item.up) }} | ↓ {{ bytesToSizeList(item.down) }}</div>
 								</n-space>
 								<n-space style="width: 220px" size="small">
-									{{ $t('total') }}:
+									{{ $t('Total') }}:
 									<div>↑ {{ bytesToSizeList(item.total_up) }} | ↓ {{ bytesToSizeList(item.total_down) }}</div>
 								</n-space>
 								<!-- <n-space size="small">

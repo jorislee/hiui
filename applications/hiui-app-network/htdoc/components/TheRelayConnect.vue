@@ -39,7 +39,7 @@
 			<n-list-item>
 				<div>{{ $t('Auto connect') }}</div>
 				<template #suffix>
-					<n-switch v-model:value="autoConnect" size="medium" />
+					<n-switch v-model:value="autoConnect" size="medium" @update:value="handleAutoConnect" />
 				</template>
 			</n-list-item>
 		</n-list>
@@ -70,6 +70,26 @@ function disconnect() {
 	});
 }
 
+function handleAutoConnect(params) {
+	const disabled = params ? '0' : '1';
+	proxy.$dialog.warning({
+		title: '关闭自动连接',
+		content: '停止自动连接,任何网络重启都将断开中继',
+		positiveText: '确定',
+		negativeText: '取消',
+		autoFocus: false,
+		style: 'border-radius: 8px;--n-icon-color: red;--n-content-margin: 10px 0 16px 28px',
+		negativeButtonProps: {round: true, size: 'medium'},
+		positiveButtonProps: {round: true, size: 'medium', color: '#0052D9'},
+		onNegativeClick: () => {
+			autoConnect.value = !params;
+		},
+		onPositiveClick: () => {
+			proxy.$hiui.call('uci', 'set', {config: 'wireless', section: 'sta', values: {disabled}});
+		}
+	});
+}
+
 function pushRelayd(params) {
 	let data;
 	if (params === 'scan') {
@@ -85,7 +105,7 @@ onMounted(() => {
 		if (result) {
 			result.forEach((item) => {
 				if (item.ssid === props.relayInfo.name) {
-					autoConnect.value = item.auto === '0';
+					autoConnect.value = item.disabled !== '1';
 				}
 			});
 		}

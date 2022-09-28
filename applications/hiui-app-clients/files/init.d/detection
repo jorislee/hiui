@@ -1,0 +1,12 @@
+#!/bin/sh /etc/rc.common
+START=99
+USE_PROCD=1
+
+start_service() {
+    procd_open_instance
+    procd_set_param command flock -xn /tmp/detection.lock -c /usr/sbin/detection.sh
+    procd_set_param respawn
+    procd_set_param user root
+    #	procd_set_param pidfile $PID_FILE
+    procd_close_instance
+}

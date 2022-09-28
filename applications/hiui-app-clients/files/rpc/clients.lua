@@ -49,7 +49,8 @@ function M.getClients()
                 item.blocked = stringToBoolean(tmp[7], '1')
                 item.up = tmp[8]
                 item.down = tmp[9]
-                item.total = tmp[10]
+                item.total_up = tmp[10]
+                item.total_down = tmp[11]
                 item.bind = false
                 c:foreach('dhcp', 'host', function(s)
                     if s.mac == item.mac then
@@ -93,10 +94,11 @@ function M.addBlocked(item)
     local tmp = io.open("/etc/clients", "w")
     io.output(tmp)
     for index, value in ipairs(clients) do
-        local line = string.format("%s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
-                                   value[1], value[2], value[3], value[4],
-                                   value[5], value[6], value[7], value[8],
-                                   value[9], value[10])
+        local line = string.format(
+                         "%s  %s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
+                         value[1], value[2], value[3], value[4], value[5],
+                         value[6], value[7], value[8], value[9], value[10],
+                         value[11])
         io.write(line)
     end
     io.close(tmp)
@@ -125,10 +127,11 @@ function M.delBlocked(item)
     local tmp = io.open("/etc/clients", "w")
     io.output(tmp)
     for index, value in ipairs(clients) do
-        local line = string.format("%s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
-                                   value[1], value[2], value[3], value[4],
-                                   value[5], value[6], value[7], value[8],
-                                   value[9], value[10])
+        local line = string.format(
+                         "%s  %s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
+                         value[1], value[2], value[3], value[4], value[5],
+                         value[6], value[7], value[8], value[9], value[10],
+                         value[11])
         io.write(line)
     end
     io.close(tmp)
@@ -142,9 +145,19 @@ function M.setQos(item) return {code = 0} end
 
 function M.setTraffic(params)
     local c = uci.cursor()
-    if fs.access('/www/cgi-bin/api') then
-        c:set('hiui', 'global', 'traffic', params.enable)
-        c:commit('hiui')
+    c:set('hiui', 'global', 'traffic', params.enable)
+    c:commit('hiui')
+    if fs.access('/etc/config/glconfig') then
+        if c:get('glconfig', 'traffic_control', 'enable') == nil then
+            c:set('glconfig', 'traffic_control', 'service')
+        end
+        c:set('glconfig', 'traffic_control', 'enable', params.enable)
+        c:commit('glconfig')
+        if params.enable == '1' then
+            os.execute('gltraffic &')
+        else
+            os.execute('killall gltraffic')
+        end
     end
 end
 
@@ -152,8 +165,8 @@ function M.getTraffic(params)
     local c = uci.cursor()
     local result = {}
     local tmp = c:get('hiui', 'global', 'traffic')
-    if tmp then
-        result.enable = tmp
+    if tmp == "1" then
+        result.enable = true
     else
         result.enable = false
     end
