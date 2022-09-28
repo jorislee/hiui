@@ -11,38 +11,38 @@
 			<div class="flex-hor bg-color bg-border">
 				<n-list class="width-fill pd-30">
 					<template #header>
-						<div class="font-18">{{ $t('线上信息') }}</div>
+						<div class="font-18">{{ $t('Online information') }}</div>
 					</template>
 					<n-list-item>
-						<n-thing :title="$t('当前版本')" :title-extra="remoteFrimwareInfo.curVer" />
+						<n-thing :title="$t('Current version')" :title-extra="remoteFrimwareInfo.curVer" />
 					</n-list-item>
 					<n-list-item>
-						<n-thing :title="$t('编译时间')" :title-extra="remoteFrimwareInfo.compileTime" />
+						<n-thing :title="$t('Compile time')" :title-extra="remoteFrimwareInfo.compileTime" />
 					</n-list-item>
 					<n-list-item>
 						<template v-if="remoteFrimwareInfo.ver" #suffix>
-							<n-button text ghost style="padding-bottom: 8px" text-color="#0052D9">{{ $t('立即下载') }}</n-button>
+							<n-button text ghost style="padding-bottom: 8px" text-color="#0052D9">{{ $t('download now') }}</n-button>
 						</template>
-						<n-thing :title="$t('最新版本')" :title-extra="remoteFrimwareInfo.ver ?? remoteFrimwareInfo.curVer" />
+						<n-thing :title="$t('The latest version of')" :title-extra="remoteFrimwareInfo.ver ?? remoteFrimwareInfo.curVer" />
 					</n-list-item>
 				</n-list>
 				<n-divider vertical />
 
 				<n-list class="width-fill pd-30">
 					<template #header>
-						<div class="font-18">{{ $t('软件信息') }}</div>
+						<div class="font-18">{{ $t('Software information') }}</div>
 					</template>
 					<n-list-item>
-						<n-thing :title="$t('当前版本')" :title-extra="remoteWebUiInfo.curVer" />
+						<n-thing :title="$t('Current version')" :title-extra="remoteWebUiInfo.curVer" />
 					</n-list-item>
 					<n-list-item>
-						<n-thing :title="$t('CPU 架构')" :title-extra="remoteWebUiInfo.arch" />
+						<n-thing :title="$t('CPU architecture')" :title-extra="remoteWebUiInfo.arch" />
 					</n-list-item>
 					<n-list-item>
 						<template v-if="remoteWebUiInfo.ver" #suffix>
-							<n-button text ghost>{{ $t('立即更新') }}</n-button>
+							<n-button text ghost>{{ $t('update immediately') }}</n-button>
 						</template>
-						<n-thing :title="$t('远程版本')" :title-extra="remoteWebUiInfo.ver" />
+						<n-thing :title="$t('Remote version')" :title-extra="remoteWebUiInfo.ver" />
 					</n-list-item>
 				</n-list>
 			</div>
@@ -74,22 +74,22 @@
 			<div v-if="progress === 100" class="bg-border pd-30">
 				<n-list class="width-fill">
 					<template #header>
-						<div class="font-18">{{ $t('固件验证') }}</div>
+						<div class="font-18">{{ $t('Firmware verification') }}</div>
 					</template>
 					<n-list-item>
-						<n-thing :title="$t('版本')" :title-extra="remoteFrimwareInfo.ver" />
+						<n-thing :title="$t('Version')" :title-extra="remoteFrimwareInfo.ver" />
 					</n-list-item>
 					<n-list-item>
 						<n-thing :title="$t('MD5')" :title-extra="md5" />
 					</n-list-item>
 					<n-list-item>
-						<n-thing :title="$t('验证结果')" :title-extra="verification" />
+						<n-thing :title="$t('Validation results')" :title-extra="verification" />
 					</n-list-item>
 					<n-list-item>
 						<template #suffix>
 							<n-switch v-model:value="keepConfig" size="medium" />
 						</template>
-						<n-thing :title="$t('保存配置')" />
+						<n-thing :title="$t('Save configuration')" />
 					</n-list-item>
 				</n-list>
 				<n-button v-if="modalConfirm" type="info" size="large" @click="doUpgrade" style="width: 100%; padding-top: 20px">{{ $t('Upgrade') }}</n-button>

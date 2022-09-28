@@ -20,7 +20,7 @@
 			</n-input>
 		</n-list-item>
 		<n-list-item>
-			<n-space justify="end" align="center" class="des">{{ $t('加密方式') }}</n-space>
+			<n-space justify="end" align="center" class="des">{{ $t('Encryption') }}</n-space>
 			<n-select v-model:value="iface.encryption" :options="encryptions" @update:value="handleUpdateValue('encryption')"></n-select>
 		</n-list-item>
 		<n-list-item>
@@ -31,26 +31,26 @@
 			</n-input>
 		</n-list-item>
 		<n-list-item>
-			<n-space justify="end" align="center" class="des">{{ $t('模式') }}</n-space>
+			<n-space justify="end" align="center" class="des">{{ $t('Model') }}</n-space>
 			<n-select v-model:value="device.hwmode" :options="hwmodelist" @update:value="handleUpdateValue('hwmode')" />
 		</n-list-item>
 		<n-list-item>
-			<n-space justify="end" align="center" class="des">{{ $t('频宽') }}</n-space>
+			<n-space justify="end" align="center" class="des">{{ $t('Bandwidth') }}</n-space>
 			<n-select v-model:value="device.htmode" :options="htmodelist" @update:value="handleUpdateValue('htmode')" />
 		</n-list-item>
 		<n-list-item>
-			<n-space justify="end" align="center" class="des">{{ $t('信道') }}</n-space>
+			<n-space justify="end" align="center" class="des">{{ $t('Channel') }}</n-space>
 			<n-select v-model:value="device.channel" :options="channels" @update:value="handleUpdateValue('channel')" />
 		</n-list-item>
 		<n-list-item>
-			<n-space justify="end" align="center" class="des">{{ $t('发射功率(dBm)') }}</n-space>
+			<n-space justify="end" align="center" class="des">{{ $t('Launch power (dBm)') }}</n-space>
 			<n-select v-model:value="device.txpower" :options="txpwrlist" @update:value="handleUpdateValue('txpower')" />
 		</n-list-item>
 		<n-list-item>
 			<n-space justify="space-between" align="center">
-				<n-checkbox v-model:checked="iface.hidden" @update:checked="handleUpdateValue('hidden')">{{ $t('隐藏网络不被发现') }}</n-checkbox>
+				<n-checkbox v-model:checked="iface.hidden" @update:checked="handleUpdateValue('hidden')">{{ $t('Hidden network is not found') }}</n-checkbox>
 				<n-space>
-					<n-button type="text" ghost @click="channelOptimize">{{ $t('信道优化') }}</n-button>
+					<n-button type="text" ghost @click="channelOptimize">{{ $t('Channel optimization') }}</n-button>
 					<n-button type="info" round size="medium" @click="updateConfig">{{ $t('save') }}</n-button>
 				</n-space>
 			</n-space>

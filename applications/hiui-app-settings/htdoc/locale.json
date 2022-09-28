@@ -12,7 +12,12 @@
     "Reset to defaults": "Reset to defaults",
     "Perform reset": "Perform reset",
     "Rebooting": "Rebooting",
-    "ResettConfirm": "Do you really want to erase all settings"
+    "ResettConfirm": "Do you really want to erase all settings",
+    "Administrator password":"Administrator password",
+    "Must -have":"Must -have",
+    "setting-tips1":"1. If the device fails to solve the law, you can choose to return to the factory default settings.",
+    "setting-tips2":"2. After returning to the factory settings, all your current settings, applications and data will be lost.",
+    "setting-tips3":"3. The recovery process takes about 3 minutes. Do not let the router be broken during the recovery process."
   },
   "zh-CN": {
     "Backup": "备份",
@@ -27,7 +32,12 @@
     "Reset to defaults": "恢复到出厂设置",
     "Perform reset": "执行重置",
     "Rebooting": "正在重启",
-    "ResettConfirm": "您确定要清除所有设置吗"
+    "ResettConfirm": "您确定要清除所有设置吗",
+    "Administrator password":"管理员密码",
+    "Must -have":"必填",
+    "setting-tips1":"1、如果设备出现无法解法的故障，你可以选择恢复到出厂默认设置。",
+    "setting-tips2":"2、恢复到出厂设置后，你当前的所有设置、应用程序和数据都将丢失。",
+    "setting-tips3":"3、恢复过程大约需要3分钟，在恢复过程中不要让路由器断电。"
   },
   "zh-TW": {
     "Backup": "備份",
@@ -42,6 +52,11 @@
     "Reset to defaults": "回復預設值",
     "Perform reset": "執行重置",
     "Rebooting": "正在重啓",
-    "ResettConfirm": "您確定要清除所有設定"
+    "ResettConfirm": "您確定要清除所有設定",
+    "Administrator password":"管理員密碼",
+    "Must -have":"必填",
+    "setting-tips1":"1、如果設備出現無法解法的故障，你可以選擇恢復到出廠默認設置。",
+    "setting-tips2":"2、恢復到出廠設置後，你當前的所有設置、應用程序和數據都將丟失。",
+    "setting-tips3":"3、恢復過程大約需要3分鐘，在恢復過程中不要讓路由器斷電。"
   }
 }

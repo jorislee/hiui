@@ -8,7 +8,21 @@
     "Size": "Size",
     "Firmware verification failed. Please upload the firmware again": "Firmware verification failed. Please upload the firmware again",
     "Keep settings and retain the current configuration": "Keep settings and retain the current configuration",
-    "Upgrading": "Upgrading..."
+    "Upgrading": "Upgrading...",
+    "Online information": "Online information",
+    "Current version": "Current version",
+    "MD5": "MD5",
+    "Compile time": "Compile time",
+    "download now": "download now",
+    "The latest version of": "The latest version of",
+    "Software information": "Software information",
+    "CPU architecture": "CPU architecture",
+    "update immediately": "update immediately",
+    "Remote version": "Remote version",
+    "Firmware verification": "Firmware verification",
+    "Version": "Version",
+    "Validation results": "Validation results",
+    "Save configuration": "Save configuration"
   },
   "zh-CN": {
     "Upgrade": "升级",
@@ -19,7 +33,21 @@
     "Size": "大小",
     "Firmware verification failed. Please upload the firmware again": "固件校验失败，请重新上传",
     "Keep settings and retain the current configuration": "保持设置并保留当前配置",
-    "Upgrading": "正在升级..."
+    "Upgrading": "正在升级...",
+    "Online information": "线上信息",
+    "Current version": "当前版本",
+    "Compile time": "编译时间",
+    "download now": "立即下载",
+    "The latest version of": "最新版本",
+    "Software information": "软件信息",
+    "CPU architecture": "CPU 架构",
+    "update immediately": "立即更新",
+    "Remote version": "远程版本",
+    "Firmware verification": "固件验证",
+    "Version": "版本",
+    "MD5": "MD5",
+    "Validation results": "验证结果",
+    "Save configuration": "保存配置"
   },
   "zh-TW": {
     "Upgrade": "升級",
@@ -30,6 +58,21 @@
     "Size": "大小",
     "Firmware verification failed. Please upload the firmware again": "固件校驗失敗，請重新上傳",
     "Keep settings and retain the current configuration": "保留目前設定",
-    "Upgrading": "正在陞級..."
+    "Upgrading": "正在陞級...",
+    "Online information": "線上信息",
+    "Current version": "當前版本",
+    "MD5": "MD5",    
+    "Compile time": "編譯時間",
+    "download now": "立即下載",
+    "Upgrading": "软件信息",
+    "The latest version of": "最新版本",
+    "Software information": "軟件信息",
+    "CPU architecture": "CPU 架構",
+    "update immediately": "立即更新",
+    "Remote version": "遠程版本",
+    "Firmware verification": "固件驗證",
+    "Version": "版本",
+    "Validation results": "驗證結果",
+    "Save configuration": "保存配置"
   }
 }

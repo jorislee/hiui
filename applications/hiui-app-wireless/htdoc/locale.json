@@ -4,20 +4,43 @@
     "Network": "Network",
     "MAC address": "MAC address",
     "Signal / Noise": "Signal / Noise",
-    "RX Rate / TX Rate": "RX Rate / TX Rate"
+    "RX Rate / TX Rate": "RX Rate / TX Rate",
+    "Model":"Model",
+    "Bandwidth":"Bandwidth",
+    "Channel":"Channel",
+    "Launch power (dBm)":"Launch power (dBm)",
+    "Hidden network is not found":"Hidden network is not found",
+    "Channel optimization":"Channel optimization",
+    "Encryption":"Encryption"
+
   },
   "zh-CN": {
     "Type": "类型",
     "Network": "网络",
     "MAC address": "MAC 地址",
     "Signal / Noise": "信号/噪声",
-    "RX Rate / TX Rate": "接收速率/发送速率"
+    "RX Rate / TX Rate": "接收速率/发送速率",
+    "Model":"模式",
+    "Bandwidth":"频宽",
+    "Channel":"信道",
+    "Launch power (dBm)":"发射功率(dBm)",
+    "Hidden network is not found":"隐藏网络不被发现",
+    "Channel optimization":"信道优化",
+    "Encryption":"加密方式"
   },
   "zh-TW": {
     "Type": "類型",
     "Network": "網絡",
     "MAC address": "MAC 地址",
     "Signal / Noise": "信號 /雜訊比",
-    "RX Rate / TX Rate": "接收速率 / 發送速率"
+    "RX Rate / TX Rate": "接收速率 / 發送速率",
+    "Model":"模式",
+    "Bandwidth":"頻寬",
+    "Channel":"信道",
+    "Launch power (dBm)":"發射功率(dBm)",
+    "Hidden network is not found":"隱藏網絡不被發現",
+    "Channel optimization":"信道優化",
+    "Encryption":"加密方式"
   }
+
 }
