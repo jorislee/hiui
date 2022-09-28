@@ -10,13 +10,13 @@
 		<n-space vertical :size="20">
 			<div class="flex-hor-ac bg-color bg-border">
 				<n-space vertical style="width: 100%" class="pd-30" size="large">
-					<div class="font-18-size">{{ $t('管理员密码') }}</div>
-					<n-input v-model:value="oldpd" type="password" placeholder="必填" show-password-on="mousedown" :minlenght="8">
+					<div class="font-18-size">{{ $t('Administrator password') }}</div>
+					<n-input v-model:value="oldpd" type="password" placeholder="$t('Must -have')" show-password-on="mousedown" :minlenght="8">
 						<template #suffix>
 							<div style="padding: 0 8px 0 0; color: #98a3b7">{{ $t('password') }}</div>
 						</template>
 					</n-input>
-					<n-input v-model:value="newpd" type="password" placeholder="必填" show-password-on="mousedown" @keydown.enter.prevent>
+					<n-input v-model:value="newpd" type="password" placeholder="$t('Must -have')" show-password-on="mousedown" @keydown.enter.prevent>
 						<template #suffix>
 							<div style="padding: 0 8px 0 0; color: #98a3b7">{{ $t('new password') }}</div>
 						</template>
@@ -41,9 +41,9 @@
 					<n-space class="tips-info-bg">
 						<img src="@/assets/info.svg" />
 						<div>
-							<div>1、如果设备出现无法解法的故障，你可以选择恢复到出厂默认设置。</div>
-							<div>2、恢复到出厂设置后，你当前的所有设置、应用程序和数据都将丢失。</div>
-							<div>3、恢复过程大约需要3分钟，在恢复过程中不要让路由器断电。</div>
+							<div>{{ $t('setting-tips1') }}</div>
+							<div>{{ $t('setting-tips2') }}</div>
+							<div>{{ $t('setting-tips3') }}</div>
 						</div>
 					</n-space>
 				</div>
