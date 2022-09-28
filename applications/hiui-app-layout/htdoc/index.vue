@@ -64,7 +64,6 @@
 </template>
 
 <script setup>
-import {Moon as MoonIcon, SunnySharp as SunnySharpIcon} from '@vicons/ionicons5';
 import TheMenu from './components/TheMenu.vue';
 defineProps({
 	menus: Array
