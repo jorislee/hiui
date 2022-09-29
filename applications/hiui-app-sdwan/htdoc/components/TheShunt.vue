@@ -67,39 +67,13 @@ const columns = [
 		width: 200
 	}
 ];
+const {proxy} = getCurrentInstance();
 
 const enode = ref('test');
 const ruleNum = ref('');
 
-const data = Array.apply(null, {length: 987}).map((_, index) => {
-	return {
-		column1: index,
-		column2: (index % 2) + 1,
-		column3: 'a' + index
-	};
-});
-
-function query(page, pageSize = 10, order = 'ascend', filterValues = []) {
-	return new Promise((resolve) => {
-		const copiedData = data.map((v) => v);
-		const orderedData = order === 'descend' ? copiedData.reverse() : copiedData;
-		const filteredData = filterValues.length ? orderedData.filter((row) => filterValues.includes(row.column2)) : orderedData;
-		const pagedData = filteredData.slice((page - 1) * pageSize, page * pageSize);
-		const total = filteredData.length;
-		const pageCount = Math.ceil(filteredData.length / pageSize);
-		setTimeout(
-			() =>
-				resolve({
-					pageCount,
-					data: pagedData,
-					total
-				}),
-			1500
-		);
-	});
-}
 const dataRef = ref([]);
-const loadingRef = ref(true);
+const loadingRef = ref(false);
 const columnsRef = ref(columns);
 const paginationReactive = reactive({
 	page: 1,
@@ -109,53 +83,17 @@ const paginationReactive = reactive({
 });
 
 onMounted(() => {
-	query(paginationReactive.page, paginationReactive.pageSize).then((data) => {
-		// dataRef.value = data.data;
-		paginationReactive.pageCount = data.pageCount;
-		paginationReactive.itemCount = data.total;
-		loadingRef.value = false;
+	proxy.$hiui.call('sdwan', 'getShunt').then((result) => {
+		console.log(result);
 	});
 });
 function rowKey(rowData) {
-	return rowData.column1;
+	console.log(rowData);
+	return rowData.id;
 }
-function handleSorterChange(sorter) {
-	if (!sorter || sorter.columnKey === 'column1') {
-		if (!loadingRef.value) {
-			loadingRef.value = true;
-			query(paginationReactive.page, paginationReactive.pageSize, !sorter ? false : sorter.order).then((data) => {
-				dataRef.value = data.data;
-				paginationReactive.pageCount = data.pageCount;
-				paginationReactive.itemCount = data.total;
-				loadingRef.value = false;
-			});
-		}
-	}
-}
-function handleFiltersChange(filters) {
-	if (!loadingRef.value) {
-		loadingRef.value = true;
-		const filterValues = filters.column2 || [];
-		query(paginationReactive.page, paginationReactive.pageSize, filterValues).then((data) => {
-			dataRef.value = data.data;
-			paginationReactive.pageCount = data.pageCount;
-			paginationReactive.itemCount = data.total;
-			loadingRef.value = false;
-		});
-	}
-}
-function handlePageChange(currentPage) {
-	if (!loadingRef.value) {
-		loadingRef.value = true;
-		query(currentPage, paginationReactive.pageSize).then((data) => {
-			dataRef.value = data.data;
-			paginationReactive.page = currentPage;
-			paginationReactive.pageCount = data.pageCount;
-			paginationReactive.itemCount = data.total;
-			loadingRef.value = false;
-		});
-	}
-}
+function handleSorterChange(sorter) {}
+function handleFiltersChange(filters) {}
+function handlePageChange(currentPage) {}
 </script>
 
 <style scoped>

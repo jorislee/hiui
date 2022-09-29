@@ -27,7 +27,7 @@ function M.checkFirmwareVersion()
 end
 
 function M.downloadFirmware(url)
-    os.execute("curl -s -o /tmp/firmware.bin %s &" % url)
+    os.execute(string.format("curl -s -o /tmp/firmware.bin %s &", url))
 end
 
 function M.downloadProgress()

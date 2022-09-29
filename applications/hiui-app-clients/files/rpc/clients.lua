@@ -32,6 +32,25 @@ local function stringToBoolean(param, s)
     end
 end
 
+local function writeBak(clients)
+    local tmp = io.open("/tmp/clients_bak", "w")
+    io.output(tmp)
+    for index, value in ipairs(clients) do
+        if value[1] and value[11] then
+            local line = string.format(
+                             "%s  %s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
+                             value[1], value[2], value[3], value[4], value[5],
+                             value[6], value[7], value[8], value[9], value[10],
+                             value[11])
+            io.write(line)
+        else
+            io.write(value .. "\n")
+        end
+
+    end
+    io.close(tmp)
+end
+
 function M.getClients()
     local c = uci.cursor()
     if fs.access('/etc/clients') then
@@ -70,7 +89,7 @@ function M.getClients()
 end
 
 function M.delClient(item)
-    os.execute("sed -i '/%s/d' /etc/clients" % item.mac)
+    os.execute(string.format("sed -i '/%s/d' /etc/clients", item.mac))
     return {code = 0}
 end
 
@@ -90,20 +109,10 @@ function M.addBlocked(item)
         end
         if not needChange then clients[#clients + 1] = line end
     end
-
-    local tmp = io.open("/etc/clients", "w")
-    io.output(tmp)
-    for index, value in ipairs(clients) do
-        local line = string.format(
-                         "%s  %s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
-                         value[1], value[2], value[3], value[4], value[5],
-                         value[6], value[7], value[8], value[9], value[10],
-                         value[11])
-        io.write(line)
-    end
-    io.close(tmp)
+    writeBak(clients)
+    os.execute("cp /tmp/clients_bak /etc/clients")
     for index, mac in ipairs(item.macs) do
-        os.execute("ipset del block_device %s" % mac)
+        os.execute(string.format("ipset add block_device %s", mac))
     end
     return {code = 0}
 end
@@ -124,19 +133,10 @@ function M.delBlocked(item)
         end
         if not needChange then clients[#clients + 1] = line end
     end
-    local tmp = io.open("/etc/clients", "w")
-    io.output(tmp)
-    for index, value in ipairs(clients) do
-        local line = string.format(
-                         "%s  %s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
-                         value[1], value[2], value[3], value[4], value[5],
-                         value[6], value[7], value[8], value[9], value[10],
-                         value[11])
-        io.write(line)
-    end
-    io.close(tmp)
+    writeBak(clients)
+    os.execute("cp /tmp/clients_bak /etc/clients")
     for index, mac in ipairs(item.macs) do
-        os.execute("ipset del block_device %s" % mac)
+        os.execute(string.format("ipset del block_device %s", mac))
     end
     return {code = 0}
 end

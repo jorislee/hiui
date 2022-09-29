@@ -39,7 +39,7 @@ local function conType(_mac)
 end
 
 local function writeFile(clients)
-    local tmp = io.open("/etc/clients", "w")
+    local tmp = io.open("/tmp/clients_bak", "w")
     io.output(tmp)
     for index, value in ipairs(clients) do
         local line = string.format(
@@ -79,6 +79,7 @@ local function updateDatas()
     end
 
     writeFile(clients)
+    os.execute("cp /tmp/clients_bak /etc/clients")
 end
 
 updateDatas()

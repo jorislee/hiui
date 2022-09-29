@@ -2,7 +2,7 @@
 # Parsing UCI configuration is skipped if uci set nginx.global.uci_enable=false
 # For details see: https://openwrt.org/docs/guide-user/services/webserver/nginx
 
-worker_processes auto;
+worker_processes 1;
 
 user root;
 

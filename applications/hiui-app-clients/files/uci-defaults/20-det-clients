@@ -18,7 +18,7 @@ cat >/etc/hotplug.d/firewall/80-add-block <<EOF
 [[ -e '/tmp/add-block.lock' && \$ACTION == 'add' ]] && exit 0
 
 if [ \$ACTION == 'add' ]; then
-    flock -xn /tmp/add-block.lock -c "/usr/bin/block-and-qos.sh addBlockList"
+    flock -xn /tmp/add-block.lock -c "block-and-qos.sh addBlockList"
 fi
 EOF
 

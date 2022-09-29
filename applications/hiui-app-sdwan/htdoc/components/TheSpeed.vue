@@ -4,7 +4,7 @@
 			<n-list-item>
 				<n-space align="center" justify="space-between">
 					<div>{{ $t('Enable Speed') }}</div>
-					<n-switch v-model:value="speedInfo.up" size="medium" @update:value="enableSpeed" />
+					<n-switch v-model:value="speedInfo.up" :loading="loading" @update:value="enableSpeed" :disabled="!speedInfo.enable" />
 				</n-space>
 			</n-list-item>
 			<n-list-item>
@@ -27,7 +27,7 @@
 			</n-list-item>
 			<n-list-item>
 				<n-space justify="flex-end">
-					<n-button type="info" round :disabled="!hasChange" @click="Apply">{{ $t('Apply') }}</n-button>
+					<n-button type="info" round :loading="loading" :disabled="!hasChange" @click="Apply">{{ $t('Apply') }}</n-button>
 				</n-space>
 			</n-list-item>
 		</n-list>
@@ -39,6 +39,7 @@ const {proxy} = getCurrentInstance();
 const speedInfo = reactive({});
 const netSpeed = reactive({});
 const hasChange = ref(false);
+const loading = ref(false);
 let curStatus;
 
 function bytesToSizeList(num) {
@@ -65,12 +66,27 @@ function enableSpeed(params) {
 }
 
 function Apply() {
-	proxy.$hiui.call('sdwan', 'enableSpeed', {enable: speedInfo.up ? '0' : '1'});
+	setTimeout(() => {
+		loading.value = false;
+	}, 10000);
+	proxy.$hiui.call('sdwan', 'enable', {enable: speedInfo.up ? '0' : '1'}).then((result) => {
+		loading.value = true;
+	});
 }
 
 onBeforeMount(() => {
 	proxy.$hiui.call('sdwan', 'status').then((result) => {
-		console.log(result);
+		speedInfo.wg = result.wg;
+		speedInfo.service = result.service;
+		speedInfo.enable = true;
+		if (result.service && Object.hasOwnProperty.call(result.service, 'peer')) {
+			speedInfo.enable = true;
+		}
+		if (speedInfo.wg?.length > 10) {
+			speedInfo.up = true;
+		} else {
+			speedInfo.up = false;
+		}
 	});
 });
 </script>
