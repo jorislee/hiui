@@ -52,7 +52,6 @@ const localeOptions = () => {
 			label: titles[locale] ?? locale,
 			key: locale
 		};
-		console.log(proxy.$hiui.state.locale);
 		if (locale === proxy.$hiui.state.locale) {
 			isAuto = false;
 			tmp.icon = renderIcon(ChevronForwardIcon);
@@ -93,6 +92,7 @@ const dialog = proxy.$dialog;
 function renderDropdownLabel(option) {
 	option.label = proxy.$t(option.label);
 	if ('children' in option && option.children.length === 0) {
+		option.label = titles[proxy.$hiui.state.locale] ?? proxy.$t('Auto');
 		option.children = localeOptions();
 	}
 	return option.label;
