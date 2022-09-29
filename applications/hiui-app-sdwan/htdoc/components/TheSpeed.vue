@@ -22,7 +22,7 @@
 			<n-list-item>
 				<n-space align="center" justify="space-between">
 					<div>{{ $t('Network Speed') }}</div>
-					<n-space>↑ {{ bytesToSizeList(netSpeed.up) }} | ↓ {{ bytesToSizeList(netSpeed.down) }}</n-space>
+					<n-space>↑ {{ netSpeed.up }} | ↓ {{ netSpeed.down }}</n-space>
 				</n-space>
 			</n-list-item>
 			<n-list-item>
@@ -69,12 +69,11 @@ function Apply() {
 	setTimeout(() => {
 		loading.value = false;
 	}, 10000);
-	proxy.$hiui.call('sdwan', 'enable', {enable: speedInfo.up ? '0' : '1'}).then((result) => {
-		loading.value = true;
-	});
+	loading.value = true;
+	proxy.$hiui.call('sdwan', 'enable', {enable: speedInfo.up ? '0' : '1'});
 }
 
-onBeforeMount(() => {
+function getStatus() {
 	proxy.$hiui.call('sdwan', 'status').then((result) => {
 		speedInfo.wg = result.wg;
 		speedInfo.service = result.service;
@@ -88,6 +87,20 @@ onBeforeMount(() => {
 			speedInfo.up = false;
 		}
 	});
+}
+
+function getSpeed() {
+	proxy.$hiui.call('sdwan', 'getSpeed').then((result) => {
+		if (result) {
+			netSpeed.up = result.down;
+			netSpeed.down = result.up;
+		}
+	});
+}
+
+onBeforeMount(() => {
+	proxy.$timer.create('getStatus', getStatus, {repeat: true, immediate: true, time: 10000});
+	proxy.$timer.create('getSpeed', getSpeed, {repeat: true, immediate: true, time: 3000});
 });
 </script>
 <style scoped lang="less"></style>

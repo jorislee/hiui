@@ -11,6 +11,16 @@ function M.status()
     return {wg = status, service = service, code = 0}
 end
 
+function M.getSpeed()
+    local f = io.popen('wg_speed.sh wg0')
+    local result = {}
+    if f then
+        result = json.decode(f:read("*a"))
+        f:close()
+    end
+    return result
+end
+
 function M.enable(params)
     uci:foreach("wireguard", "proxy", function(s)
         uci:set("wireguard", s[".name"], "enable", params.enable)
@@ -28,15 +38,14 @@ function M.getShunt()
     local tmp = io.popen("awk -F'/' '/hi-th-api/ {print $2}' /etc/dnsmasq.conf")
     local host
     if tmp then
-        host = tmp:read("*a")
+        host = tmp:read()
         if rtty.general.ssl == '1' then
             host = "https://" .. host .. "/hi/shunt/list/"
         else
-            host = "http://" .. host .. "/hi/shunt/list/"
+            host = "http://" .. host .. '/hi/shunt/list/'
         end
         tmp:close()
     end
-
     local response_body = {}
     https.request({
         url = host .. rtty.general.id,

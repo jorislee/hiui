@@ -1,64 +1,80 @@
 <template>
-	<n-el style="background-color: #f5f7fa; opacity: 0.8; width: 100%">
-		<div class="login">
-			<img src="./assets/login-logo.jpg" />
-			<n-form size="large" ref="form" :model="formValue" :rules="rules">
+	<n-config-provider :theme-overrides="themeOverrides" class="login">
+		<img style="width: 400px; height: 480px; background: #253554" src="./assets/login-logo.png" />
+		<div class="login-input">
+			<div style="font-size: 24px">{{ $t('Login') }}</div>
+			<n-form size="large" ref="formRef" :model="formValue" :rules="rules">
 				<n-form-item path="username">
-					<n-input v-model:value="formValue.username" :placeholder="$t('Please enter username')">
+					<n-input v-model:value="formValue.username" size="medium" :placeholder="$t('Please enter username')">
 						<template #prefix>
 							<n-icon size="18" color="#808695">
-								<person-outline />
+								<UserCircle />
 							</n-icon>
 						</template>
 					</n-input>
 				</n-form-item>
 				<n-form-item path="password">
-					<n-input v-model:value="formValue.password" :placeholder="$t('Please enter password')" type="password" show-password-on="mousedown">
+					<n-input size="medium" v-model:value="formValue.password" :placeholder="$t('Please enter password')" type="password" show-password-on="mousedown">
 						<template #prefix>
 							<n-icon size="18" color="#808695">
-								<lock-closed-outline />
+								<Lock />
 							</n-icon>
 						</template>
 					</n-input>
 				</n-form-item>
 				<n-form-item>
-					<n-button type="primary" block :loading="loading" @click="handleSubmit">{{ $t('Login') }}</n-button>
+					<n-button type="info" block :loading="loading" @click="handleSubmit">{{ $t('Login') }}</n-button>
 				</n-form-item>
 			</n-form>
 		</div>
-	</n-el>
+	</n-config-provider>
 </template>
 
 <script setup>
-import {PersonOutline, LockClosedOutline} from '@vicons/ionicons5';
-const loading = false;
-const formValue = {
-	username: '',
-	password: ''
-};
-const rules = {
-	username: {
-		required: true,
-		trigger: 'blur',
-		message: () => this.$t('Please enter username')
+import {UserCircle, Lock} from '@vicons/tabler';
+const themeOverrides = {
+	Button: {
+		colorInfo: '#0052D9',
+		textColorHover: '#0052D9',
+		textColorFocus: '#0052D9',
+		borderHover: '1px solid #0052D9',
+		borderFocus: '1px solid #0052D9'
+	},
+	Input: {
+		heightMedium: '48px',
+		borderHover: '1px solid #0052D9',
+		borderFocus: '1px solid #0052D9'
 	}
 };
+const loading = ref(false);
+const formRef = ref(null);
+const {proxy} = getCurrentInstance();
+const formValue = reactive({
+	username: '',
+	password: ''
+});
+const rules = reactive({});
 function handleSubmit() {
-	this.$refs.form.validate(async (errors) => {
+	console.log(formRef);
+	formRef.value?.validate(async (errors) => {
 		if (errors) return;
-
-		this.loading = true;
-
+		loading.value = true;
 		try {
-			await this.$hiui.login(this.formValue.username, this.formValue.password);
-			this.$router.push('/');
+			await proxy.$hiui.login(formValue.username, formValue.password);
+			proxy.$router.push('/');
 		} catch {
-			this.$message.error(this.$t('wrong username or password'));
+			proxy.$message.error(proxy.$t('wrong username or password'));
 		}
-
-		this.loading = false;
+		loading.value = false;
 	});
 }
+onMounted(() => {
+	rules.username = {
+		required: true,
+		trigger: 'blur',
+		message: proxy.$t('Please enter username')
+	};
+});
 </script>
 
 <style scoped>
@@ -67,6 +83,22 @@ function handleSubmit() {
 	height: 100%;
 	width: 100%;
 	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: #f3f5f8;
+}
+
+.login-input {
+	width: 400px;
+	height: 480px;
+	padding: 50px 40px 60px 40px;
+	border-radius: 8px;
+	/* S_渐变色 */
+	background: linear-gradient(180deg, #f3f5f8 0%, #ffffff 99%);
+	box-sizing: border-box;
+	/* 纯白 */
+	border: 2px solid #ffffff;
+	transform: translateX(-5px);
 }
 
 .copyright {
@@ -76,6 +108,9 @@ function handleSubmit() {
 
 .copyright .n-a {
 	font-size: 1.2em;
+}
+:deep(.n-input__input) {
+	margin: 0 10px;
 }
 </style>
 
