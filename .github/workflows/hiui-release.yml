@@ -1,4 +1,4 @@
-name: build-hiui
+name: hiui-release
 on:
     push:
         tags:
