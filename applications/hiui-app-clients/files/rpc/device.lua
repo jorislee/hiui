@@ -21,11 +21,15 @@ local function conType(_mac)
         device = 'Wired'
     else
         uci:foreach("wireless", "wifi-iface", function(s)
-            local driver_type = iwinfo.type(s.ifname)
-            if driver_type and iwinfo[driver_type]["assoclist"] then
-                local assoclist = iwinfo[driver_type]["assoclist"](s.ifname)
-                for key, value in pairs(assoclist) do
-                    if key == _mac then device = s.device end
+            if s.ifname then
+                local driver_type = iwinfo.type(s.ifname)
+                if driver_type and iwinfo[driver_type]["assoclist"] then
+                    local assoclist = iwinfo[driver_type]["assoclist"](s.ifname)
+                    for key, value in pairs(assoclist) do
+                        if key == _mac then
+                            device = s.device
+                        end
+                    end
                 end
             end
         end)

@@ -376,8 +376,7 @@ CONFIGURE_ARGS += \
 
 define Package/nginx-mod-luci/install
 	$(INSTALL_DIR) $(1)/etc/nginx
-	$(INSTALL_BIN) ./files-luci-support/luci_uwsgi.conf $(1)/etc/nginx/luci_uwsgi.conf
-	$(INSTALL_BIN) ./files-luci-support/luci_nginx.conf $(1)/etc/nginx/luci_nginx.conf
+	$(INSTALL_BIN) ./files-luci-support/luci.locations $(1)/etc/nginx/conf.d/luci.locations
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files-luci-support/60_nginx-luci-support $(1)/etc/uci-defaults/60_nginx-luci-support
 endef

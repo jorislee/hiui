@@ -3,6 +3,11 @@ START=99
 USE_PROCD=1
 
 start_service() {
+    if [ ! -e '/tmp/tertf/tertfinfo' ]; then
+        mkdir -p /tmp/tertf
+        touch /tmp/tertf/tertfinfo
+        [ -e '/usr/bin/gltertf' ] && gltertf &
+    fi
     procd_open_instance
     procd_set_param command flock -xn /tmp/detection.lock -c /usr/sbin/detection.sh
     procd_set_param respawn
