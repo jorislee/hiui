@@ -92,7 +92,9 @@
 						<n-thing :title="$t('Save configuration')" />
 					</n-list-item>
 				</n-list>
-				<n-button v-if="modalConfirm" type="info" size="large" @click="doUpgrade" style="width: 100%; padding-top: 20px">{{ $t('Upgrade') }}</n-button>
+				<div style="padding-top: 20px">
+					<n-button v-if="modalConfirm" type="info" size="large" style="width: 100%" @click="doUpgrade">{{ $t('Upgrade') }}</n-button>
+				</div>
 			</div>
 		</n-space>
 	</div>

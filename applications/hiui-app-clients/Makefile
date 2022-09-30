@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 APP_TITLE:=Clients
 APP_NAME:=clients
-APP_DEPENDS:=+arp-scan
+
 
 include ../../hiui.mk
 
