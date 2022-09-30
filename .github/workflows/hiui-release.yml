@@ -1,0 +1,40 @@
+name: build-hiui
+on:
+    push:
+        tags:
+            - '*'
+
+jobs:
+    build:
+        name: Build ${{ matrix.arch }} ipk
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                arch:
+                    - mips_24kc
+                    - mipsel_24kc
+                    - mvebu-cortexa53
+                version: [19.07.8]
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - run: echo "PKGS=$(ls $GITHUB_WORKSPACE/applications/|tr '\n' ' ')" >> $GITHUB_ENV
+
+            - name: Build
+              uses: innet8/gh-action-sdk@master
+              env:
+                  ARCH: ${{ matrix.arch }}-${{ matrix.version }}
+                  MODE: all
+                  FEEDNAME: hiui
+                  PACKAGES: hiui-ui-core hiui-rpc-core ${{env.PKGS}}
+                  CHECKS: no
+                  V: s
+
+            - name: Release and Upload Assets
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: 'hiui*.ipk'
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
