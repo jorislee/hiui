@@ -1,8 +1,8 @@
 #!/bin/sh
 
 if nginx -V 2>&1 | grep -q ubus; then
-	if [ -z "$(cat /etc/nginx/conf.d/luci.locations | grep ubus)" ]; then
-		cat <<EOT >> /etc/nginx/conf.d/luci.locations
+        if [ -z "$(cat /etc/nginx/conf.d/luci.locations | grep ubus)" ]; then
+                cat <<EOT >>/etc/nginx/conf.d/luci.locations
 
 location /ubus {
         ubus_interpreter;
@@ -10,11 +10,11 @@ location /ubus {
         ubus_parallel_req 2;
 }
 EOT
-	fi
+        fi
 fi
 
-grep -q /var/run/ubus.sock /etc/nginx/conf.d/luci.locations &&
-	sed -i 's#/var/run/ubus.sock#/var/run/ubus/ubus.sock#' /etc/nginx/conf.d/luci.locations
+# grep -q /var/run/ubus.sock /etc/nginx/conf.d/luci.locations &&
+# sed -i 's#/var/run/ubus.sock#/var/run/ubus/ubus.sock#' /etc/nginx/conf.d/luci.locations
 
 if [ -x /etc/init.d/uhttpd ]; then
         /etc/init.d/uhttpd disable
@@ -36,6 +36,5 @@ if [ -n "$(pgrep uwsgi)" ]; then
 else
         /etc/init.d/uwsgi start
 fi
-
 
 exit 0
