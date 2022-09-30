@@ -42,12 +42,14 @@ local function writeFile(clients)
     local tmp = io.open("/tmp/clients_bak", "w")
     io.output(tmp)
     for index, value in ipairs(clients) do
-        local line = string.format(
-                         "%s  %s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
-                         value[1], value[2], value[3], value[4], value[5],
-                         value[6], value[7], value[8], value[9], value[10],
-                         value[11])
-        io.write(line)
+        if value[1] and value[11] then
+            local line = string.format(
+                             "%s  %s  %s  %s  %s  %s  %s  %s  %s  %s  %s\n",
+                             value[1], value[2], value[3], value[4], value[5],
+                             value[6], value[7], value[8], value[9], value[10],
+                             value[11])
+            io.write(line)
+        end
     end
     io.close(tmp)
 end
@@ -57,20 +59,20 @@ local function updateDatas()
     local hasMac = false
 
     for line in io.lines("/etc/clients", "r") do
-
-        local client = split(line, '%s+', false)
-        if string.find(line, mac) then
-            hasMac = true
-            client[1] = mac
-            if ip and name then
-                client[2] = ip
-                client[3] = name
+        if string.len(line) > 10 then
+            local client = split(line, '%s+', false)
+            if string.find(line, mac) then
+                hasMac = true
+                client[1] = mac
+                if ip and name then
+                    client[2] = ip
+                    client[3] = name
+                end
+                client[4] = conType(mac)
+                client[5] = 1
             end
-            client[4] = conType(mac)
-            client[5] = 1
+            clients[#clients + 1] = client
         end
-        clients[#clients + 1] = client
-
     end
 
     if not hasMac then

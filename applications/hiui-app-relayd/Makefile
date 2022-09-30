@@ -6,8 +6,8 @@
 
 include $(TOPDIR)/rules.mk
 
-APP_TITLE:=Demo
-APP_NAME:=demo
+APP_TITLE:=Relayd
+APP_NAME:=relayd
 
 include ../../hiui.mk
 

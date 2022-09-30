@@ -1,12 +1,12 @@
 {
     "/network/relayd": {
-        "title": "relayd Demo",
+        "title": "relayd",
         "view": "relayd",
         "index": 11,
         "locales": {
-            "en-US": "relayd Demo",
-            "zh-CN": "relayd 示范",
-            "zh-TW": "relayd 示範"
+            "en-US": "relayd",
+            "zh-CN": "relayd",
+            "zh-TW": "relayd"
         }
     }
 }
