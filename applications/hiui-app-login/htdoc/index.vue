@@ -84,7 +84,7 @@ const titles = {
 	'zh-TW': '繁體中文'
 };
 const language = ref(proxy.$hiui.state.locale);
-const languageLabel = ref(titles[language.value]);
+const languageLabel = ref(titles[language.value] ?? 'Auto');
 const languages = ref([]);
 
 const localeOptions = () => {

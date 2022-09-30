@@ -4,7 +4,7 @@ cat >/etc/hotplug.d/dhcp/20-det-clients <<EOF
 #!/bin/sh
 [ ! -e '/etc/clients' ] && touch /etc/clients
 [ "\$ACTION" = "update" -o "\$ACTION" = "add" ] && {
-    if [ "\$(awk '\$1<60 {print 0}' /proc/uptime)" == "0" ]; then
+    if [ "\$(awk '\$1<20 {print 0}' /proc/uptime)" == "0" ]; then
         flock -x /tmp/det-clients.lock -c "lua /usr/share/hiui/rpc/device.lua \$MACADDR \$IPADDR \$HOSTNAME Wired"
     else
         flock -x /tmp/det-clients.lock -c "lua /usr/share/hiui/rpc/device.lua \$MACADDR \$IPADDR \$HOSTNAME"

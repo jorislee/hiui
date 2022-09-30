@@ -3,7 +3,7 @@
 		<n-space vertical class="bg-border bg-color pd-30">
 			<div class="flex-hor-ac h-bg">
 				<div style="width: -webkit-fill-available">{{ $t('enter node') }}:&nbsp;&nbsp;&nbsp;&nbsp;{{ enode }}</div>
-				<div style="width: -webkit-fill-available">{{ $t('rule number') }}:&nbsp;&nbsp;&nbsp;&nbsp;{{ ruleNum }}</div>
+				<div style="width: -webkit-fill-available">{{ $t('rule number') }}:&nbsp;&nbsp;&nbsp;&nbsp;{{ dataRef.length }}</div>
 			</div>
 			<n-data-table
 				remote
@@ -14,8 +14,6 @@
 				:loading="loadingRef"
 				:pagination="paginationReactive"
 				:row-key="rowKey"
-				@update:sorter="handleSorterChange"
-				@update:filters="handleFiltersChange"
 				@update:page="handlePageChange"
 			>
 				<template #empty>
@@ -43,17 +41,19 @@ const columns = [
 	},
 	{
 		title: 'Shunt object',
-		key: 'shunt_object',
-		width: 200
+		key: 'source',
+		width: 200,
+		ellipsis: {tooltip: true}
 	},
 	{
 		title: 'Rule',
 		key: 'rule',
-		width: 200
+		width: 200,
+		ellipsis: {tooltip: true}
 	},
 	{
 		title: 'Config',
-		key: 'config',
+		key: 'out_ip',
 		width: 200
 	},
 	{
@@ -63,17 +63,16 @@ const columns = [
 	},
 	{
 		title: 'Remark',
-		key: 'remark',
+		key: 'status',
 		width: 200
 	}
 ];
 const {proxy} = getCurrentInstance();
 
 const enode = ref('test');
-const ruleNum = ref('');
 
 const dataRef = ref([]);
-const loadingRef = ref(false);
+const loadingRef = ref(true);
 const columnsRef = ref(columns);
 const paginationReactive = reactive({
 	page: 1,
@@ -82,18 +81,33 @@ const paginationReactive = reactive({
 	showQuickJumper: true
 });
 
+function getDatas() {
+	proxy.$hiui.call('sdwan', 'getShunt').then(({result}) => {
+		result.data.forEach((element) => {
+			if (element.source === '[""]') {
+				element.source = 'All';
+			}
+		});
+		if (result.ret === 1) {
+			dataRef.value = result.data;
+		}
+		loadingRef.value = false;
+		console.log(dataRef.value);
+	});
+}
+
 onMounted(() => {
-	proxy.$hiui.call('sdwan', 'getShunt').then((result) => {
+	getDatas();
+	proxy.$hiui.call('uci', 'get', {config: 'wireguard', section: 'peers', option: 'end_point'}).then((result) => {
 		console.log(result);
 	});
 });
 function rowKey(rowData) {
-	console.log(rowData);
 	return rowData.id;
 }
-function handleSorterChange(sorter) {}
-function handleFiltersChange(filters) {}
-function handlePageChange(currentPage) {}
+function handlePageChange(currentPage) {
+	console.log(currentPage);
+}
 </script>
 
 <style scoped>

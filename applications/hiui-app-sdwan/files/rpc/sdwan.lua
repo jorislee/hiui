@@ -12,10 +12,11 @@ function M.status()
 end
 
 function M.getSpeed()
-    local f = io.popen('wg_speed.sh wg0')
     local result = {}
+    local f = io.popen('wg_speed.sh wg0')
     if f then
-        result = json.decode(f:read("*a"))
+        local req = f:read("*a")
+        if string.len(req) > 10 then result = json.decode(req) end
         f:close()
     end
     return result
