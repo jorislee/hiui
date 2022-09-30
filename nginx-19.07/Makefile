@@ -569,6 +569,6 @@ endif
 
 $(eval $(call BuildPackage,nginx))
 $(eval $(call BuildPackage,nginx-ssl))
-$(eval $(call BuildPackage,nginx-all-module))
+#$(eval $(call BuildPackage,nginx-all-module))
 $(eval $(call BuildPackage,nginx-mod-luci))
 $(eval $(call BuildPackage,nginx-mod-luci-ssl))
