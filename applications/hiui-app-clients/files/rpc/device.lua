@@ -3,7 +3,6 @@
 local iwinfo = require "iwinfo"
 local uci = require('uci').cursor()
 local split = require "hiui.split"
-local json = require 'cjson'
 
 local mac = string.upper(arg[1])
 local ip = arg[2]
@@ -13,21 +12,30 @@ if arg[3] then
 else
     name = 'unknown'
 end
-local con_type = arg[4]
+local con_type
+local online
+if arg[4] == 'Wired' then
+    con_type = arg[4]
+else
+    online = arg[4] == "0x2" and 1 or 0
+end
 
 local function conType(_mac)
     local device = 'Wired'
-    if con_type then
+    local found = false
+    if con_type == "Wired" then
         device = 'Wired'
     else
         uci:foreach("wireless", "wifi-iface", function(s)
-            if s.ifname then
+            if s.ifname and not found then
                 local driver_type = iwinfo.type(s.ifname)
                 if driver_type and iwinfo[driver_type]["assoclist"] then
                     local assoclist = iwinfo[driver_type]["assoclist"](s.ifname)
                     for key, value in pairs(assoclist) do
                         if key == _mac then
                             device = s.device
+                            found = true
+                            return
                         end
                     end
                 end
@@ -35,11 +43,8 @@ local function conType(_mac)
         end)
     end
 
-    if device ~= 'Wired' then
-        return uci:get("wireless", device, 'band')
-    else
-        return device
-    end
+    if device ~= 'Wired' then return uci:get("wireless", device, 'band') end
+    return device
 end
 
 local function writeFile(clients)
@@ -72,8 +77,10 @@ local function updateDatas()
                     client[2] = ip
                     client[3] = name
                 end
-                client[4] = conType(mac)
-                client[5] = 1
+                if client[4] ~= "Wired" then
+                    client[4] = conType(mac)
+                end
+                client[5] = online
             end
             clients[#clients + 1] = client
         end

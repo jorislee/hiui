@@ -52,6 +52,7 @@ function addItem(item) {
 				}
 			}
 			if (cur.value === (item.online ? 'online' : 'offline')) {
+				empty.value = false;
 				datas.device2g.push(item);
 			}
 			break;
@@ -62,6 +63,7 @@ function addItem(item) {
 				}
 			}
 			if (cur.value === (item.online ? 'online' : 'offline')) {
+				empty.value = false;
 				datas.device5g.push(item);
 			}
 			break;
@@ -72,6 +74,8 @@ function addItem(item) {
 				}
 			}
 			if (cur.value === (item.online ? 'online' : 'offline')) {
+				console.log('----------------------------------------------------------------');
+				empty.value = false;
 				datas.deviceCable.push(item);
 			}
 			break;
@@ -83,7 +87,6 @@ function handleTraffic() {
 	setTimeout(() => {
 		loading.value = false;
 	}, 10000);
-	console.log(loading.value);
 	if (!loading.value) {
 		loading.value = true;
 		setTrafficStatus();
@@ -94,15 +97,12 @@ function handleOnlineChange() {
 	datas.device2g = [];
 	datas.device5g = [];
 	datas.deviceCable = [];
+	empty.value = true;
+
 	if (rawdata) {
 		rawdata.forEach((item) => {
 			addItem(item);
 		});
-		if (datas.device2g.length === 0 && datas.device5g.length === 0 && datas.deviceCable.length === 0) {
-			empty.value = true;
-		} else {
-			empty.value = false;
-		}
 	}
 }
 
@@ -125,7 +125,6 @@ onBeforeMount(() => {
 			proxy.$hiui.call('clients', 'getClients').then((result) => {
 				console.log(result);
 				if (result.code === 0) {
-					empty.value = false;
 					rawdata = result.clients;
 					datas.device2g = [];
 					datas.device5g = [];

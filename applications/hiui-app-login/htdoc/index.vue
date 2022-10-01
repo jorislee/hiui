@@ -16,7 +16,14 @@
 							</n-input>
 						</n-form-item>
 						<n-form-item path="password">
-							<n-input size="medium" v-model:value="formValue.password" :placeholder="$t('Please enter password')" type="password" show-password-on="mousedown">
+							<n-input
+								size="medium"
+								v-model:value="formValue.password"
+								:placeholder="$t('Please enter password')"
+								type="password"
+								show-password-on="mousedown"
+								@keyup.enter="handleSubmit"
+							>
 								<template #prefix>
 									<n-icon size="18" color="#808695">
 										<Lock />
