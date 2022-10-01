@@ -171,7 +171,7 @@ function selectIpk(params, option) {
 
 function ipkUpgrade() {
 	let params = [];
-	if (params == 'all') {
+	if (params === 'all') {
 		remoteWebUiInfo.value?.forEach((item) => {
 			if (params === 'hiui-rpc-core') {
 				if (item.downloadUrl.includes(ipkInfo.arch)) {
