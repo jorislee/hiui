@@ -33,16 +33,20 @@
 						<div class="font-18">{{ $t('Software information') }}</div>
 					</template>
 					<n-list-item>
-						<n-thing :title="$t('Current version')" :title-extra="remoteWebUiInfo.curVer" />
-					</n-list-item>
-					<n-list-item>
-						<n-thing :title="$t('CPU architecture')" :title-extra="remoteWebUiInfo.arch" />
-					</n-list-item>
-					<n-list-item>
-						<template v-if="remoteWebUiInfo.ver" #suffix>
-							<n-button text ghost>{{ $t('update immediately') }}</n-button>
+						<n-thing :title="$t('Module name')" />
+						<template #suffix>
+							<n-select v-model:value="ipkInfo.name" size="small" :options="localWebUiInfo" @update:value="selectIpk" style="width: 180px" />
 						</template>
-						<n-thing :title="$t('Remote version')" :title-extra="remoteWebUiInfo.ver" />
+					</n-list-item>
+					<n-list-item>
+						<n-thing :title="$t('Current version')" :title-extra="ipkInfo.curVer" />
+					</n-list-item>
+
+					<n-list-item>
+						<template v-if="ipkInfo.remoteVer > ipkInfo.curVer" #suffix>
+							<n-button text ghost style="padding-bottom: 8px" @click="ipkUpgrade">{{ remoteWebUiInfo.lenght > 6 ? $t('update all') : $t('update immediately') }}</n-button>
+						</template>
+						<n-thing :title="$t('Remote version')" :title-extra="ipkInfo.remoteVer" />
 					</n-list-item>
 				</n-list>
 			</div>
@@ -60,7 +64,7 @@
 						:on-finish="onUploadFinish"
 						:show-file-list="false"
 						:max="1"
-						:on-change="handleChange"
+						:on-change="uploadProgress"
 					>
 						<n-upload-dragger class="upload-bg">
 							<div>
@@ -93,7 +97,7 @@
 					</n-list-item>
 				</n-list>
 				<div style="padding-top: 20px">
-					<n-button v-if="modalConfirm" type="info" size="large" style="width: 100%" @click="doUpgrade">{{ $t('Upgrade') }}</n-button>
+					<n-button v-if="modalConfirm" type="info" size="large" style="width: 100%" @click="firmwareUpgrade">{{ $t('Upgrade') }}</n-button>
 				</div>
 			</div>
 		</n-space>
@@ -126,9 +130,12 @@ const size = ref(0);
 const md5 = ref('');
 const keepConfig = ref(true);
 const remoteFrimwareInfo = reactive({});
-const remoteWebUiInfo = reactive({});
+const remoteWebUiInfo = ref([]);
+const localWebUiInfo = ref([]);
 const verification = ref(false);
 const progress = ref(0);
+const ipkInfo = reactive({});
+
 function bytesToHuman(bytes) {
 	if (isNaN(bytes)) {
 		return '';
@@ -145,6 +152,41 @@ function bytesToHuman(bytes) {
 
 	return (bytes / Math.pow(1024, k)).toFixed(2) + ' ' + units;
 }
+
+function selectIpk(params, option) {
+	ipkInfo.curVer = option.ver;
+	remoteWebUiInfo.value?.forEach((item) => {
+		if (item.name === params) {
+			ipkInfo.remoteVer = item.curVer;
+			if (params === 'hiui-rpc-core') {
+				if (item.downloadUrl.includes(ipkInfo.arch)) {
+					ipkInfo.downloadUrl = item.downloadUrl;
+				}
+			} else {
+				ipkInfo.downloadUrl = item.downloadUrl;
+			}
+		}
+	});
+}
+
+function ipkUpgrade() {
+	let params = [];
+	if (params == 'all') {
+		remoteWebUiInfo.value?.forEach((item) => {
+			if (params === 'hiui-rpc-core') {
+				if (item.downloadUrl.includes(ipkInfo.arch)) {
+					params.push(item.downloadUrl);
+				}
+			} else {
+				params.push(item.downloadUrl);
+			}
+		});
+	} else {
+		params.push(ipkInfo.downloadUrl);
+	}
+	proxy.$hiui.call('upgrade', 'ipkUpgrade', params).then((result) => {});
+}
+
 function onUploadFinish({event, file}) {
 	const response = JSON.parse(event.target.response);
 	size.value = response.size;
@@ -164,7 +206,7 @@ function onUploadFinish({event, file}) {
 		}
 	});
 }
-function doUpgrade() {
+function firmwareUpgrade() {
 	proxy.$hiui.call('system', 'sysupgrade', {keep: keepConfig.value}).then(() => {
 		modalSpin.value = true;
 		proxy.$hiui.reconnect().then(() => {
@@ -173,10 +215,10 @@ function doUpgrade() {
 	});
 }
 
-function handleChange({file}) {
+function uploadProgress({file}) {
 	progress.value = file.percentage;
-	console.log(progress.value);
 }
+
 onBeforeMount(() => {
 	proxy.$hiui.call('upgrade', 'checkFirmwareVersion').then((result) => {
 		console.log(result);
@@ -186,9 +228,22 @@ onBeforeMount(() => {
 	});
 	proxy.$hiui.call('upgrade', 'checkWebVersion').then((result) => {
 		console.log(result);
-		remoteWebUiInfo.curVer = result.curVer;
-		remoteWebUiInfo.arch = result.arch;
-		remoteWebUiInfo.ver = result.ver;
+		result.loc?.forEach((item) => {
+			let tmp = {};
+			tmp.value = item.name;
+			tmp.label = item.name;
+			tmp.ver = item.curVer;
+			localWebUiInfo.value.push(tmp);
+		});
+		ipkInfo.name = localWebUiInfo.value[0].label;
+		ipkInfo.curVer = localWebUiInfo.value[0].ver;
+		ipkInfo.arch = result.arch;
+		remoteWebUiInfo.value = result.remote;
+		remoteWebUiInfo.value?.forEach((item) => {
+			if (item.name === ipkInfo.name) {
+				ipkInfo.remoteVer = item.curVer;
+			}
+		});
 	});
 });
 </script>

@@ -123,6 +123,11 @@ const themeOverrides = {
 	},
 	Modal: {
 		boxShadow: 'none'
+	},
+	Spin: {
+		color: '#0052D9',
+		textColor: '#0052D9',
+		fontSize: '24px'
 	}
 };
 
