@@ -61,7 +61,7 @@ function M.checkWebVersion()
         local f, err = io.open('/tmp/webui.info', 'r')
         if f then
             local content = f:read("*a")
-            result = json.decode(content)
+            remote = json.decode(content)
         end
     else
 
