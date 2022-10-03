@@ -4,7 +4,7 @@
 START=99
 USE_PROCD=1
 
-NAME=wrtbwmon
+NAME=hiui
 PID_FILE=/var/run/wrtbwmon.pid
 args=/usr/sbin/wrtbwmon
 
@@ -25,15 +25,13 @@ start_service() {
     local db enabled
     config_load $NAME
 
-    config_get db general path
+    config_get db global path
     [ -z "$db" ] && db="/tmp/usage.db"
     append args " -46"
     append args "-f $db"
-    append args "-p /tmp/usage.htm"
-    append args "-u /etc/wrtbwmon.user"
     append args "-d"
 
-    config_get enabled general enabled
+    config_get enabled global traffic
     [ "$enabled"0 -eq 0 ] || create_instance
 }
 
