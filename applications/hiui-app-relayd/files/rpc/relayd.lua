@@ -87,7 +87,7 @@ function M.join(params)
     uci:commit("network")
     uci:commit("wireless")
     if params.remember then addHistory(params) end
-    os.execute("/etc/init.d/firewall reload &&  wifi reload")
+    os.execute("/etc/init.d/firewall reload && wifi down;sleep 3;wifi up")
     return {code = 0}
 end
 
@@ -127,7 +127,7 @@ function M.updateHistory(params)
     uci:set("wireless", params.device, "disabled", '0')
     uci:commit("wireless")
     uci:commit("hiui")
-    os.execute("wifi reload")
+    os.execute("wifi down;sleep 3;wifi up")
     return {code = 0}
 end
 
